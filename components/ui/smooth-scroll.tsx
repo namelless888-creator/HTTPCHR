@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { ReactLenis, useLenis } from 'lenis/react';
 import { useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowUp, Clock, Mail, MapPin, Phone } from 'lucide-react';
@@ -68,6 +68,7 @@ const BackToTop = () => {
 
 export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
   const reduce = useReducedMotion();
+  const mapSectionRef = useRef<HTMLElement>(null);
 
   return (
     <ReactLenis root options={{ smoothWheel: !reduce, anchors: !reduce }}>
@@ -85,35 +86,42 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
           <ArrowDown aria-hidden className='relative mx-auto mt-10 size-6 animate-bounce motion-reduce:animate-none' />
         </section>
 
-        {/* Layer 2: frost light, rounded top, contacts + map animation */}
-        <section className='stack-layer section-light flex items-center overflow-hidden rounded-t-3xl px-4 py-20 md:px-8'>
-          <Grid line='#0D1B221F' />
-          <div className='relative mx-auto grid w-full max-w-7xl gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-center'>
-            <div>
-              <h3 className='font-display text-3xl font-bold tracking-tight md:text-4xl'>Мы на трассе Ростов–Баку</h3>
-              <ul className='mt-8 space-y-5'>
-                <ContactRow icon={MapPin} label='Адрес'>
-                  ЧР, г. Гудермес, 5-й км трассы Ростов–Баку
-                </ContactRow>
-                <ContactRow icon={Phone} label='Телефон'>
-                  <a href='tel:+79389042323' className={cn('rounded-sm underline-offset-4 hover:underline', focusRing)}>
-                    +7 (938) 904-23-23
-                  </a>
-                </ContactRow>
-                <ContactRow icon={Mail} label='E-mail'>
-                  <a href='mailto:oooiceberg95@mail.ru' className={cn('rounded-sm underline-offset-4 hover:underline', focusRing)}>
-                    oooiceberg95@mail.ru
-                  </a>
-                </ContactRow>
-                <ContactRow icon={Clock} label='Режим работы'>
-                  Пн–Сб 8:00–18:00, воскресенье — выходной
-                </ContactRow>
-              </ul>
-            </div>
-            <MapAnimation
-              src='/videos/karta_animation.mp4'
-              label='Анимация карты: как доехать до RAMCAD по трассе Ростов–Баку в Гудермесе'
-            />
+        {/* Layer 2: map video fills the whole section as a background, scrubbed by scroll */}
+        <section
+          ref={mapSectionRef}
+          className='stack-layer section-light relative flex min-h-[100svh] items-end overflow-hidden rounded-t-3xl'
+        >
+          <MapAnimation
+            src='/videos/karta_animation.mp4'
+            label='Карта: маршрут к RAMCAD по трассе Ростов–Баку в Гудермесе'
+            sectionRef={mapSectionRef}
+            className='absolute inset-0 -z-20'
+          />
+          <div
+            aria-hidden
+            className='absolute inset-0 -z-10 bg-gradient-to-t from-[#0D1B22]/85 via-[#0D1B22]/15 to-transparent'
+          />
+
+          <div className='relative m-4 w-full max-w-sm rounded-2xl border border-border bg-background/70 p-6 text-foreground shadow-xl backdrop-blur-md md:m-10'>
+            <h3 className='font-display text-2xl font-bold tracking-tight'>Мы на трассе Ростов–Баку</h3>
+            <ul className='mt-5 space-y-4'>
+              <ContactRow icon={MapPin} label='Адрес'>
+                ЧР, г. Гудермес, 5-й км трассы Ростов–Баку
+              </ContactRow>
+              <ContactRow icon={Phone} label='Телефон'>
+                <a href='tel:+79389042323' className={cn('rounded-sm underline-offset-4 hover:underline', focusRing)}>
+                  +7 (938) 904-23-23
+                </a>
+              </ContactRow>
+              <ContactRow icon={Mail} label='E-mail'>
+                <a href='mailto:oooiceberg95@mail.ru' className={cn('rounded-sm underline-offset-4 hover:underline', focusRing)}>
+                  oooiceberg95@mail.ru
+                </a>
+              </ContactRow>
+              <ContactRow icon={Clock} label='Режим работы'>
+                Пн–Сб 8:00–18:00, воскресенье — выходной
+              </ContactRow>
+            </ul>
           </div>
         </section>
 

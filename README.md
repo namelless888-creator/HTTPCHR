@@ -60,7 +60,7 @@ Copy in blocks 3–5 and contacts was carried over from icechr.ru with the compa
 - Director's name/quote in block 3 (currently "Муса Шаванов")
 - The four news items in block 5 (dated 2024, currently linking to the original icechr.ru articles)
 - Address, phone, e-mail, and hours in block 6
-- The map video still shows the original "ООО «Айсберг»" label and blue linework — re-render it in the RAMCAD palette if needed
+- The map video still shows the original "ООО «Айсберг»" label and blue linework — re-render it in the RAMCAD palette if needed (it now fills the whole block 6 map layer as a background, so it's more visible than before)
 
 ## Design notes
 
@@ -73,3 +73,4 @@ Copy in blocks 3–5 and contacts was carried over from icechr.ru with the compa
   - Exactly three colors plus opacity tints of those three — no other hues anywhere, including focus rings and overlays.
 - Section rhythm: Hero (dark) → Catalog (steel) → About (frost) → Extras (dark) → News (frost) → Contacts (dark / frost / steel sticky layers).
 - Reduced motion: marquee freezes, reveal animations are skipped, and the map video shows its final frame without autoplay.
+- **Block 6, map layer**: the map video is a full-bleed background behind the whole sticky section (not a boxed card), with a dark gradient scrim for legibility. The address/phone/e-mail/hours card floats bottom-left as a frosted-glass panel (`bg-background/70` + `backdrop-blur`). Its `currentTime` is scrubbed directly to scroll position — `MapAnimation` reads `section.offsetTop`/`offsetHeight` (stable across the section's own sticky offsetting) against `lenis.scroll` to compute progress, so the route "draws" as the page scrolls rather than autoplaying once. Under `prefers-reduced-motion` it skips the scroll binding entirely and holds the last frame.
