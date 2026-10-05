@@ -53,8 +53,8 @@ export const HeroBrand: React.FC<HeroBrandProps> = ({
       )}
     >
       <Image src={bgSrc} alt={bgAlt} fill priority sizes='100vw' className='-z-20 object-cover' />
-      <div aria-hidden className='absolute inset-0 -z-10 bg-gradient-to-b from-[#1A1A1A]/70 via-[#1A1A1A]/55 to-[#1A1A1A]' />
-      <div aria-hidden className='absolute inset-0 -z-10 bg-[#4A2E1B]/25 mix-blend-multiply' />
+      <div aria-hidden className='absolute inset-0 -z-10 bg-gradient-to-b from-[#0D1B22]/70 via-[#0D1B22]/55 to-[#0D1B22]' />
+      <div aria-hidden className='absolute inset-0 -z-10 bg-[#3E6E85]/25 mix-blend-multiply' />
 
       <motion.p
         {...fade(0)}

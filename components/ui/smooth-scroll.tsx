@@ -72,9 +72,9 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
   return (
     <ReactLenis root options={{ smoothWheel: !reduce, anchors: !reduce }}>
       <div id='contacts' ref={ref} className='scroll-mt-20'>
-        {/* Layer 1: ink */}
+        {/* Layer 1: deepfreeze dark */}
         <section className='stack-layer grid place-content-center bg-background px-4 py-24 text-center text-foreground'>
-          <Grid line='#F5F5DC14' />
+          <Grid line='#F1F6F814' />
           <p className='relative text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground'>Контакты</p>
           <h2 className='relative mt-4 px-4 font-display text-5xl font-semibold leading-[120%] tracking-tight 2xl:text-7xl'>
             Где нас найти
@@ -85,9 +85,9 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
           <ArrowDown aria-hidden className='relative mx-auto mt-10 size-6 animate-bounce motion-reduce:animate-none' />
         </section>
 
-        {/* Layer 2: cream, rounded top, contacts + map animation */}
+        {/* Layer 2: frost light, rounded top, contacts + map animation */}
         <section className='stack-layer section-light flex items-center overflow-hidden rounded-t-3xl px-4 py-20 md:px-8'>
-          <Grid line='#1A1A1A1F' />
+          <Grid line='#0D1B221F' />
           <div className='relative mx-auto grid w-full max-w-7xl gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-center'>
             <div>
               <h3 className='font-display text-3xl font-bold tracking-tight md:text-4xl'>Мы на трассе Ростов–Баку</h3>
@@ -117,9 +117,9 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
           </div>
         </section>
 
-        {/* Layer 3: cocoa, request form + footer */}
+        {/* Layer 3: steel accent, request form + footer */}
         <section className='stack-layer flex flex-col justify-between bg-card px-4 pb-8 pt-24 text-card-foreground md:px-8'>
-          <Grid line='#F5F5DC14' />
+          <Grid line='#F1F6F814' />
           <div className='relative mx-auto grid w-full max-w-7xl gap-10 lg:grid-cols-2'>
             <div>
               <h3 className='font-display text-4xl font-bold tracking-tight md:text-6xl'>Узнать оптовую цену</h3>

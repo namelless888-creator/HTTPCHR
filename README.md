@@ -43,7 +43,7 @@ public/
 
 ## Asset status — placeholders in place, replace before launch
 
-The source material for this task included only the map animation video and a reference screenshot (not meant to be used as a site asset). No real photography was supplied, and the live icechr.ru assets are not reachable from this sandbox's network policy, so these files are flat `#4A2E1B` (cocoa) placeholders and must be swapped for real photos before shipping:
+The source material for this task included only the map animation video and a reference screenshot (not meant to be used as a site asset). No real photography was supplied, and the live icechr.ru assets are not reachable from this sandbox's network policy, so these files are flat `#3E6E85` (steel accent) placeholders and must be swapped for real photos before shipping:
 
 - `public/images/hero-bg.jpg` — needs a real background photo, width ≥ 2400px
 - `public/images/catalog/01.jpg` … `56.jpg` — needs real product photos; order and captions are already wired up in `lib/catalog.ts` (18 are flagged `hot: true` → "Хит" badge)
@@ -64,6 +64,12 @@ Copy in blocks 3–5 and contacts was carried over from icechr.ru with the compa
 
 ## Design notes
 
-- Exactly three colors (`#4A2E1B` cocoa, `#1A1A1A` ink, `#F5F5DC` cream) plus opacity tints of those three — no other hues anywhere, including focus rings and overlays.
-- Section rhythm: Hero (ink) → Catalog (cocoa) → About (cream) → Extras (ink) → News (cream) → Contacts (ink / cream / cocoa sticky layers).
+- **Palette: "Морозная сталь" (Frosted Steel)** — chosen over the original cocoa/cream dessert palette via a judge-panel workflow (3 independent proposals, scored by 2 comparative judges on brand fit / accessibility / distinctiveness, then synthesized). The brief: the old cocoa-brown palette read as a confectionery/gelateria brand and said nothing about the cold chain, refrigeration, or the fish line — RAMCAD is a хладокомбинат (cold-storage plant), and the palette should say so.
+  - `#0D1B22` **deepfreeze** (dark) — the inside of a freezer in the dark; a blue-black, not a neutral charcoal
+  - `#F1F6F8` **frost** (light) — frost on a freezer display case glass; ice-blue, not warm cream
+  - `#3E6E85` **steel** (accent) — stainless steel of refrigeration units/compressors; used for cards, borders, glow, buttons, and the catalog section background
+  - All three sit in one narrow blue hue band (~197–202°) — no red/green/yellow anywhere, so error/success states stay icon + brand-color only, as before.
+  - Contrast: dark/light = 16.1:1 (huge margin over AA). Light text on the steel accent = 5.11:1 (passes AA 4.5:1 for body text; not quite the AAA levels the original cocoa/cream pair hit). Steel as a border/glow against dark = 3.15:1 (passes the 3:1 UI-component threshold; not meant for text). The judge panel tried to push the accent-on-dark ratio higher and found every attempt traded away the accent-on-light ratio by a larger amount — `#3E6E85` is the balanced point.
+  - Exactly three colors plus opacity tints of those three — no other hues anywhere, including focus rings and overlays.
+- Section rhythm: Hero (dark) → Catalog (steel) → About (frost) → Extras (dark) → News (frost) → Contacts (dark / frost / steel sticky layers).
 - Reduced motion: marquee freezes, reveal animations are skipped, and the map video shows its final frame without autoplay.
