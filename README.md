@@ -1,13 +1,15 @@
-# RAMCAD — one-page site
+# RAMCAD — site
 
 Redesign of icechr.ru for RAMCAD, a cold-chain food producer (ice cream, fish, ready-to-eat products). Next.js App Router, TypeScript, Tailwind CSS v4, shadcn-style component structure.
+
+Originally built as a one-pager, then split into a multi-page site: `/` (home), `/catalog`, `/news`, `/contacts` each a real route. `SiteHeader` and `SiteFooter` live in `app/layout.tsx` so every page shares the same nav/footer chrome; internal links use `next/link` for client-side navigation.
 
 ## Stack
 
 - **Next.js 16** (App Router, Turbopack), **React 19**, **TypeScript** (strict)
 - **Tailwind CSS v4** — tokens live in `app/globals.css` as CSS custom properties (`@theme inline`), no `tailwind.config.ts` needed
 - **shadcn/ui conventions** — `components.json` sets the default component path to `@/components/ui` (this matters: every shadcn component, and all custom UI components in this project, import siblings through `@/components/ui/*`, so anything placed outside that folder breaks those imports). Shared helpers live in `@/lib/utils` (`cn()`, via `clsx` + `tailwind-merge`).
-- **framer-motion**, **lucide-react**, **lenis** (smooth scroll, mounted once in block 6)
+- **framer-motion**, **lucide-react**, **lenis** (smooth scroll, mounted once per page load on `/contacts`, which is the only route using it)
 
 ### About the shadcn CLI
 
@@ -26,19 +28,22 @@ npm run lint
 
 ```
 app/
-  layout.tsx       # fonts (Playfair Display + Manrope), lenis.css import
-  page.tsx          # assembles all 6 sections inside <main id="main">
-  globals.css       # palette tokens, section-light theme, stack-layer sticky rules
+  layout.tsx          # fonts, lenis.css import, global <SiteHeader>/<SiteFooter>
+  page.tsx            # home: Hero, About, Extras
+  catalog/page.tsx     # /catalog — CatalogBlock (animated marquee)
+  news/page.tsx        # /news — NewsBlock
+  contacts/page.tsx    # /contacts — ContactsBlock (3-layer sticky scroll + map)
+  globals.css          # palette tokens, section-light theme, stack-layer sticky rules
   api/contact/route.ts
 components/
-  catalog-block.tsx # wires lib/catalog.ts into the marquee (block 2)
-  ui/               # all shadcn-style + custom components
+  catalog-block.tsx   # wires lib/catalog.ts into the marquee
+  ui/                 # all shadcn-style + custom components, incl. site-header.tsx / site-footer.tsx
 lib/
-  catalog.ts        # 56-item catalog data
-  utils.ts          # cn()
+  catalog.ts          # 56-item catalog data
+  utils.ts            # cn()
 public/
-  images/           # hero-bg.jpg, catalog/01-56.jpg, extras/seld-file.jpg
-  videos/           # karta_animation.mp4 (block 6 map animation)
+  images/             # hero-bg.jpg, catalog/01-56.jpg, extras/seld-file.jpg
+  videos/             # karta_animation.mp4 (/contacts map background)
 ```
 
 ## Asset status — placeholders in place, replace before launch
@@ -57,10 +62,10 @@ The CEO portrait (`/public/images/ceo.jpg`) was intentionally **not** added — 
 
 Copy in blocks 3–5 and contacts was carried over from icechr.ru with the company name swapped to RAMCAD. Confirm before launch:
 
-- Director's name/quote in block 3 (currently "Муса Шаванов")
-- The four news items in block 5 (dated 2024, currently linking to the original icechr.ru articles)
-- Address, phone, e-mail, and hours in block 6
-- The map video still shows the original "ООО «Айсберг»" label and blue linework — re-render it in the RAMCAD palette if needed (it now fills the whole block 6 map layer as a background, so it's more visible than before)
+- Director's name/quote on the home page's About section (currently "Муса Шаванов")
+- The four news items on `/news` (dated 2024, currently linking to the original icechr.ru articles)
+- Address, phone, e-mail, and hours on `/contacts`
+- The map video still shows the original "ООО «Айсберг»" label and blue linework — re-render it in the RAMCAD palette if needed (it fills the whole `/contacts` map layer as a background, so it's more visible than before)
 
 ## Design notes
 
@@ -71,6 +76,6 @@ Copy in blocks 3–5 and contacts was carried over from icechr.ru with the compa
   - All three sit in one narrow blue hue band (~197–202°) — no red/green/yellow anywhere, so error/success states stay icon + brand-color only, as before.
   - Contrast: dark/light = 16.1:1 (huge margin over AA). Light text on the steel accent = 5.11:1 (passes AA 4.5:1 for body text; not quite the AAA levels the original cocoa/cream pair hit). Steel as a border/glow against dark = 3.15:1 (passes the 3:1 UI-component threshold; not meant for text). The judge panel tried to push the accent-on-dark ratio higher and found every attempt traded away the accent-on-light ratio by a larger amount — `#3E6E85` is the balanced point.
   - Exactly three colors plus opacity tints of those three — no other hues anywhere, including focus rings and overlays.
-- Section rhythm: Hero (dark) → Catalog (steel) → About (frost) → Extras (dark) → News (frost) → Contacts (dark / frost / steel sticky layers).
+- Section rhythm, now across routes: `/` Hero (dark) → About (frost) → Extras (dark); `/catalog` (steel); `/news` (frost); `/contacts` (dark / frost / steel sticky layers).
 - Reduced motion: marquee freezes, reveal animations are skipped, and the map video shows its final frame without autoplay.
-- **Block 6, map layer**: the map video is a full-bleed background behind the whole sticky section (not a boxed card), with a dark gradient scrim for legibility. The address/phone/e-mail/hours card floats bottom-left as a frosted-glass panel (`bg-background/70` + `backdrop-blur`). Its `currentTime` is scrubbed directly to scroll position — `MapAnimation` reads `section.offsetTop`/`offsetHeight` (stable across the section's own sticky offsetting) against `lenis.scroll` to compute progress, so the route "draws" as the page scrolls rather than autoplaying once. Under `prefers-reduced-motion` it skips the scroll binding entirely and holds the last frame.
+- **`/contacts`, map layer**: the map video is a full-bleed background behind the whole sticky section (not a boxed card), with a dark gradient scrim for legibility. The address/phone/e-mail/hours card floats bottom-left as a frosted-glass panel (`bg-background/70` + `backdrop-blur`). Its `currentTime` is scrubbed directly to scroll position — `MapAnimation` reads `section.offsetTop`/`offsetHeight` (stable across the section's own sticky offsetting) against `lenis.scroll` to compute progress, so the route "draws" as the page scrolls rather than autoplaying once. Under `prefers-reduced-motion` it skips the scroll binding entirely and holds the last frame.

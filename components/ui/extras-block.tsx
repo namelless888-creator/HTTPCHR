@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { ArrowUpRight, ChefHat } from 'lucide-react';
 import { Reveal } from '@/components/ui/reveal';
 import { cn } from '@/lib/utils';
@@ -38,8 +39,8 @@ export const ExtrasBlock: React.FC<{ className?: string }> = ({ className }) => 
                 Рыба
               </span>
               <h3 className='font-display text-2xl font-bold tracking-tight'>Сельдь филе в масле с пряностями</h3>
-              <a
-                href='#contacts'
+              <Link
+                href='/contacts'
                 className={cn(
                   'mt-auto inline-flex items-center gap-1.5 rounded-full bg-primary px-6 py-2.5 font-semibold text-primary-foreground',
                   focusRing
@@ -47,7 +48,7 @@ export const ExtrasBlock: React.FC<{ className?: string }> = ({ className }) => 
               >
                 Узнать оптовую цену
                 <ArrowUpRight aria-hidden className='size-4' />
-              </a>
+              </Link>
             </div>
           </article>
         </Reveal>

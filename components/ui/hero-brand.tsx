@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, useReducedMotion, type MotionProps } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -86,23 +87,23 @@ export const HeroBrand: React.FC<HeroBrandProps> = ({
       </motion.ul>
 
       <motion.div {...fade(0.55)} className='mt-10 flex flex-wrap justify-center gap-3'>
-        <a
+        <Link
           href={primary.href}
           className={cn('rounded-full bg-primary px-8 py-3 font-semibold text-primary-foreground transition-transform hover:scale-105', focusRing)}
         >
           {primary.label}
-        </a>
-        <a
+        </Link>
+        <Link
           href={secondary.href}
           className={cn('rounded-full border border-foreground/40 px-8 py-3 font-semibold transition-colors hover:bg-card', focusRing)}
         >
           {secondary.label}
-        </a>
+        </Link>
       </motion.div>
 
-      <a href={primary.href} aria-label='Прокрутить вниз' className={cn('absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full p-2', focusRing)}>
+      <Link href={primary.href} aria-label='Прокрутить вниз' className={cn('absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full p-2', focusRing)}>
         <ChevronDown className={cn('size-6 text-muted-foreground', !reduce && 'animate-bounce')} />
-      </a>
+      </Link>
     </section>
   );
 };

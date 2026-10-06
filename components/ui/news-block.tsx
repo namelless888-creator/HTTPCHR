@@ -55,9 +55,9 @@ export const NewsBlock: React.FC<{ className?: string }> = ({ className }) => (
     <div className='mx-auto max-w-7xl px-4 md:px-8'>
       <Reveal>
         <p className='text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground'>Новости</p>
-        <h2 className='mt-4 max-w-3xl font-display text-4xl font-bold tracking-tight md:text-6xl'>
+        <h1 className='mt-4 max-w-3xl font-display text-4xl font-bold tracking-tight md:text-6xl'>
           Холодное производство. Горячие новости.
-        </h2>
+        </h1>
       </Reveal>
 
       <div className='mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>

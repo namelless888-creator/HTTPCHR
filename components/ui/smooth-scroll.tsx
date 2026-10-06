@@ -1,9 +1,9 @@
 'use client';
 
 import React, { forwardRef, useRef } from 'react';
-import { ReactLenis, useLenis } from 'lenis/react';
+import { ReactLenis } from 'lenis/react';
 import { useReducedMotion } from 'framer-motion';
-import { ArrowDown, ArrowUp, Clock, Mail, MapPin, Phone } from 'lucide-react';
+import { ArrowDown, Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { ContactForm } from '@/components/ui/contact-form';
 import { MapAnimation } from '@/components/ui/map-animation';
 import { cn } from '@/lib/utils';
@@ -11,14 +11,6 @@ import { cn } from '@/lib/utils';
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background';
 
 const ROUTE_URL = `https://yandex.ru/maps/?text=${encodeURIComponent('Гудермес, 5-й км трассы Ростов-Баку')}`;
-
-const FOOTER_LINKS = [
-  { label: 'Каталог', href: '#catalog' },
-  { label: 'Рыба', href: '#fish' },
-  { label: 'Полуфабрикаты', href: '#ready-to-eat' },
-  { label: 'О компании', href: '#about' },
-  { label: 'Новости', href: '#news' },
-];
 
 // Grid overlay from the original component, recolored to the palette.
 const Grid = ({ line }: { line: string }) => (
@@ -51,21 +43,6 @@ const ContactRow = ({
   </li>
 );
 
-// Must live inside <ReactLenis> to reach the instance.
-const BackToTop = () => {
-  const lenis = useLenis();
-  return (
-    <button
-      type='button'
-      onClick={() => (lenis ? lenis.scrollTo(0) : window.scrollTo({ top: 0 }))}
-      className='inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold transition-colors hover:bg-background/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-    >
-      Наверх
-      <ArrowUp aria-hidden className='size-4' />
-    </button>
-  );
-};
-
 export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
   const reduce = useReducedMotion();
   const mapSectionRef = useRef<HTMLElement>(null);
@@ -77,9 +54,9 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
         <section className='stack-layer grid place-content-center bg-background px-4 py-24 text-center text-foreground'>
           <Grid line='#F1F6F814' />
           <p className='relative text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground'>Контакты</p>
-          <h2 className='relative mt-4 px-4 font-display text-5xl font-semibold leading-[120%] tracking-tight 2xl:text-7xl'>
+          <h1 className='relative mt-4 px-4 font-display text-5xl font-semibold leading-[120%] tracking-tight 2xl:text-7xl'>
             Где нас найти
-          </h2>
+          </h1>
           <p className='relative mx-auto mt-6 max-w-xl text-lg text-muted-foreground'>
             Гудермес, 5-й км трассы Ростов–Баку. Листайте вниз: покажем дорогу.
           </p>
@@ -103,7 +80,7 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
           />
 
           <div className='relative m-4 w-full max-w-sm rounded-2xl border border-border bg-background/70 p-6 text-foreground shadow-xl backdrop-blur-md md:m-10'>
-            <h3 className='font-display text-2xl font-bold tracking-tight'>Мы на трассе Ростов–Баку</h3>
+            <h2 className='font-display text-2xl font-bold tracking-tight'>Мы на трассе Ростов–Баку</h2>
             <ul className='mt-5 space-y-4'>
               <ContactRow icon={MapPin} label='Адрес'>
                 ЧР, г. Гудермес, 5-й км трассы Ростов–Баку
@@ -125,12 +102,12 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
           </div>
         </section>
 
-        {/* Layer 3: steel accent, request form + footer */}
-        <section className='stack-layer flex flex-col justify-between bg-card px-4 pb-8 pt-24 text-card-foreground md:px-8'>
+        {/* Layer 3: steel accent, request form */}
+        <section className='stack-layer bg-card px-4 pb-16 pt-24 text-card-foreground md:px-8'>
           <Grid line='#F1F6F814' />
           <div className='relative mx-auto grid w-full max-w-7xl gap-10 lg:grid-cols-2'>
             <div>
-              <h3 className='font-display text-4xl font-bold tracking-tight md:text-6xl'>Узнать оптовую цену</h3>
+              <h2 className='font-display text-4xl font-bold tracking-tight md:text-6xl'>Узнать оптовую цену</h2>
               <p className='mt-4 max-w-md text-muted-foreground'>
                 Оставьте заявку, и менеджер свяжется с вами в рабочее время: Пн–Сб, 8:00–18:00.
               </p>
@@ -146,21 +123,6 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
             </div>
             <ContactForm />
           </div>
-
-          <footer className='relative mx-auto mt-12 flex w-full max-w-7xl flex-col gap-4 border-t border-border pt-6 text-sm md:flex-row md:items-center md:justify-between'>
-            <span className='text-base font-extrabold uppercase tracking-[0.18em]'>RAMCAD</span>
-            <nav aria-label='Нижнее меню' className='flex flex-wrap gap-x-6 gap-y-2 text-muted-foreground'>
-              {FOOTER_LINKS.map((l) => (
-                <a key={l.href} href={l.href} className={cn('rounded-sm transition-colors hover:text-foreground', focusRing)}>
-                  {l.label}
-                </a>
-              ))}
-            </nav>
-            <div className='flex items-center gap-4'>
-              <span className='text-muted-foreground'>© {new Date().getFullYear()} RAMCAD</span>
-              <BackToTop />
-            </div>
-          </footer>
         </section>
       </div>
     </ReactLenis>

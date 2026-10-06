@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
+import Link from 'next/link';
 import { motion, useAnimationFrame, useMotionValue, useReducedMotion, type Variants } from 'framer-motion';
 import { Pause, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -31,17 +32,15 @@ const FADE_IN_ANIMATION_VARIANTS: Variants = {
 };
 
 const ActionButton = ({ children, href }: { children: React.ReactNode; href: string }) => (
-  <motion.a
+  <Link
     href={href}
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
     className={cn(
-      'mt-8 inline-block rounded-full bg-primary px-8 py-3 font-semibold text-primary-foreground shadow-lg transition-colors hover:bg-primary/90',
+      'mt-8 inline-block rounded-full bg-primary px-8 py-3 font-semibold text-primary-foreground shadow-lg transition hover:scale-105 hover:bg-primary/90 active:scale-95',
       focusRing
     )}
   >
     {children}
-  </motion.a>
+  </Link>
 );
 
 export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
@@ -90,7 +89,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           {tagline}
         </motion.div>
 
-        <motion.h2
+        <motion.h1
           initial={initial}
           animate='show'
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
@@ -103,7 +102,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
                 </motion.span>
               ))
             : title}
-        </motion.h2>
+        </motion.h1>
 
         <motion.p
           initial={initial}

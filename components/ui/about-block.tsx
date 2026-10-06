@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { FlaskConical, IceCreamCone, Quote, Snowflake, UtensilsCrossed } from 'lucide-react';
 import { Reveal } from '@/components/ui/reveal';
 import { cn } from '@/lib/utils';
@@ -102,12 +103,12 @@ export const AboutBlock: React.FC<{ className?: string }> = ({ className }) => (
           <div className='flex flex-col items-start justify-center gap-4 md:items-end md:text-right'>
             <p className='font-display text-2xl font-bold'>Приглашаем к сотрудничеству!</p>
             <p className='opacity-80'>Организуем экскурсии по производству.</p>
-            <a
-              href='#contacts'
+            <Link
+              href='/contacts'
               className='rounded-full bg-primary-foreground px-8 py-3 font-semibold text-primary transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-primary'
             >
               Договориться об экскурсии
-            </a>
+            </Link>
           </div>
         </div>
       </Reveal>

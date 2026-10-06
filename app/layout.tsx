@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Manrope, Playfair_Display } from 'next/font/google';
 import 'lenis/dist/lenis.css';
 import './globals.css';
+import { SiteHeader } from '@/components/ui/site-header';
+import { SiteFooter } from '@/components/ui/site-footer';
 
 const display = Playfair_Display({
   subsets: ['latin', 'cyrillic'],
@@ -32,7 +34,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           К содержимому
         </a>
+        <SiteHeader />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

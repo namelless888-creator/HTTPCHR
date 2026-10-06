@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Menu, Phone } from 'lucide-react';
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -8,29 +9,29 @@ import { cn } from '@/lib/utils';
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background';
 
 const LINKS = [
-  { label: 'Главная', href: '#hero' },
-  { label: 'Каталог', href: '#catalog' },
-  { label: 'О компании', href: '#about' },
-  { label: 'Новости', href: '#news' },
-  { label: 'Контакты', href: '#contacts' },
+  { label: 'Главная', href: '/' },
+  { label: 'Каталог', href: '/catalog' },
+  { label: 'О компании', href: '/#about' },
+  { label: 'Новости', href: '/news' },
+  { label: 'Контакты', href: '/contacts' },
 ];
 
 export const SiteHeader: React.FC = () => (
   <header className='fixed inset-x-0 top-0 z-50 h-16 border-b border-border bg-background/80 text-foreground backdrop-blur'>
     <div className='mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 md:px-8'>
-      <a href='#hero' className={cn('rounded-sm text-lg font-extrabold uppercase tracking-[0.18em]', focusRing)}>
+      <Link href='/' className={cn('rounded-sm text-lg font-extrabold uppercase tracking-[0.18em]', focusRing)}>
         RAMCAD
-      </a>
+      </Link>
 
       <nav aria-label='Главное меню' className='hidden items-center gap-8 md:flex'>
         {LINKS.map((l) => (
-          <a
+          <Link
             key={l.href}
             href={l.href}
             className={cn('rounded-sm text-sm text-muted-foreground transition-colors hover:text-foreground', focusRing)}
           >
             {l.label}
-          </a>
+          </Link>
         ))}
       </nav>
 
@@ -56,9 +57,9 @@ export const SiteHeader: React.FC = () => (
             <nav aria-label='Мобильное меню' className='mt-8 flex flex-col gap-5 px-4'>
               {LINKS.map((l) => (
                 <SheetClose asChild key={l.href}>
-                  <a href={l.href} className={cn('rounded-sm font-display text-2xl', focusRing)}>
+                  <Link href={l.href} className={cn('rounded-sm font-display text-2xl', focusRing)}>
                     {l.label}
-                  </a>
+                  </Link>
                 </SheetClose>
               ))}
               <a href='tel:+79389042323' className={cn('mt-4 inline-flex items-center gap-2 rounded-sm font-semibold', focusRing)}>
