@@ -4,6 +4,7 @@ import 'lenis/dist/lenis.css';
 import './globals.css';
 import { SiteHeader } from '@/components/ui/site-header';
 import { SiteFooter } from '@/components/ui/site-footer';
+import { SideNav } from '@/components/ui/side-nav';
 
 const display = Playfair_Display({
   subsets: ['latin', 'cyrillic'],
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           К содержимому
         </a>
         <SiteHeader />
+        <SideNav />
         {children}
         <SiteFooter />
       </body>

@@ -4,17 +4,10 @@ import React from 'react';
 import Link from 'next/link';
 import { Menu, Phone } from 'lucide-react';
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { NAV_LINKS } from '@/lib/nav-links';
 import { cn } from '@/lib/utils';
 
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background';
-
-const LINKS = [
-  { label: 'Главная', href: '/' },
-  { label: 'Каталог', href: '/catalog' },
-  { label: 'О компании', href: '/#about' },
-  { label: 'Новости', href: '/news' },
-  { label: 'Контакты', href: '/contacts' },
-];
 
 export const SiteHeader: React.FC = () => (
   <header className='fixed inset-x-0 top-0 z-50 h-16 border-b border-border bg-background/80 text-foreground backdrop-blur'>
@@ -22,18 +15,6 @@ export const SiteHeader: React.FC = () => (
       <Link href='/' className={cn('rounded-sm text-lg font-extrabold uppercase tracking-[0.18em]', focusRing)}>
         RAMCAD
       </Link>
-
-      <nav aria-label='Главное меню' className='hidden items-center gap-8 md:flex'>
-        {LINKS.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className={cn('rounded-sm text-sm text-muted-foreground transition-colors hover:text-foreground', focusRing)}
-          >
-            {l.label}
-          </Link>
-        ))}
-      </nav>
 
       <div className='flex items-center gap-3'>
         <a href='tel:+79389042323' className={cn('hidden items-center gap-2 rounded-sm text-sm font-semibold lg:inline-flex', focusRing)}>
@@ -55,7 +36,7 @@ export const SiteHeader: React.FC = () => (
               <SheetTitle className='font-extrabold uppercase tracking-[0.18em]'>RAMCAD</SheetTitle>
             </SheetHeader>
             <nav aria-label='Мобильное меню' className='mt-8 flex flex-col gap-5 px-4'>
-              {LINKS.map((l) => (
+              {NAV_LINKS.map((l) => (
                 <SheetClose asChild key={l.href}>
                   <Link href={l.href} className={cn('rounded-sm font-display text-2xl', focusRing)}>
                     {l.label}
@@ -73,3 +54,4 @@ export const SiteHeader: React.FC = () => (
     </div>
   </header>
 );
+

@@ -2,7 +2,7 @@
 
 Redesign of icechr.ru for RAMCAD, a cold-chain food producer (ice cream, fish, ready-to-eat products). Next.js App Router, TypeScript, Tailwind CSS v4, shadcn-style component structure.
 
-Originally built as a one-pager, then split into a multi-page site: `/` (home), `/catalog`, `/news`, `/contacts` each a real route. `SiteHeader` and `SiteFooter` live in `app/layout.tsx` so every page shares the same nav/footer chrome; internal links use `next/link` for client-side navigation.
+Originally built as a one-pager, then split into a multi-page site: `/` (home), `/catalog`, `/news`, `/contacts` each a real route. `SiteHeader` and `SiteFooter` live in `app/layout.tsx` so every page shares the same nav/footer chrome; internal links use `next/link` for client-side navigation. Desktop (`md`+) also gets a floating `SideNav`: pinned open while the home page's hero is in view, otherwise a slim hover-to-expand handle on the left edge, on every page. Mobile keeps the header's hamburger + sheet menu instead (no hover on touch). Nav items live once in `lib/nav-links.ts`, shared by the header, the mobile sheet, and the side nav.
 
 ## Stack
 
@@ -28,7 +28,7 @@ npm run lint
 
 ```
 app/
-  layout.tsx          # fonts, lenis.css import, global <SiteHeader>/<SiteFooter>
+  layout.tsx          # fonts, lenis.css import, global <SiteHeader>/<SideNav>/<SiteFooter>
   page.tsx            # home: Hero, About, Extras
   catalog/page.tsx     # /catalog — CatalogBlock (animated marquee)
   news/page.tsx        # /news — NewsBlock
@@ -40,6 +40,7 @@ components/
   ui/                 # all shadcn-style + custom components, incl. site-header.tsx / site-footer.tsx
 lib/
   catalog.ts          # 56-item catalog data
+  nav-links.ts        # shared nav items (header, mobile sheet, side nav)
   utils.ts            # cn()
 public/
   images/             # hero-bg.jpg, catalog/01-56.jpg, extras/seld-file.jpg
