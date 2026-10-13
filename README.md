@@ -30,7 +30,7 @@ npm run lint
 app/
   layout.tsx          # fonts, lenis.css import, global <SiteHeader>/<SideNav>/<SiteFooter>
   page.tsx            # home: Hero, About, Extras
-  catalog/page.tsx     # /catalog — CatalogBlock (animated marquee)
+  catalog/page.tsx     # /catalog — CatalogBlock (marquee teaser) + CatalogGrid (full browsable grid)
   news/page.tsx        # /news — NewsBlock
   contacts/page.tsx    # /contacts — ContactsBlock (3-layer sticky scroll + map)
   globals.css          # palette tokens, section-light theme, stack-layer sticky rules
@@ -39,23 +39,24 @@ components/
   catalog-block.tsx   # wires lib/catalog.ts into the marquee
   ui/                 # all shadcn-style + custom components, incl. site-header.tsx / site-footer.tsx
 lib/
-  catalog.ts          # 56-item catalog data
+  catalog.ts          # 36-item catalog data, real packaging photos (brand MARZO + sub-lines)
   nav-links.ts        # shared nav items (header, mobile sheet, side nav)
   utils.ts            # cn()
 public/
-  images/             # hero-bg.jpg, catalog/01-56.jpg, extras/seld-file.jpg
+  images/             # hero-bg.jpg, catalog/01-36.jpg (real), extras/seld-file.jpg
   videos/             # karta_animation.mp4 (/contacts map background)
 ```
 
-## Asset status — placeholders in place, replace before launch
+## Asset status
 
-The source material for this task included only the map animation video and a reference screenshot (not meant to be used as a site asset). No real photography was supplied, and the live icechr.ru assets are not reachable from this sandbox's network policy, so these files are flat `#3E6E85` (steel accent) placeholders and must be swapped for real photos before shipping:
+The client supplied real packaging photography for the catalog (`Ramcard_2.zip`, 41 images: 2 full page mockups used as art-direction reference + 39 individual product shots). 36 of those 39 became `public/images/catalog/01.jpg` … `36.jpg`, cropped onto the brand's frost background and wired into `lib/catalog.ts` with their real printed names (brand MARZO, plus the Бурёнка / My Love / Ванильное небо / Фрукт-Frost sub-lines). One product photo was left out because its packaging art depicted a recognizable third-party cartoon character; everything else is the client's own branding. The catalog is now 36 real, named, photographed items rather than the original 56 fictional entries scraped from icechr.ru with flat-color placeholders — fewer items, but every one of them is real.
+
+Two assets are still flat-color placeholders and need real photos before launch:
 
 - `public/images/hero-bg.jpg` — needs a real background photo, width ≥ 2400px
-- `public/images/catalog/01.jpg` … `56.jpg` — needs real product photos; order and captions are already wired up in `lib/catalog.ts` (18 are flagged `hot: true` → "Хит" badge)
 - `public/images/extras/seld-file.jpg` — needs a real photo of the herring product
 
-`public/videos/karta_animation.mp4` is the real supplied asset (1920×1080, 14s, H.264) and is already wired into block 6.
+`public/videos/karta_animation.mp4` is the real supplied asset (1920×1080, 14s, H.264) and is already wired into `/contacts`.
 
 The CEO portrait (`/public/images/ceo.jpg`) was intentionally **not** added — the shipped `about-block.tsx` always shows the "МШ" initials avatar, matching the component exactly as specified.
 
@@ -79,4 +80,5 @@ Copy in blocks 3–5 and contacts was carried over from icechr.ru with the compa
   - Exactly three colors plus opacity tints of those three — no other hues anywhere, including focus rings and overlays.
 - Section rhythm, now across routes: `/` Hero (dark) → About (frost) → Extras (dark); `/catalog` (steel); `/news` (frost); `/contacts` (dark / frost / steel sticky layers).
 - Reduced motion: marquee freezes, reveal animations are skipped, and the map video shows its final frame without autoplay.
+- **`/catalog`**: `CatalogBlock` (the animated marquee teaser) sits above `CatalogGrid`, a plain responsive grid (2/3/4 columns) of all 36 real products with captions — the marquee alone was a teaser, not a browsable catalog, so the grid is what actually fulfills "a catalog page." Hot items keep the same badge treatment as the marquee.
 - **`/contacts`, map layer**: the map video is a full-bleed background behind the whole sticky section (not a boxed card), with a dark gradient scrim for legibility. The address/phone/e-mail/hours card floats bottom-left as a frosted-glass panel (`bg-background/70` + `backdrop-blur`). Its `currentTime` is scrubbed directly to scroll position — `MapAnimation` reads `section.offsetTop`/`offsetHeight` (stable across the section's own sticky offsetting) against `lenis.scroll` to compute progress, so the route "draws" as the page scrolls rather than autoplaying once. Under `prefers-reduced-motion` it skips the scroll binding entirely and holds the last frame.
