@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Reveal } from '@/components/ui/reveal';
+import { MagicCard } from '@/components/ui/magic-card';
 import { CATALOG } from '@/lib/catalog';
 import { cn } from '@/lib/utils';
 
@@ -20,7 +21,7 @@ export const CatalogGrid: React.FC<{ className?: string }> = ({ className }) => 
       <div className='mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
         {CATALOG.map((item, i) => (
           <Reveal key={item.src} delay={Math.min(i * 0.03, 0.3)} className='h-full'>
-            <article className='group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card'>
+            <MagicCard isLight gradientSize={160} gradientOpacity={0.3} className='group flex h-full flex-col'>
               <div className='relative aspect-[3/4] overflow-hidden'>
                 <img
                   src={item.src}
@@ -36,7 +37,7 @@ export const CatalogGrid: React.FC<{ className?: string }> = ({ className }) => 
                 )}
               </div>
               <p className='px-3 py-3 text-sm leading-snug'>{item.name}</p>
-            </article>
+            </MagicCard>
           </Reveal>
         ))}
       </div>

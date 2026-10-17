@@ -4,6 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { FlaskConical, IceCreamCone, Quote, Snowflake, UtensilsCrossed } from 'lucide-react';
 import { Reveal } from '@/components/ui/reveal';
+import { NumberTicker } from '@/components/ui/number-ticker';
+import { BorderBeam } from '@/components/ui/border-beam';
 import { cn } from '@/lib/utils';
 
 const ADVANTAGES = [
@@ -20,8 +22,8 @@ const QUALITY = [
 ];
 
 const STATS = [
-  { value: '2003', label: 'год основания' },
-  { value: '3', label: 'отдельных цеха' },
+  { value: 2003, label: 'год основания' },
+  { value: 3, label: 'отдельных цеха' },
 ];
 
 export const AboutBlock: React.FC<{ className?: string }> = ({ className }) => (
@@ -66,7 +68,9 @@ export const AboutBlock: React.FC<{ className?: string }> = ({ className }) => (
             {STATS.map((s) => (
               <div key={s.label} className='flex flex-col-reverse rounded-2xl border border-border p-5'>
                 <dt className='mt-1 text-sm text-muted-foreground'>{s.label}</dt>
-                <dd className='font-display text-4xl font-bold'>{s.value}</dd>
+                <dd className='font-display text-4xl font-bold'>
+                  <NumberTicker value={s.value} />
+                </dd>
               </div>
             ))}
           </dl>
@@ -76,7 +80,8 @@ export const AboutBlock: React.FC<{ className?: string }> = ({ className }) => (
       <div className='mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
         {ADVANTAGES.map(({ icon: Icon, title, text }, i) => (
           <Reveal key={title} delay={i * 0.08} className='h-full'>
-            <article className='h-full rounded-2xl border border-border bg-card p-6'>
+            <article className='relative h-full overflow-hidden rounded-2xl border border-border bg-card p-6'>
+              <BorderBeam size={70} duration={10} delay={i * 1.5} borderWidth={1.25} />
               <span className='grid size-11 place-content-center rounded-full bg-primary text-primary-foreground'>
                 <Icon aria-hidden className='size-5' />
               </span>

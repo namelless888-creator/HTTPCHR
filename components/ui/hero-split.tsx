@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useReducedMotion, type MotionProps } from 'framer-motion';
+import { Particles } from '@/components/ui/particles';
 import { cn } from '@/lib/utils';
 
 interface HeroSplitProps {
@@ -60,6 +61,7 @@ export const HeroSplit: React.FC<HeroSplitProps> = ({ eyebrow, headline, cta, se
       {/* Right: dark panel, product collage */}
       <div className='relative flex min-h-[60svh] items-center justify-center overflow-hidden bg-background px-6 py-16 lg:min-h-0 lg:py-20'>
         <div aria-hidden className='absolute inset-0 bg-gradient-to-t from-[#0D1B22] via-transparent to-transparent' />
+        <Particles className='absolute inset-0' quantity={70} staticity={40} color='#F1F6F8' />
         <div className='relative flex items-end gap-3 sm:gap-5'>
           {images.map((img, i) => (
             <motion.div
