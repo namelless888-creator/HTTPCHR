@@ -201,7 +201,6 @@ button { cursor: pointer; }
 .direction-card-copy > p { font-size: clamp(12px,1.05vw,16px); line-height: 1.7; color: #9db8c2; margin-top: 8px; }
 .direction-card-link { display: flex; align-items: center; gap: 9px; font-size: clamp(12px,1vw,15px); color: #85d3ec; margin-top: auto; padding-top: 25px; }
 .direction-card-link svg { flex-shrink: 0; transition: transform .3s; }
-.direction-card-link i { height: 1px; background: #68b8d0; flex: 1; margin-left: 7px; opacity: .65; }
 .direction-card:hover .direction-card-link svg { transform: translate(2px,-2px); }
 .direction-partnership { margin-top: 17px; border: 1px solid #51788950; border-radius: 10px; background: #071f28; padding: 20px 26px; display: flex; align-items: center; gap: 28px; }
 .partnership-icon { flex-shrink: 0; width: 68px; padding-right: 22px; border-right: 1px solid #709cab80; }

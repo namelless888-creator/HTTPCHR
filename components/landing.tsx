@@ -151,7 +151,7 @@ export function Landing({ page = 'home' }: { page?: SitePage }) {
                 <div className='direction-card-copy'>
                   <h3>Мороженое</h3>
                   <p>Натуральные ингредиенты в традиционных рецептах с 2003 года.</p>
-                  <span className='direction-card-link'>Смотреть продукцию <ArrowUpRight size={17} /><i /></span>
+                  <span className='direction-card-link'>Смотреть продукцию <ArrowUpRight size={17} /></span>
                 </div>
               </Link>
             </Reveal>
@@ -163,7 +163,7 @@ export function Landing({ page = 'home' }: { page?: SitePage }) {
                 <div className='direction-card-copy'>
                   <h3>Рыба и морепродукты</h3>
                   <p>Надёжные поставки для вашей сети.</p>
-                  <span className='direction-card-link'>Узнать ассортимент <ArrowUpRight size={17} /><i /></span>
+                  <span className='direction-card-link'>Узнать ассортимент <ArrowUpRight size={17} /></span>
                 </div>
               </Link>
             </Reveal>
