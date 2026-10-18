@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
-import { ArrowRight, ArrowUpRight, ChevronDown, Handshake, Menu, Snowflake, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, Menu, PackageCheck, Snowflake, UtensilsCrossed, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 
 const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
@@ -18,6 +18,13 @@ const NEWS = [
   { date: '06.03.2024', iso: '2024-03-06', type: 'События', title: 'Когда хороший вкус объединяет', text: 'MARZO — партнёр интеллектуального вечера «Недвижимый квиз».', slug: '2024/03/06/estate-quiz/', image: 4 },
   { date: '29.02.2024', iso: '2024-02-29', type: 'Партнёрство', title: 'Кино, друзья и любимое мороженое', text: 'Уютный кинопросмотр вместе с MARZO и Lancman School.', slug: '2024/02/29/marzo-and-lancman/', image: 11 },
   { date: '18.02.2024', iso: '2024-02-18', type: 'Новый вкус', title: 'Маленький кусочек большого лета', text: 'Фруктовый лёд со вкусом дыни в коллекции MARZO.', slug: '2024/02/18/new-icecream/', image: 3 },
+];
+
+const ADVANTAGES = [
+  { icon: Factory, title: 'Передовой хладокомбинат', text: 'Высокоточное оборудование, полная автоматизация холода, цифровой контроль температуры, надёжность.' },
+  { icon: Lightbulb, title: 'Исследования и разработки', text: 'Изучаем свойства сырья, тестируем технологии, улучшаем процессы и стандарты качества.' },
+  { icon: PackageCheck, title: 'Линейка продукции', text: 'Разнообразие решений, единый стандарт качества, проверенный временем и людьми.' },
+  { icon: UtensilsCrossed, title: 'Всегда на столе', text: 'Продукты, которые покупают снова и снова. Ежедневно. Для всей семьи. Во всех городах.' },
 ];
 
 function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -182,8 +189,9 @@ export function Landing() {
         <section id='about' className='about-section section-pad'>
           <SectionTitle number='03' note='Гудермес, Чеченская Республика'>О компании</SectionTitle>
           <div className='about-layout'><Reveal><h2>Большое дело.<br /><em>Простые ценности.</em></h2><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><a href='#contacts' className='text-link'>Обсудить сотрудничество <ArrowUpRight size={17} /></a></div></Reveal></div>
-          <div className='about-statistics'><Reveal><div><strong>2003</strong><span>год, когда началась наша история</span></div></Reveal><Reveal delay={.1}><div><strong>3<span> цеха</span></strong><span>независимых направления производства</span></div></Reveal><Reveal delay={.2}><div><strong>36<span> вкусов</span></strong><span>в коллекции мороженого</span></div></Reveal></div>
-          <div className='brand-strip' aria-hidden><span>ЗАБОТА В ДЕТАЛЯХ</span><Snowflake /><span>КАЧЕСТВО В ГЛАВНОМ</span><Snowflake /><span>ВКУС В КАЖДОМ МОМЕНТЕ</span></div>
+          <div className='about-advantages' aria-label='Преимущества хладокомбината'>
+            {ADVANTAGES.map(({ icon: Icon, title, text }, index) => <Reveal key={title} delay={index * .08}><article className='about-advantage'><Icon size={42} strokeWidth={1.2} aria-hidden /><h3>{title}</h3><p>{text}</p></article></Reveal>)}
+          </div>
         </section>
 
         <section id='news' className='news-section section-pad'><SectionTitle number='04' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
