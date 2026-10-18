@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
-import { ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronDown, Menu, Snowflake, X } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronDown, Handshake, Menu, Snowflake, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 
-const NAV = [['hero', 'Главная'], ['catalog', 'Продукция'], ['about', 'О компании'], ['quality', 'Качество'], ['news', 'Новости'], ['contacts', 'Контакты']];
+const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
 const CONES = [2, 4, 6, 7, 9, 18, 19, 20];
 const ICE = [3, 10, 13, 14, 28, 36];
@@ -35,15 +35,11 @@ export function Landing() {
   const [filter, setFilter] = useState('Все вкусы');
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
-  const hero = useRef<HTMLElement>(null);
   const map = useRef<HTMLVideoElement>(null);
   const lastProduct = useRef<HTMLButtonElement | null>(null);
   const menuToggle = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  const { scrollYProgress: heroProgress } = useScroll({ target: hero, offset: ['start start', 'end start'] });
-  const productY = useTransform(heroProgress, [0, 1], [0, 145]);
-  const productRotate = useTransform(heroProgress, [0, 1], [-12, 2]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
@@ -84,31 +80,62 @@ export function Landing() {
 
   return <div className='ramcad'>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
-    <aside className='rail'>
-      <a href='#hero' className='brand' aria-label='RAMCAD — на главную'><Snowflake strokeWidth={1.3} /><span>RAMCAD<small>ХЛАДОКОМБИНАТ</small></span></a>
-      <button ref={menuToggle} className='mobile-toggle' aria-label={menu ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={menu} aria-controls='main-navigation' onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button>
-      <nav id='main-navigation' className={menu ? 'rail-nav is-open' : 'rail-nav'} aria-label='Основная навигация'>
-        {NAV.map(([id, label], i) => <a key={id} href={`#${id}`} className={active === id ? 'is-active' : ''} aria-current={active === id ? 'location' : undefined} onClick={() => setMenu(false)}><span>0{i + 1}</span>{label}<i /></a>)}
-        <a className='mobile-phone' href='tel:+79389042323'>+7 (938) 904-23-23</a>
+    <header className='main-header'>
+      <a href='#hero' className='header-brand' aria-label='RAMCAD — на главную'>RAMCAD</a>
+      <nav id='main-navigation' className={menu ? 'header-links is-open' : 'header-links'} aria-label='Основная навигация'>
+        {NAV.map(([id, label]) => <a key={id} href={`#${id}`} className={active === id ? 'is-active' : ''} aria-current={active === id ? 'location' : undefined} onClick={() => setMenu(false)}>{label}</a>)}
       </nav>
-      <div className='rail-bottom'><span className='status-dot' />Сделано в Чечне<p>С заботой о вкусе.<br />С уважением к традициям.</p><a href='mailto:oooiceberg95@mail.ru'>Напишите нам <ArrowUpRight size={14} /></a><span className='rail-year'>EST. 2003</span></div>
-    </aside>
+      <a className='header-phone' href='tel:+79389042323'>8 (938) 904-23-23</a>
+      <button ref={menuToggle} className='mobile-toggle header-menu-toggle' aria-label={menu ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={menu} aria-controls='main-navigation' onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button>
+    </header>
 
     <div className='page-content'>
-      <header className='top-bar'><span>ХОЛОД СОХРАНЯЕТ. ВКУС ОБЪЕДИНЯЕТ.</span><a href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={16} /></a></header>
       <main id='main'>
-        <section id='hero' className='hero-section' ref={hero}>
-          <div className='hero-text'><p className='eyebrow'><span />Хладокомбинат нового времени</p><h1>Создаём вкус.<br /><em>Сохраняем</em><br />свежесть.</h1><p className='hero-description'>От любимого пломбира до морских деликатесов.<br className='desktop-break' /> Всё, что мы делаем, начинается с качества.</p><a className='pill pill-dark' href='#catalog'>Открыть коллекцию <ArrowUpRight size={20} /></a><a className='hero-scroll' href='#directions'><span><ArrowDown size={17} /></span>Листайте, чтобы познакомиться</a></div>
-          <div className='hero-art' aria-label='Фирменное мороженое MARZO'><span className='hero-orbit orbit-one' /><span className='hero-orbit orbit-two' /><span className='hero-word' aria-hidden>MARZO</span><motion.div className='hero-pack pack-back' style={reduce ? undefined : { y: productY, rotate: productRotate }}><Image src='/images/products/08.png' alt='MARZO — фисташковое эскимо в тёмном шоколаде' width={311} height={573} priority /></motion.div><motion.div className='hero-pack pack-front' style={reduce ? undefined : { y: productY }}><Image src='/images/products/04.png' alt='MARZO — солёная карамель в вафельном рожке' width={307} height={577} priority /></motion.div><div className='hero-seal'><Snowflake size={26} strokeWidth={1} /><span>Настоящий вкус<br />настоящих продуктов</span></div><span className='art-caption'>КОЛЛЕКЦИЯ MARZO · ВКУС ДЕТСТВА, НОВЫЙ ВЗГЛЯД</span></div>
-          <div className='hero-bottom'><span>С 2003 года <i>сохраняем главное</i></span><span>Мороженое <b>·</b> Рыба <b>·</b> Полуфабрикаты</span><Snowflake size={22} strokeWidth={1} /></div>
+        <section id='hero' className='reference-hero'>
+          <div className='reference-hero-photo' role='img' aria-label='Мороженое MARZO: солёная карамель, эскимо и шоколадный пломбир на ледяной поверхности'>
+            <Image src='/images/hero-reference.webp' alt='' width={1536} height={1024} unoptimized priority />
+          </div>
+          <div className='reference-hero-copy'><h1>Создаём вкус.<br />Сохраняем свежесть.</h1><a className='pill pill-dark reference-hero-button' href='#catalog'>Смотреть каталог <ArrowRight size={27} /></a></div>
         </section>
 
         <section id='directions' className='directions-section section-pad'>
-          <SectionTitle number='01' note='Три направления. Одна философия.'>Наше дело</SectionTitle>
-          <Reveal><h2>Разные продукты.<br /><em>Одинаково высокие стандарты.</em></h2></Reveal>
-          <div className='direction-list'>
-            {[['01', 'Мороженое', 'Маленькое счастье в каждом вкусе', 'Пломбир, эскимо, рожки и фруктовый лёд под брендом MARZO.', 'catalog', 'ice'], ['02', 'Рыба и морепродукты', 'Свежесть, которую важно сохранить', 'Отборное сырьё, бережная переработка и собственный холод.', 'fish', 'fish'], ['03', 'Полуфабрикаты', 'Больше времени для самого важного', 'Удобные решения для вашего стола. Ассортимент уточняйте у нашей команды.', 'ready-to-eat', 'ready']].map(([n, title, sub, text, href, type]) => <Reveal key={n}><a href={`#${href}`} className={`direction-row direction-${type}`}><span className='direction-number'>{n}</span><div><h3>{title}</h3><span>{sub}</span></div><p>{text}</p><span className='circle-arrow'><ArrowUpRight /></span></a></Reveal>)}
+          <Reveal className='direction-heading'>
+            <h2>Эксперты в холоде.<br />Мастера вкуса.</h2>
+            <p>Производим мороженое.<br />Поставляем рыбу и морепродукты.</p>
+          </Reveal>
+          <div className='direction-cards'>
+            <Reveal>
+              <a href='#catalog' className='direction-card'>
+                <div className='direction-photo direction-photo-ice' role='img' aria-label='Вафельный рожок с мороженым и эскимо в шоколадной глазури'>
+                  <Image src='/images/directions/reference.webp' alt='' width={1536} height={1024} unoptimized />
+                </div>
+                <div className='direction-card-copy'>
+                  <h3>Мороженое</h3>
+                  <p>Натуральные ингредиенты в традиционных рецептах с 2003 года.</p>
+                  <span className='direction-card-link'>Смотреть продукцию <ArrowUpRight size={17} /><i /></span>
+                </div>
+              </a>
+            </Reveal>
+            <Reveal delay={.12}>
+              <a href='#fish' className='direction-card'>
+                <div className='direction-photo direction-photo-fish' role='img' aria-label='Свежая рыба и филе лосося на льду'>
+                  <Image src='/images/directions/reference.webp' alt='' width={1536} height={1024} unoptimized />
+                </div>
+                <div className='direction-card-copy'>
+                  <h3>Рыба и морепродукты</h3>
+                  <p>Надёжные поставки для вашей сети.</p>
+                  <span className='direction-card-link'>Узнать ассортимент <ArrowUpRight size={17} /><i /></span>
+                </div>
+              </a>
+            </Reveal>
           </div>
+          <Reveal delay={.18}>
+            <div className='direction-partnership'>
+              <Handshake className='partnership-icon' size={48} strokeWidth={1.2} aria-hidden />
+              <div><h3>Для магазинов, ресторанов и дистрибьюторов</h3><p>Стабильные поставки. Гибкие условия. Личный менеджер.</p></div>
+              <a href='#contacts' className='pill partnership-button'>Сотрудничать <ArrowRight size={20} /></a>
+            </div>
+          </Reveal>
         </section>
 
         <section id='catalog' className='catalog-section section-pad'>
