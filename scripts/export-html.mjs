@@ -3,16 +3,22 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mountHeroParallax } from '../lib/hero-parallax.mjs';
 
-// Run after `npm run build`. The resulting index.html opens directly from disk
-// together with the checkout's public/ directory; it does not need Next.js.
+// Run after `npm run build`. Each route becomes an independent HTML page
+// with embedded styles and fonts; local images and videos stay in public/.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const builtHtml = path.join(root, '.next/server/app/index.html');
-let html;
-try {
-  html = await readFile(builtHtml, 'utf8');
-} catch {
-  throw new Error('Build output is missing. Run npm run build before node scripts/export-html.mjs.');
-}
+const pages = [
+  { route: '/', build: 'index.html', output: 'index.html' },
+  { route: '/catalog', build: 'catalog.html', output: 'catalog.html' },
+  { route: '/about', build: 'about.html', output: 'about.html' },
+  { route: '/contacts', build: 'contacts.html', output: 'contacts.html' },
+];
+const routeFiles = new Map(pages.map(page => [page.route, page.output]));
+const staticHref = value => {
+  if (!value.startsWith('/') || value.startsWith('//')) return value;
+  const url = new URL(value, 'https://local.invalid');
+  const file = routeFiles.get(url.pathname.replace(/\/+$/, '') || '/');
+  return file ? file + url.search + url.hash : value;
+};
 
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const decodeEntities = value => value.replaceAll('&amp;', '&').replaceAll('&#x27;', "'").replaceAll('&quot;', '"');
@@ -37,51 +43,7 @@ const cards = entries.map(item => {
   return `<button type="button" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span>${item.hot ? '<span class="product-label">Любимый вкус</span>' : ''}<img src="public/images/products/${number}.png" alt="${name}" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>MARZO / ${number}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3></div></button>`;
 }).join('');
 
-const stylesheetTags = [...html.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*>/g)];
-if (!stylesheetTags.length) throw new Error('The built page has no linked stylesheet.');
-const styles = [];
-for (const [tag] of stylesheetTags) {
-  const href = tag.match(/href="([^"]+)"/)?.[1];
-  if (!href?.startsWith('/_next/static/')) throw new Error(`Unexpected stylesheet: ${href}`);
-  const cssPath = path.join(root, '.next', href.slice('/_next/'.length));
-  let css = await readFile(cssPath, 'utf8');
-  const resources = [...new Set([...css.matchAll(/url\(([^)]+)\)/g)].map(match => match[1].replace(/^['"]|['"]$/g, '')))];
-  for (const resource of resources) {
-    if (!/\.woff2(?:\?.*)?$/.test(resource)) continue;
-    const fontPath = resource.startsWith('/_next/')
-      ? path.join(root, '.next', resource.slice('/_next/'.length))
-      : path.resolve(path.dirname(cssPath), resource);
-    if (!fontPath.startsWith(path.join(root, '.next/static/'))) throw new Error('Font path escapes the static build directory.');
-    const font = await readFile(fontPath);
-    css = css.replaceAll(resource, `data:font/woff2;base64,${font.toString('base64')}`);
-  }
-  styles.push(css);
-  html = html.replace(tag, '');
-}
-
-html = html
-  .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
-  .replace(/<link\b[^>]*rel="(?:preload|modulepreload|prefetch|icon)"[^>]*>/gi, '')
-  .replace(/<meta\b[^>]*name="next-size-adjust"[^>]*>/gi, '')
-  .replace(/\s+srcSet="[^"]*"/gi, '')
-  .replace(/\s+data-nimg="[^"]*"/gi, '')
-  .replace(/\b(src|poster)="([^"]+)"/g, (match, attr, raw) => {
-    let value = decodeEntities(raw);
-    if (value.startsWith('/_next/image?')) value = new URL(value, 'https://local.invalid').searchParams.get('url') ?? value;
-    if (value.startsWith('/images/') || value.startsWith('/videos/')) value = `public${value}`;
-    return `${attr}="${escapeHtml(value)}"`;
-  });
-
-const staticStyles = `
-dialog.product-dialog{margin:0;border:0;padding:0}
-dialog.product-dialog:not([open]){display:none}
-dialog.product-dialog::backdrop{background:#0c2b33a8;backdrop-filter:blur(7px)}
-.show-more[hidden]{display:none!important}
-html:has(dialog[open]){overflow:hidden}
-`;
-html = html.replace('</head>', `<style>${styles.join('\n')}\n${staticStyles}</style></head>`);
-
-const dialog = `<dialog id="product-detail" class="product-dialog" aria-labelledby="product-title" aria-describedby="product-description"><button type="button" class="dialog-close" aria-label="Закрыть товар"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg></button><div class="dialog-image"><img width="600" height="800" alt=""></div><div class="dialog-copy"><p class="eyebrow">Коллекция MARZO</p><h2 id="product-title"></h2><p id="product-description">Любимый вкус для маленьких радостей. Уточните состав, наличие и условия оптовой поставки у нашей команды.</p><a href="#contacts" class="pill pill-dark">Узнать о поставке ${arrow}</a></div></dialog>`;
+const dialog = `<dialog id="product-detail" class="product-dialog" aria-labelledby="product-title" aria-describedby="product-description"><button type="button" class="dialog-close" aria-label="Закрыть товар"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg></button><div class="dialog-image"><img width="600" height="800" alt=""></div><div class="dialog-copy"><p class="eyebrow">Коллекция MARZO</p><h2 id="product-title"></h2><p id="product-description">Любимый вкус для маленьких радостей. Уточните состав, наличие и условия оптовой поставки у нашей команды.</p><a href="contacts.html" class="pill pill-dark">Узнать о поставке ${arrow}</a></div></dialog>`;
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
 const runtime = String.raw`
@@ -90,69 +52,63 @@ const runtime = String.raw`
   ${heroRuntime}
   const grid = document.querySelector('.product-grid');
   const source = document.getElementById('static-products');
-  const products = [...source.content.querySelectorAll('.product-card')];
-  const filters = [...document.querySelectorAll('.filter-tabs button')];
-  const count = document.querySelector('.catalog-toolbar > span');
-  const more = document.querySelector('.show-more');
-  let filter = 'Все вкусы';
-  let expanded = false;
-  const flavorCount = n => n + ' ' + (n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов');
-  const render = () => {
-    const matching = products.filter(card => filter === 'Все вкусы' || card.dataset.category === filter);
-    grid.replaceChildren(...(expanded ? matching : matching.slice(0, 8)).map(card => card.cloneNode(true)));
-    count.textContent = flavorCount(matching.length);
-    filters.forEach(button => {
-      const selected = button.textContent.trim() === filter;
-      button.classList.toggle('selected', selected);
-      button.setAttribute('aria-pressed', String(selected));
-    });
-    more.hidden = matching.length <= 8;
-    more.firstChild.textContent = expanded ? 'Свернуть коллекцию' : 'Все ' + matching.length + ' вкусов';
-    more.querySelector('svg').style.transform = expanded ? 'rotate(180deg)' : '';
-  };
-  filters.forEach(button => button.addEventListener('click', () => {
-    filter = button.textContent.trim(); expanded = false; render();
-  }));
-  more.addEventListener('click', () => { expanded = !expanded; render(); });
-  render();
+  if (grid && source) {
+    const products = [...source.content.querySelectorAll('.product-card')];
+    const filters = [...document.querySelectorAll('.filter-tabs button')];
+    const count = document.querySelector('.catalog-toolbar > span');
+    const more = document.querySelector('.show-more');
+    let filter = 'Все вкусы';
+    let expanded = false;
+    const flavorCount = n => n + ' ' + (n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов');
+    const render = () => {
+      const matching = products.filter(card => filter === 'Все вкусы' || card.dataset.category === filter);
+      grid.replaceChildren(...(expanded ? matching : matching.slice(0, 8)).map(card => card.cloneNode(true)));
+      count.textContent = flavorCount(matching.length);
+      filters.forEach(button => {
+        const selected = button.textContent.trim() === filter;
+        button.classList.toggle('selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+      more.hidden = matching.length <= 8;
+      more.firstChild.textContent = expanded ? 'Свернуть коллекцию' : 'Все ' + matching.length + ' вкусов';
+      more.querySelector('svg').style.transform = expanded ? 'rotate(180deg)' : '';
+    };
+    filters.forEach(button => button.addEventListener('click', () => {
+      filter = button.textContent.trim(); expanded = false; render();
+    }));
+    more.addEventListener('click', () => { expanded = !expanded; render(); });
+    render();
 
-  const dialog = document.getElementById('product-detail');
-  let trigger = null;
-  let returnFocus = true;
-  grid.addEventListener('click', event => {
-    const card = event.target.closest('.product-card');
-    if (!card) return;
-    trigger = card; returnFocus = true;
-    const image = card.querySelector('img');
-    const preview = dialog.querySelector('img');
-    preview.src = image.getAttribute('src'); preview.alt = image.alt;
-    document.getElementById('product-title').textContent = image.alt;
-    dialog.showModal();
-    dialog.querySelector('.dialog-close').focus();
-  });
-  dialog.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
-  dialog.addEventListener('close', () => { if (returnFocus) trigger?.focus({ preventScroll: true }); });
-  dialog.addEventListener('keydown', event => {
-    if (event.key !== 'Tab') return;
-    const controls = [...dialog.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')].filter(element => element.getClientRects().length);
-    const first = controls[0], last = controls.at(-1);
-    if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
-      event.preventDefault(); last?.focus();
-    } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
-      event.preventDefault(); first?.focus();
-    }
-  });
-  dialog.addEventListener('click', event => {
-    const rect = dialog.getBoundingClientRect();
-    if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
-  });
-  dialog.querySelector('a[href="#contacts"]').addEventListener('click', event => {
-    event.preventDefault(); returnFocus = false; dialog.close();
-    location.hash = 'contacts';
-    const heading = document.querySelector('#contacts h2');
-    heading.tabIndex = -1; heading.focus({ preventScroll: true });
-    document.getElementById('contacts').scrollIntoView({ behavior: reduce.matches ? 'instant' : 'smooth' });
-  });
+    const dialog = document.getElementById('product-detail');
+    let trigger = null;
+    grid.addEventListener('click', event => {
+      const card = event.target.closest('.product-card');
+      if (!card) return;
+      trigger = card;
+      const image = card.querySelector('img');
+      const preview = dialog.querySelector('img');
+      preview.src = image.getAttribute('src'); preview.alt = image.alt;
+      document.getElementById('product-title').textContent = image.alt;
+      dialog.showModal();
+      dialog.querySelector('.dialog-close').focus();
+    });
+    dialog.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => trigger?.focus({ preventScroll: true }));
+    dialog.addEventListener('keydown', event => {
+      if (event.key !== 'Tab') return;
+      const controls = [...dialog.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')].filter(element => element.getClientRects().length);
+      const first = controls[0], last = controls.at(-1);
+      if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+        event.preventDefault(); last?.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+        event.preventDefault(); first?.focus();
+      }
+    });
+    dialog.addEventListener('click', event => {
+      const rect = dialog.getBoundingClientRect();
+      if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+    });
+  }
 
   const toggle = document.querySelector('.mobile-toggle');
   const nav = document.getElementById('main-navigation');
@@ -168,19 +124,7 @@ const runtime = String.raw`
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && nav.classList.contains('is-open')) { setMenu(false); toggle.focus(); }
   });
-  const anchors = [...nav.querySelectorAll('a[href^="#"]')];
-  const setActive = id => anchors.forEach(anchor => {
-    const active = anchor.hash === '#' + id;
-    anchor.classList.toggle('is-active', active);
-    if (active) anchor.setAttribute('aria-current', 'location'); else anchor.removeAttribute('aria-current');
-  });
-  anchors.forEach(anchor => anchor.addEventListener('click', () => { setMenu(false); setActive(anchor.hash.slice(1)); }));
-  if (typeof IntersectionObserver === 'function') {
-    const activeObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id); });
-    }, { rootMargin: '-15% 0px -60% 0px' });
-    anchors.forEach(anchor => { const section = document.querySelector(anchor.hash); if (section) activeObserver.observe(section); });
-  }
+  nav.querySelectorAll('a').forEach(anchor => anchor.addEventListener('click', () => setMenu(false)));
 
   const reveals = [...document.querySelectorAll('.reveal')];
   if (typeof IntersectionObserver === 'function') {
@@ -201,47 +145,107 @@ const runtime = String.raw`
   addEventListener('resize', updateProgress); updateProgress();
 
   const video = document.querySelector('.map-section video');
-  video.muted = true;
-  let mapFrame = 0;
-  let mapLastTick = 0;
-  const syncVideo = () => {
-    mapFrame = 0;
-    video.pause();
-    if (!Number.isFinite(video.duration) || video.seeking) return;
-    const rect = video.closest('.contacts-section').getBoundingClientRect();
-    const headerHeight = document.querySelector('.main-header').getBoundingClientRect().height;
-    const sectionTop = scrollY + rect.top;
-    const start = sectionTop - innerHeight;
-    const naturalEnd = sectionTop + rect.height - headerHeight - .1 * (innerHeight - headerHeight);
-    const maxScroll = document.documentElement.scrollHeight - innerHeight;
-    const end = Math.max(start + 1, Math.min(naturalEnd, maxScroll - 64));
-    const progress = reduce.matches ? 1 : Math.min(1, Math.max(0,
-      (scrollY - start) / (end - start)));
-    const target = progress * Math.max(0, video.duration - .05);
-    const now = performance.now();
-    const elapsed = mapLastTick ? Math.min(64, now - mapLastTick) : 16.7;
-    mapLastTick = now;
-    const distance = target - video.currentTime;
-    if (Math.abs(distance) <= .015) { mapLastTick = 0; return; }
-    const time = reduce.matches || Math.abs(distance) < .04
-      ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 220));
-    video.currentTime = time;
-  };
-  const scheduleMap = () => { if (!mapFrame) mapFrame = requestAnimationFrame(syncVideo); };
-  video.addEventListener('loadedmetadata', scheduleMap);
-  video.addEventListener('seeked', scheduleMap);
-  addEventListener('scroll', scheduleMap, { passive: true });
-  addEventListener('resize', scheduleMap);
+  if (video) {
+    video.muted = true;
+    let mapFrame = 0;
+    let mapLastTick = 0;
+    const syncVideo = () => {
+      mapFrame = 0;
+      video.pause();
+      if (!Number.isFinite(video.duration) || video.seeking) return;
+      const rect = video.closest('.contacts-section').getBoundingClientRect();
+      const headerHeight = document.querySelector('.main-header').getBoundingClientRect().height;
+      const sectionTop = scrollY + rect.top;
+      const start = Math.max(0, sectionTop - innerHeight);
+      const naturalEnd = sectionTop + rect.height - headerHeight - .1 * (innerHeight - headerHeight);
+      const maxScroll = document.documentElement.scrollHeight - innerHeight;
+      const end = Math.max(start + 1, Math.min(naturalEnd, maxScroll - 64));
+      const progress = reduce.matches ? 1 : Math.min(1, Math.max(0,
+        (scrollY - start) / (end - start)));
+      const target = progress * Math.max(0, video.duration - .05);
+      const now = performance.now();
+      const elapsed = mapLastTick ? Math.min(64, now - mapLastTick) : 16.7;
+      mapLastTick = now;
+      const distance = target - video.currentTime;
+      if (Math.abs(distance) <= .015) { mapLastTick = 0; return; }
+      const time = reduce.matches || Math.abs(distance) < .04
+        ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 220));
+      video.currentTime = time;
+    };
+    const scheduleMap = () => { if (!mapFrame) mapFrame = requestAnimationFrame(syncVideo); };
+    video.addEventListener('loadedmetadata', scheduleMap);
+    video.addEventListener('seeked', scheduleMap);
+    addEventListener('scroll', scheduleMap, { passive: true });
+    addEventListener('resize', scheduleMap);
+    reduce.addEventListener('change', scheduleMap);
+    syncVideo();
+  }
   reduce.addEventListener('change', () => {
     if (reduce.matches) reveals.forEach(element => element.classList.add('is-visible'));
-    syncVideo();
   });
   if (reduce.matches) reveals.forEach(element => element.classList.add('is-visible'));
-  syncVideo();
 })();
 `;
 
-html = html.replace('</body>', `<template id="static-products">${cards}</template>${dialog}<script>${runtime}</script></body>`);
-if (html.includes('/_next/')) throw new Error('An unresolved Next.js asset remains in the static HTML.');
-await writeFile(path.join(root, 'index.html'), html);
-console.log(`Exported index.html with ${entries.length} products, embedded CSS and local fonts.`);
+const staticStyles = `
+dialog.product-dialog{margin:0;border:0;padding:0}
+dialog.product-dialog:not([open]){display:none}
+dialog.product-dialog::backdrop{background:#0c2b33a8;backdrop-filter:blur(7px)}
+.show-more[hidden]{display:none!important}
+html:has(dialog[open]){overflow:hidden}
+`;
+
+const builtPages = await Promise.all(pages.map(async page => {
+  try {
+    return { ...page, html: await readFile(path.join(root, '.next/server/app', page.build), 'utf8') };
+  } catch {
+    throw new Error(`Build output for ${page.route} is missing. Run npm run build before node scripts/export-html.mjs.`);
+  }
+}));
+
+for (const page of builtPages) {
+  let html = page.html;
+  const stylesheetTags = [...html.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*>/g)];
+  if (!stylesheetTags.length) throw new Error('The built page has no linked stylesheet.');
+  const styles = [];
+  for (const [tag] of stylesheetTags) {
+    const href = tag.match(/href="([^"]+)"/)?.[1];
+    if (!href?.startsWith('/_next/static/')) throw new Error(`Unexpected stylesheet: ${href}`);
+    const cssPath = path.join(root, '.next', href.slice('/_next/'.length));
+    let css = await readFile(cssPath, 'utf8');
+    const resources = [...new Set([...css.matchAll(/url\(([^)]+)\)/g)].map(match => match[1].replace(/^['"]|['"]$/g, '')))];
+    for (const resource of resources) {
+      if (!/\.woff2(?:\?.*)?$/.test(resource)) continue;
+      const fontPath = resource.startsWith('/_next/')
+        ? path.join(root, '.next', resource.slice('/_next/'.length))
+        : path.resolve(path.dirname(cssPath), resource);
+      if (!fontPath.startsWith(path.join(root, '.next/static/'))) throw new Error('Font path escapes the static build directory.');
+      const font = await readFile(fontPath);
+      css = css.replaceAll(resource, `data:font/woff2;base64,${font.toString('base64')}`);
+    }
+    styles.push(css);
+    html = html.replace(tag, '');
+  }
+
+  html = html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<link\b[^>]*rel="(?:preload|modulepreload|prefetch|icon)"[^>]*>/gi, '')
+    .replace(/<meta\b[^>]*name="next-size-adjust"[^>]*>/gi, '')
+    .replace(/\s+srcSet="[^"]*"/gi, '')
+    .replace(/\s+data-nimg="[^"]*"/gi, '')
+    .replace(/\b(src|poster)="([^"]+)"/g, (match, attr, raw) => {
+      let value = decodeEntities(raw);
+      if (value.startsWith('/_next/image?')) value = new URL(value, 'https://local.invalid').searchParams.get('url') ?? value;
+      if (value.startsWith('/images/') || value.startsWith('/videos/')) value = `public${value}`;
+      return `${attr}="${escapeHtml(value)}"`;
+    });
+
+  html = html.replace('</head>', `<style>${styles.join('\n')}\n${staticStyles}</style></head>`);
+
+  html = html.replace(/\bhref="([^"]+)"/g, (_, raw) => `href="${escapeHtml(staticHref(decodeEntities(raw)))}"`);
+  const catalog = page.route === '/catalog' ? `<template id="static-products">${cards}</template>${dialog}` : '';
+  html = html.replace('</body>', `${catalog}<script>${runtime}</script></body>`);
+  if (html.includes('/_next/')) throw new Error(`An unresolved Next.js asset remains in ${page.output}.`);
+  await writeFile(path.join(root, page.output), html);
+  console.log(`Exported ${page.output} with embedded CSS and local fonts${catalog ? `; ${entries.length} catalog products` : ''}.`);
+}
