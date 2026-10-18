@@ -199,24 +199,22 @@ const runtime = String.raw`
 
   const video = document.querySelector('.map-section video');
   video.muted = true;
-  let mapVisible = false;
+  let mapFrame = 0;
   const syncVideo = () => {
-    if (reduce.matches) {
-      video.pause();
-      if (Number.isFinite(video.duration)) video.currentTime = Math.max(0, video.duration - .1);
-    } else if (mapVisible) video.play().catch(() => {});
-    else video.pause();
+    mapFrame = 0;
+    video.pause();
+    if (!Number.isFinite(video.duration) || video.seeking) return;
+    const rect = video.getBoundingClientRect();
+    const progress = reduce.matches ? 1 : Math.min(1, Math.max(0,
+      (innerHeight - rect.top) / Math.min(rect.height, innerHeight)));
+    const time = progress * Math.max(0, video.duration - .05);
+    if (Math.abs(video.currentTime - time) > .04) video.currentTime = time;
   };
-  if (typeof IntersectionObserver === 'function') {
-    const mapObserver = new IntersectionObserver(([entry]) => {
-      const entering = entry.isIntersecting && entry.intersectionRatio >= .15;
-      if (entering && !mapVisible && !reduce.matches) video.currentTime = 0;
-      mapVisible = entering;
-      syncVideo();
-    }, { threshold: [0, .15] });
-    mapObserver.observe(video);
-  } else mapVisible = true;
-  video.addEventListener('loadedmetadata', syncVideo);
+  const scheduleMap = () => { if (!mapFrame) mapFrame = requestAnimationFrame(syncVideo); };
+  video.addEventListener('loadedmetadata', scheduleMap);
+  video.addEventListener('seeked', scheduleMap);
+  addEventListener('scroll', scheduleMap, { passive: true });
+  addEventListener('resize', scheduleMap);
   reduce.addEventListener('change', () => {
     if (reduce.matches) reveals.forEach(element => element.classList.add('is-visible'));
     syncVideo();

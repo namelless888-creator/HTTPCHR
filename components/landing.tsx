@@ -63,24 +63,30 @@ export function Landing() {
   useEffect(() => {
     const video = map.current;
     if (!video) return;
-    let visible = false;
+    let frame = 0;
     const sync = () => {
-      if (reduce) {
-        video.pause();
-        if (Number.isFinite(video.duration)) video.currentTime = Math.max(0, video.duration - .1);
-      } else if (visible) void video.play().catch(() => {});
-      else video.pause();
+      frame = 0;
+      video.pause();
+      if (!Number.isFinite(video.duration) || video.seeking) return;
+      const rect = video.getBoundingClientRect();
+      const progress = reduce ? 1 : Math.min(1, Math.max(0,
+        (window.innerHeight - rect.top) / Math.min(rect.height, window.innerHeight)));
+      const time = progress * Math.max(0, video.duration - .05);
+      if (Math.abs(video.currentTime - time) > .04) video.currentTime = time;
     };
-    video.addEventListener('loadedmetadata', sync);
-    const observer = new IntersectionObserver(([entry]) => {
-      const entering = entry.isIntersecting && entry.intersectionRatio >= .15;
-      if (entering && !visible && !reduce) video.currentTime = 0;
-      visible = entering;
-      sync();
-    }, { threshold: [0, .15] });
-    observer.observe(video);
-    sync();
-    return () => { observer.disconnect(); video.removeEventListener('loadedmetadata', sync); };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(sync); };
+    video.addEventListener('loadedmetadata', schedule);
+    video.addEventListener('seeked', schedule);
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    schedule();
+    return () => {
+      cancelAnimationFrame(frame);
+      video.removeEventListener('loadedmetadata', schedule);
+      video.removeEventListener('seeked', schedule);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+    };
   }, [reduce]);
 
   const products = CATALOG.map((item, i) => ({ ...item, n: i + 1 })).filter(item => filter === 'Все вкусы' || category(item.n) === filter);
