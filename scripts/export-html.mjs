@@ -2,7 +2,6 @@ import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mountHeroParallax } from '../lib/hero-parallax.mjs';
-import { CONE_MASK, mountConeScrollTransition } from '../lib/cone-scroll-transition.mjs';
 
 // Run after `npm run build`. The resulting index.html opens directly from disk
 // together with the checkout's public/ directory; it does not need Next.js.
@@ -84,13 +83,11 @@ html = html.replace('</head>', `<style>${styles.join('\n')}\n${staticStyles}</st
 
 const dialog = `<dialog id="product-detail" class="product-dialog" aria-labelledby="product-title" aria-describedby="product-description"><button type="button" class="dialog-close" aria-label="Закрыть товар"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg></button><div class="dialog-image"><img width="600" height="800" alt=""></div><div class="dialog-copy"><p class="eyebrow">Коллекция MARZO</p><h2 id="product-title"></h2><p id="product-description">Любимый вкус для маленьких радостей. Уточните состав, наличие и условия оптовой поставки у нашей команды.</p><a href="#contacts" class="pill pill-dark">Узнать о поставке ${arrow}</a></div></dialog>`;
 
-const coneRuntime = `(${mountConeScrollTransition.toString()})(document.querySelector('.cone-transition'), ${JSON.stringify(CONE_MASK)});`;
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
 const runtime = String.raw`
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   ${heroRuntime}
-  ${coneRuntime}
   const grid = document.querySelector('.product-grid');
   const source = document.getElementById('static-products');
   const products = [...source.content.querySelectorAll('.product-card')];

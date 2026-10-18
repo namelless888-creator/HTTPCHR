@@ -7,7 +7,6 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, Menu, PackageCheck, Snowflake, UtensilsCrossed, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
-import { ConeScrollTransition } from '@/components/ui/cone-scroll-transition';
 
 const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
@@ -139,16 +138,6 @@ export function Landing() {
           <div className='reference-hero-copy'><h1>Создаём вкус.<br />Сохраняем свежесть.</h1><a className='pill pill-dark reference-hero-button' href='#catalog'>Смотреть каталог <ArrowRight size={27} /></a></div>
         </section>
 
-        <ConeScrollTransition>
-          <section id='about' className='about-section section-pad'>
-          <SectionTitle number='01' note='Гудермес, Чеченская Республика'>О компании</SectionTitle>
-          <div className='about-layout'><Reveal><h2>Большое дело.<br /><em>Простые ценности.</em></h2><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><a href='#contacts' className='text-link'>Обсудить сотрудничество <ArrowUpRight size={17} /></a></div></Reveal></div>
-          <div className='about-advantages' aria-label='Преимущества хладокомбината'>
-            {ADVANTAGES.map(({ icon: Icon, title, text }, index) => <Reveal key={title} delay={index * .08}><article className='about-advantage'><Icon size={42} strokeWidth={1.2} aria-hidden /><h3>{title}</h3><p>{text}</p></article></Reveal>)}
-          </div>
-        </section>
-        </ConeScrollTransition>
-
         <section id='directions' className='directions-section section-pad'>
           <Reveal className='direction-heading'>
             <h2>Эксперты в холоде.<br />Мастера вкуса.</h2>
@@ -200,7 +189,15 @@ export function Landing() {
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>
         </section>
 
-        <section id='news' className='news-section section-pad'><SectionTitle number='03' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
+        <section id='about' className='about-section section-pad'>
+          <SectionTitle number='03' note='Гудермес, Чеченская Республика'>О компании</SectionTitle>
+          <div className='about-layout'><Reveal><h2>Большое дело.<br /><em>Простые ценности.</em></h2><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><a href='#contacts' className='text-link'>Обсудить сотрудничество <ArrowUpRight size={17} /></a></div></Reveal></div>
+          <div className='about-advantages' aria-label='Преимущества хладокомбината'>
+            {ADVANTAGES.map(({ icon: Icon, title, text }, index) => <Reveal key={title} delay={index * .08}><article className='about-advantage'><Icon size={42} strokeWidth={1.2} aria-hidden /><h3>{title}</h3><p>{text}</p></article></Reveal>)}
+          </div>
+        </section>
+
+        <section id='news' className='news-section section-pad'><SectionTitle number='04' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
 
         <section id='contacts' className='contacts-section' aria-labelledby='contacts-heading'><div className='map-section'>
             <video className='map-route' ref={map} src='/videos/karta-scroll.mp4' muted playsInline preload='auto' aria-label='Видео маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><p className='eyebrow'><span />Приезжайте в гости</p><h2 id='contacts-heading'>Контакты</h2><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>
