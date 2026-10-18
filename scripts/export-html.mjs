@@ -208,7 +208,12 @@ const runtime = String.raw`
     else video.pause();
   };
   if (typeof IntersectionObserver === 'function') {
-    const mapObserver = new IntersectionObserver(([entry]) => { mapVisible = entry.isIntersecting; syncVideo(); }, { threshold: .15 });
+    const mapObserver = new IntersectionObserver(([entry]) => {
+      const entering = entry.isIntersecting && entry.intersectionRatio >= .15;
+      if (entering && !mapVisible && !reduce.matches) video.currentTime = 0;
+      mapVisible = entering;
+      syncVideo();
+    }, { threshold: [0, .15] });
     mapObserver.observe(video);
   } else mapVisible = true;
   video.addEventListener('loadedmetadata', syncVideo);
