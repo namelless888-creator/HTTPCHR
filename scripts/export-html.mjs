@@ -243,7 +243,7 @@ for (const page of builtPages) {
   html = html.replace('</head>', `<style>${styles.join('\n')}\n${staticStyles}</style></head>`);
 
   html = html.replace(/\bhref="([^"]+)"/g, (_, raw) => `href="${escapeHtml(staticHref(decodeEntities(raw)))}"`);
-  const catalog = page.route === '/catalog' ? `<template id="static-products">${cards}</template>${dialog}` : '';
+  const catalog = page.route === '/' || page.route === '/catalog' ? `<template id="static-products">${cards}</template>${dialog}` : '';
   html = html.replace('</body>', `${catalog}<script>${runtime}</script></body>`);
   if (html.includes('/_next/')) throw new Error(`An unresolved Next.js asset remains in ${page.output}.`);
   await writeFile(path.join(root, page.output), html);
