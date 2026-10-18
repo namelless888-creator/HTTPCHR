@@ -197,14 +197,6 @@ const runtime = String.raw`
   addEventListener('scroll', () => { if (!scheduled) { scheduled = true; requestAnimationFrame(updateProgress); } }, { passive: true });
   addEventListener('resize', updateProgress); updateProgress();
 
-  document.querySelector('[data-contact-form]').addEventListener('submit', event => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const subject = 'Сотрудничество с RAMCAD — ' + (data.get('company') || data.get('name'));
-    const body = 'Имя: ' + data.get('name') + '\nКомпания: ' + (data.get('company') || '—') + '\nПочта: ' + data.get('email') + '\n\n' + data.get('message');
-    location.href = 'mailto:oooiceberg95@mail.ru?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  });
-
   const video = document.querySelector('.map-section video');
   video.muted = true;
   let mapFrame = 0;
