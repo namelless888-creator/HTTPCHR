@@ -293,13 +293,13 @@ button { cursor: pointer; }
 .map-section video { position: absolute; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; }
 .map-shade { position: absolute; inset: 0; background: linear-gradient(90deg,#0c2b3320,transparent 60%); pointer-events: none; z-index: 2; }
 .map-section [hidden] { display: none!important; }
-.contact-card { position: absolute; left: 4.8%; bottom: 38px; background: #f1f6f8ed; color: #10343c; backdrop-filter: blur(14px); padding: 28px; width: clamp(300px,26vw,350px); border: 1px solid #ffffffa0; border-radius: 12px; box-shadow: 0 14px 40px #0c2b331c; z-index: 3; }
-.contact-card .eyebrow { font-size: 8px; }
-.contact-card h2 { font-family: var(--font-playfair),serif; font-size: 33px; line-height: 1.15; font-weight: 500; letter-spacing: -.03em; margin: 22px 0 0; }
-.contact-card address { font-style: normal; font-size: 10px; line-height: 1.9; color: #587078; margin-top: 22px; }
-.contact-card > a { font-size: 10px; }
-.contact-card .contact-phone { display: flex; align-items: center; justify-content: space-between; font-size: 17px; font-weight: 600; margin: 21px 0 11px; }
-.opening-hours { font-size: 9px; line-height: 1.9; color: #587078; margin: 18px 0 !important; padding-top: 18px; border-top: 1px solid #10343c26; }
+.contact-card { position: absolute; left: 4.8%; top: 24px; bottom: 24px; display: flex; flex-direction: column; justify-content: center; background: #f1f6f8ed; color: #10343c; backdrop-filter: blur(14px); padding: 34px; width: clamp(320px,28vw,390px); border: 1px solid #ffffffa0; border-radius: 12px; box-shadow: 0 14px 40px #0c2b331c; z-index: 3; }
+.contact-card .eyebrow { font-size: 9px; }
+.contact-card h2 { font-family: var(--font-playfair),serif; font-size: 40px; line-height: 1.15; font-weight: 500; letter-spacing: -.03em; margin: 22px 0 0; }
+.contact-card address { font-style: normal; font-size: 12px; line-height: 1.9; color: #587078; margin-top: 22px; }
+.contact-card > a { font-size: 12px; }
+.contact-card .contact-phone { display: flex; align-items: center; justify-content: space-between; font-size: 20px; font-weight: 600; margin: 21px 0 11px; }
+.opening-hours { font-size: 11px; line-height: 1.9; color: #587078; margin: 18px 0 !important; padding-top: 18px; border-top: 1px solid #10343c26; }
 .contact-card .text-link { width: 100%; }
 .map-caption { position: absolute; bottom: 28px; right: 4.8%; color: #10343c; background: #f1f6f8b0; font-size: 8px; letter-spacing: .1em; padding: 7px 9px; pointer-events: none; z-index: 3; }
 .landing-footer { padding: 24px 2% 22px; background: #0c2b33; color: #f1f6f8; }
@@ -484,9 +484,10 @@ button { cursor: pointer; }
   .map-section { height: 680px; }
   .map-section video { height: 100%; object-position: 62% 50%; }
   .map-section>.map-shade { height: 100%; }
-  .contact-card { left: 50%; bottom: 20px; transform: translateX(-50%); padding: 24px; width: calc(100% - 32px); max-width: 360px; }
+  .contact-card { left: 50%; top: auto; bottom: 20px; min-height: 400px; transform: translateX(-50%); padding: 24px; width: calc(100% - 32px); max-width: 360px; }
   .contact-card h2 { font-size: 31px; }
-  .contact-card address { font-size: 10px; }
+  .contact-card address { font-size: 11px; }
+  .contact-card .contact-phone { font-size: 18px; }
   .map-caption { display: none; }
   .landing-footer { padding: 20px 2% 22px; }
   .landing-footer > div { margin: 15px 14px 0; padding-top: 15px; font-size: 8px; }
@@ -573,3 +574,5 @@ html { scroll-padding-top: 88px; }
 @media (prefers-reduced-motion: reduce) {
   .reference-hero-photo img,.reference-hero-copy { transform: none!important; will-change: auto!important; }
 }
+
+@media (min-width: 601px) and (max-width: 1000px) { .map-section video { object-position: 30% 50%; } }
