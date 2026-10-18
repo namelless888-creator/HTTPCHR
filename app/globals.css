@@ -549,3 +549,12 @@ html { scroll-padding-top: 88px; }
 }
 
 @media (prefers-reduced-motion: reduce) { .header-phone { transition: none; } .header-phone:is(:hover,:focus-visible) { transform: none; } }
+
+/* First-screen layers move independently within the existing image crop. */
+.reference-hero-photo img { transform: translate3d(0,var(--hero-parallax-photo,0px),0); }
+.reference-hero-copy { transform: translate3d(0,var(--hero-parallax-copy,0px),0); }
+.reference-hero[data-parallax-active] .reference-hero-photo img,
+.reference-hero[data-parallax-active] .reference-hero-copy { will-change: transform; }
+@media (prefers-reduced-motion: reduce) {
+  .reference-hero-photo img,.reference-hero-copy { transform: none!important; will-change: auto!important; }
+}

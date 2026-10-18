@@ -6,6 +6,7 @@ import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, Menu, PackageCheck, Snowflake, UtensilsCrossed, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
+import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
 
 const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
@@ -47,6 +48,8 @@ export function Landing() {
   const menuToggle = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+
+  useEffect(() => mountHeroParallax(document.getElementById('hero')), []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
