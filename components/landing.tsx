@@ -7,7 +7,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { ArrowRight, ArrowUpRight, ChevronDown, Handshake, Menu, Snowflake, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 
-const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
+const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['fish', 'Направления'], ['contacts', 'Контакты']];
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
 const CONES = [2, 4, 6, 7, 9, 18, 19, 20];
 const ICE = [3, 10, 13, 14, 28, 36];
@@ -70,8 +70,15 @@ export function Landing() {
       video.pause();
       if (!Number.isFinite(video.duration) || video.seeking) return;
       const rect = video.closest('.contacts-section')!.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      const headerHeight = document.querySelector('.main-header')!.getBoundingClientRect().height;
+      const sectionTop = window.scrollY + rect.top;
+      const start = sectionTop - viewport;
+      const naturalEnd = sectionTop + rect.height - headerHeight - .1 * (viewport - headerHeight);
+      const maxScroll = document.documentElement.scrollHeight - viewport;
+      const end = Math.max(start + 1, Math.min(naturalEnd, maxScroll - 64));
       const progress = reduce ? 1 : Math.min(1, Math.max(0,
-        (window.innerHeight - rect.top) / rect.height));
+        (window.scrollY - start) / (end - start)));
       const target = progress * Math.max(0, video.duration - .05);
       const now = performance.now();
       const elapsed = lastTick ? Math.min(64, now - lastTick) : 16.7;
@@ -172,21 +179,14 @@ export function Landing() {
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>
         </section>
 
-        <section id='about' className='about-section section-pad'>
-          <SectionTitle number='03' note='Гудермес, Чеченская Республика'>О компании</SectionTitle>
-          <div className='about-layout'><Reveal><h2>Большое дело.<br /><em>Простые ценности.</em></h2><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><a href='#contacts' className='text-link'>Обсудить сотрудничество <ArrowUpRight size={17} /></a></div></Reveal></div>
-          <div className='about-statistics'><Reveal><div><strong>2003</strong><span>год, когда началась наша история</span></div></Reveal><Reveal delay={.1}><div><strong>3<span> цеха</span></strong><span>независимых направления производства</span></div></Reveal><Reveal delay={.2}><div><strong>36<span> вкусов</span></strong><span>в коллекции мороженого</span></div></Reveal></div>
-          <div className='brand-strip' aria-hidden><span>ЗАБОТА В ДЕТАЛЯХ</span><Snowflake /><span>КАЧЕСТВО В ГЛАВНОМ</span><Snowflake /><span>ВКУС В КАЖДОМ МОМЕНТЕ</span></div>
-        </section>
+        <section className='other-section section-pad' id='fish'><SectionTitle number='03' note='Больше, чем мороженое'>Другие направления</SectionTitle><div className='other-grid'><Reveal><article><span className='line-illustration' aria-hidden>≈</span><p className='eyebrow'>Свежесть моря</p><h2>Рыба и<br /><em>морепродукты.</em></h2><p>Бережная переработка и хранение в отдельном цехе. Узнайте о доступной продукции и условиях поставки у нашей команды.</p><a className='pill pill-outline' href='#contacts'>Узнать ассортимент <ArrowUpRight size={18} /></a></article></Reveal><Reveal delay={.15}><article id='ready-to-eat'><span className='line-illustration' aria-hidden>⌁</span><p className='eyebrow'>Для вашего стола</p><h2>Время —<br /><em>для близких.</em></h2><p>Полуфабрикаты для простых домашних решений. Свяжитесь с нами, чтобы уточнить ассортимент и возможности сотрудничества.</p><a className='pill pill-outline' href='#contacts'>Обсудить поставку <ArrowUpRight size={18} /></a></article></Reveal></div></section>
 
-        <section className='other-section section-pad' id='fish'><SectionTitle number='04' note='Больше, чем мороженое'>Другие направления</SectionTitle><div className='other-grid'><Reveal><article><span className='line-illustration' aria-hidden>≈</span><p className='eyebrow'>Свежесть моря</p><h2>Рыба и<br /><em>морепродукты.</em></h2><p>Бережная переработка и хранение в отдельном цехе. Узнайте о доступной продукции и условиях поставки у нашей команды.</p><a className='pill pill-outline' href='#contacts'>Узнать ассортимент <ArrowUpRight size={18} /></a></article></Reveal><Reveal delay={.15}><article id='ready-to-eat'><span className='line-illustration' aria-hidden>⌁</span><p className='eyebrow'>Для вашего стола</p><h2>Время —<br /><em>для близких.</em></h2><p>Полуфабрикаты для простых домашних решений. Свяжитесь с нами, чтобы уточнить ассортимент и возможности сотрудничества.</p><a className='pill pill-outline' href='#contacts'>Обсудить поставку <ArrowUpRight size={18} /></a></article></Reveal></div></section>
-
-        <section id='news' className='news-section section-pad'><SectionTitle number='05' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
+        <section id='news' className='news-section section-pad'><SectionTitle number='04' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
 
         <section id='contacts' className='contacts-section' aria-labelledby='contacts-heading'><div className='map-section'>
             <video className='map-route' ref={map} src='/videos/karta-scroll.mp4' muted playsInline preload='auto' aria-label='Видео маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><p className='eyebrow'><span />Приезжайте в гости</p><h2 id='contacts-heading'>Контакты</h2><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>
       </main>
-      <footer className='landing-footer'><a href='#hero' className='footer-brand'>RAMCAD<span>СОХРАНЯЕМ ГЛАВНОЕ.</span></a><div><span>© {new Date().getFullYear()} RAMCAD</span><a href='#hero'>В начало <ArrowUpRight size={17} /></a></div></footer>
+      <footer className='landing-footer'><a href='#hero' className='footer-brand' aria-label='RAMCAD — в начало'><svg viewBox='0 0 1000 180' role='img' aria-label='RAMCAD'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg></a><div><span>© {new Date().getFullYear()} RAMCAD</span><a href='#hero'>В начало <ArrowUpRight size={17} /></a></div></footer>
     </div>
 
     <Dialog.Root open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}><Dialog.Portal><Dialog.Overlay className='product-overlay' /><Dialog.Content className='product-dialog' onCloseAutoFocus={event => { event.preventDefault(); lastProduct.current?.focus({ preventScroll: true }); }}><Dialog.Close className='dialog-close' aria-label='Закрыть товар'><X size={22} /></Dialog.Close>{product && <><div className='dialog-image'><Image src={product.src} width={600} height={800} unoptimized alt={product.name} /></div><div className='dialog-copy'><p className='eyebrow'>Коллекция MARZO</p><Dialog.Title>{product.name}</Dialog.Title><Dialog.Description>Любимый вкус для маленьких радостей. Уточните состав, наличие и условия оптовой поставки у нашей команды.</Dialog.Description><a href='#contacts' className='pill pill-dark' onClick={() => setSelected(null)}>Узнать о поставке <ArrowRight size={18} /></a></div></>}</Dialog.Content></Dialog.Portal></Dialog.Root>

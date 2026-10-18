@@ -206,8 +206,14 @@ const runtime = String.raw`
     video.pause();
     if (!Number.isFinite(video.duration) || video.seeking) return;
     const rect = video.closest('.contacts-section').getBoundingClientRect();
+    const headerHeight = document.querySelector('.main-header').getBoundingClientRect().height;
+    const sectionTop = scrollY + rect.top;
+    const start = sectionTop - innerHeight;
+    const naturalEnd = sectionTop + rect.height - headerHeight - .1 * (innerHeight - headerHeight);
+    const maxScroll = document.documentElement.scrollHeight - innerHeight;
+    const end = Math.max(start + 1, Math.min(naturalEnd, maxScroll - 64));
     const progress = reduce.matches ? 1 : Math.min(1, Math.max(0,
-      (innerHeight - rect.top) / rect.height));
+      (scrollY - start) / (end - start)));
     const target = progress * Math.max(0, video.duration - .05);
     const now = performance.now();
     const elapsed = mapLastTick ? Math.min(64, now - mapLastTick) : 16.7;
