@@ -197,6 +197,14 @@ const runtime = String.raw`
   addEventListener('scroll', () => { if (!scheduled) { scheduled = true; requestAnimationFrame(updateProgress); } }, { passive: true });
   addEventListener('resize', updateProgress); updateProgress();
 
+  document.querySelector('[data-contact-form]').addEventListener('submit', event => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const subject = 'Сотрудничество с RAMCAD — ' + (data.get('company') || data.get('name'));
+    const body = 'Имя: ' + data.get('name') + '\nКомпания: ' + (data.get('company') || '—') + '\nПочта: ' + data.get('email') + '\n\n' + data.get('message');
+    location.href = 'mailto:oooiceberg95@mail.ru?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  });
+
   const video = document.querySelector('.map-section video');
   video.muted = true;
   let mapFrame = 0;
@@ -205,9 +213,9 @@ const runtime = String.raw`
     mapFrame = 0;
     video.pause();
     if (!Number.isFinite(video.duration) || video.seeking) return;
-    const rect = video.getBoundingClientRect();
+    const rect = video.closest('.contacts-section').getBoundingClientRect();
     const progress = reduce.matches ? 1 : Math.min(1, Math.max(0,
-      (innerHeight - rect.top) / Math.min(rect.height, innerHeight)));
+      (innerHeight - rect.top) / rect.height));
     const target = progress * Math.max(0, video.duration - .05);
     const now = performance.now();
     const elapsed = mapLastTick ? Math.min(64, now - mapLastTick) : 16.7;
@@ -215,7 +223,7 @@ const runtime = String.raw`
     const distance = target - video.currentTime;
     if (Math.abs(distance) <= .015) { mapLastTick = 0; return; }
     const time = reduce.matches || Math.abs(distance) < .04
-      ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 120));
+      ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 220));
     video.currentTime = time;
   };
   const scheduleMap = () => { if (!mapFrame) mapFrame = requestAnimationFrame(syncVideo); };

@@ -6,6 +6,7 @@ import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ArrowRight, ArrowUpRight, ChevronDown, Handshake, Menu, Snowflake, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
+import ContactPanel from '@/components/ui/contact-panel';
 
 const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
@@ -69,9 +70,9 @@ export function Landing() {
       frame = 0;
       video.pause();
       if (!Number.isFinite(video.duration) || video.seeking) return;
-      const rect = video.getBoundingClientRect();
+      const rect = video.closest('.contacts-section')!.getBoundingClientRect();
       const progress = reduce ? 1 : Math.min(1, Math.max(0,
-        (window.innerHeight - rect.top) / Math.min(rect.height, window.innerHeight)));
+        (window.innerHeight - rect.top) / rect.height));
       const target = progress * Math.max(0, video.duration - .05);
       const now = performance.now();
       const elapsed = lastTick ? Math.min(64, now - lastTick) : 16.7;
@@ -79,7 +80,7 @@ export function Landing() {
       const distance = target - video.currentTime;
       if (Math.abs(distance) <= .015) { lastTick = 0; return; }
       const time = reduce || Math.abs(distance) < .04
-        ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 120));
+        ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 220));
       video.currentTime = time;
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(sync); };
@@ -184,7 +185,7 @@ export function Landing() {
         <section id='news' className='news-section section-pad'><SectionTitle number='05' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
 
         <section id='contacts' className='contacts-section' aria-labelledby='contacts-heading'><div className='map-section'>
-            <video className='map-route' ref={map} src='/videos/karta-scroll.mp4' muted playsInline preload='auto' aria-label='Видео маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><p className='eyebrow'><span />Приезжайте в гости</p><h2 id='contacts-heading'>Контакты</h2><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>
+            <video className='map-route' ref={map} src='/videos/karta-scroll.mp4' muted playsInline preload='auto' aria-label='Видео маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><ContactPanel /><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>
       </main>
       <footer className='landing-footer'><a href='#hero' className='footer-brand'>RAMCAD<span>СОХРАНЯЕМ ГЛАВНОЕ.</span></a><div><span>© {new Date().getFullYear()} RAMCAD</span><a href='#hero'>В начало <ArrowUpRight size={17} /></a></div></footer>
     </div>
