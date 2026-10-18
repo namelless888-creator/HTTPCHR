@@ -56,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   } as CSSProperties;
 
   return (
-    <html lang='ru' className={`${display.variable} ${sans.variable}`} style={fontVariables}>
+    <html lang='ru' data-scroll-behavior='smooth' className={`${display.variable} ${sans.variable}`} style={fontVariables}>
       <body className='bg-background font-sans text-foreground antialiased'>
         <a
           href='#main'
