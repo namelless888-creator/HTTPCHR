@@ -200,6 +200,7 @@ const runtime = String.raw`
   const video = document.querySelector('.map-section video');
   video.muted = true;
   let mapFrame = 0;
+  let mapLastTick = 0;
   const syncVideo = () => {
     mapFrame = 0;
     video.pause();
@@ -207,8 +208,15 @@ const runtime = String.raw`
     const rect = video.getBoundingClientRect();
     const progress = reduce.matches ? 1 : Math.min(1, Math.max(0,
       (innerHeight - rect.top) / Math.min(rect.height, innerHeight)));
-    const time = progress * Math.max(0, video.duration - .05);
-    if (Math.abs(video.currentTime - time) > .04) video.currentTime = time;
+    const target = progress * Math.max(0, video.duration - .05);
+    const now = performance.now();
+    const elapsed = mapLastTick ? Math.min(64, now - mapLastTick) : 16.7;
+    mapLastTick = now;
+    const distance = target - video.currentTime;
+    if (Math.abs(distance) <= .015) { mapLastTick = 0; return; }
+    const time = reduce.matches || Math.abs(distance) < .04
+      ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 120));
+    video.currentTime = time;
   };
   const scheduleMap = () => { if (!mapFrame) mapFrame = requestAnimationFrame(syncVideo); };
   video.addEventListener('loadedmetadata', scheduleMap);

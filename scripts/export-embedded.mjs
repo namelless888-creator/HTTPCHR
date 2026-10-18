@@ -15,7 +15,7 @@ for (const [, key] of html.matchAll(/data-embedded-src="(public\/[^"<>]+)"/g)) {
   let local = preview ? key.replace(/public\/images\/products\/(\d+)\.png$/, 'public/images/preview-products/$1.webp') : key;
   if (preview && key === 'public/images/hero-reference.png') local = 'public/images/preview-hero.webp';
   if (preview && key === 'public/images/directions/reference.png') local = 'public/images/directions/preview.webp';
-  if (preview && key === 'public/videos/karta_animation.mp4') local = 'public/videos/karta-preview.mp4';
+  if (preview && key === 'public/videos/karta-scroll.mp4') local = 'public/videos/karta-preview.mp4';
   const resolved = path.resolve(root, local);
   if (!resolved.startsWith(path.join(root, 'public') + path.sep)) throw new Error('Asset escapes public directory.');
   const mime = mimeTypes[path.extname(local)];
