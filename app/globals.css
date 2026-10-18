@@ -290,7 +290,7 @@ button { cursor: pointer; }
 .news-source { display: flex; align-items: center; gap: 15px; margin-top: 22px; padding-top: 14px; border-top: 1px solid #10343c30; font-size: 9px; }
 .contacts-section { background: #10343c; color: #f1f6f8; }
 .map-section { position: relative; height: 690px; background: #d8e3e6; overflow: hidden; }
-.map-section video { position: absolute; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; }
+.map-section video { position: absolute; left: 20%; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; }
 .map-shade { position: absolute; inset: 0; background: linear-gradient(90deg,#0c2b3320,transparent 60%); pointer-events: none; z-index: 2; }
 .map-section [hidden] { display: none!important; }
 .contact-card { position: absolute; left: 4.8%; top: 24px; bottom: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; background: #f1f6f8ed; color: #10343c; backdrop-filter: blur(14px); padding: 34px; width: clamp(320px,28vw,390px); border: 1px solid #ffffffa0; border-radius: 12px; box-shadow: 0 14px 40px #0c2b331c; z-index: 3; }
