@@ -1,6 +1,6 @@
 import type { CatalogItem } from '@/components/ui/hero-3';
 
-const img = (n: number) => `/images/catalog/${String(n).padStart(2, '0')}.jpg`;
+const img = (n: number) => `/images/products/${String(n).padStart(2, '0')}.png`;
 
 // Real packaging photos supplied by the client (brand: MARZO and sub-lines).
 export const CATALOG: CatalogItem[] = [

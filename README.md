@@ -1,84 +1,69 @@
-# RAMCAD — site
+# RAMCAD — одностраничный сайт
 
-Redesign of icechr.ru for RAMCAD, a cold-chain food producer (ice cream, fish, ready-to-eat products). Next.js App Router, TypeScript, Tailwind CSS v4, shadcn-style component structure.
+Сайт хладокомбината на Next.js 16, React 19 и TypeScript. Визуальное направление основано на макетах и аннотациях из соседнего репозитория `ramcad-assets`: крупная продукция MARZO, холодная палитра, боковая навигация и видео-карта на фоне контактов.
 
-Originally built as a one-pager, then split into a multi-page site: `/` (home), `/catalog`, `/news`, `/contacts` each a real route. `SiteHeader` and `SiteFooter` live in `app/layout.tsx` so every page shares the same nav/footer chrome; internal links use `next/link` for client-side navigation. Desktop (`md`+) also gets a floating `SideNav`: pinned open while the home page's hero is in view, otherwise a slim hover-to-expand handle on the left edge, on every page. Mobile keeps the header's hamburger + sheet menu instead (no hover on touch). Nav items live once in `lib/nav-links.ts`, shared by the header, the mobile sheet, and the side nav.
+## Разработка
 
-## Stack
-
-- **Next.js 16** (App Router, Turbopack), **React 19**, **TypeScript** (strict)
-- **Tailwind CSS v4** — tokens live in `app/globals.css` as CSS custom properties (`@theme inline`), no `tailwind.config.ts` needed
-- **shadcn/ui conventions** — `components.json` sets the default component path to `@/components/ui` (this matters: every shadcn component, and all custom UI components in this project, import siblings through `@/components/ui/*`, so anything placed outside that folder breaks those imports). Shared helpers live in `@/lib/utils` (`cn()`, via `clsx` + `tailwind-merge`).
-- **framer-motion**, **lucide-react**, **lenis** (smooth scroll, mounted once per page load on `/contacts`, which is the only route using it)
-
-### About the shadcn CLI
-
-This sandbox's network policy blocks `ui.shadcn.com`, so `npx shadcn@latest init` / `add` cannot run here. The project structure was built by hand to match exactly what the CLI would generate (`components.json`, `lib/utils.ts`, and a standard Radix-based `components/ui/sheet.tsx`). Once you have access to `ui.shadcn.com` (locally, or by widening this environment's network policy), the CLI will recognize this `components.json` and `npx shadcn@latest add <component>` works normally for anything added later.
-
-## Scripts
+Проверено с Node.js 24.19.0 и npm 11.9.0.
 
 ```bash
-npm install
-npm run dev      # http://localhost:3000
+npm ci
+npm run dev
+```
+
+Производственная сборка и запуск:
+
+```bash
 npm run build
+npm run start
+```
+
+Шрифты Manrope и Playfair Display хранятся локально в `public/fonts` вместе с лицензиями SIL OFL. Для сборки и просмотра не требуется Google Fonts. Дополнительные переменные окружения, ключи и база данных не нужны.
+
+## Что работает
+
+На главной странице собраны направления продукции, каталог, история предприятия, принципы качества, архив новостей и контакты. Навигация ведёт к секциям этой страницы; прежние адреса `/catalog`, `/news` и `/contacts` перенаправляют к соответствующим якорям.
+
+Каталог содержит 36 товаров, шесть фильтров, разворачивание полной коллекции и подробные карточки. Диалог поддерживает клавиатуру, Escape и возврат фокуса. Кнопки сотрудничества открывают почтовую программу, телефон — звонок, маршрут — Яндекс Карты. Форма с имитацией успешной отправки на новой странице не используется; существующий `/api/contact` остаётся заглушкой и не отправляет сообщения.
+
+При прокрутке появляются блоки, меняется активная секция навигации, движутся упаковки первого экрана и заполняется индикатор чтения. Видео карты воспроизводится, пока контакты находятся в области просмотра. При `prefers-reduced-motion` параллакс, плавная прокрутка и анимации отключены, видео приостановлено.
+
+## HTML-версия
+
+`ramcad.html` в корне репозитория — полностью автономный HTML: изображения, видео, CSS и шрифты встроены в один файл (около 18 МБ). Его можно перенести отдельно от остальных файлов.
+
+После сборки можно обновить переносимую версию сайта:
+
+```bash
+node scripts/export-html.mjs
+```
+
+Полученный `index.html` открывается из корня репозитория обычным браузером. CSS, шрифты и поведение встроены; изображения и видео загружаются из соседней папки `public`. Для переноса нужны **и `index.html`, и папка `public`**. Эта версия не требует Next.js-сервера. После изменений интерфейса повторите сборку и экспорт.
+
+## Основные файлы
+
+- `components/landing.tsx` — секции страницы и интерактивность.
+- `app/globals.css` — оформление, адаптивная сетка и анимации.
+- `app/layout.tsx` — локальные шрифты, метаданные и ссылка перехода к содержимому.
+- `lib/catalog.ts` — названия и изображения 36 товаров.
+- `public/images/products` — исходные PNG упаковок, скопированные без перекодирования из `ramcad-assets/products`.
+- `public/videos/karta_animation.mp4` — предоставленное видео маршрута.
+- `scripts/export-html.mjs` — генерация переносимого HTML.
+
+Старые изображения `public/images/catalog`, исторические компоненты и папка `mockup` сохранены; новая главная страница их не использует.
+
+## Проверки
+
+```bash
 npm run lint
+npx tsc --noEmit
+npm run build
 ```
 
-## Structure
+В браузере проверяйте фильтры, открытие и закрытие товара, мобильное меню, якоря, загрузку медиа и режим уменьшения движения. Отдельного автоматического test-скрипта в package.json нет.
 
-```
-app/
-  layout.tsx          # fonts, lenis.css import, global <SiteHeader>/<SideNav>/<SiteFooter>
-  page.tsx            # home: Hero, About, Extras
-  catalog/page.tsx     # /catalog — CatalogBlock (marquee teaser) + CatalogGrid (full browsable grid)
-  news/page.tsx        # /news — NewsBlock
-  contacts/page.tsx    # /contacts — ContactsBlock (3-layer sticky scroll + map)
-  globals.css          # palette tokens, section-light theme, stack-layer sticky rules
-  api/contact/route.ts
-components/
-  catalog-block.tsx   # wires lib/catalog.ts into the marquee
-  ui/                 # all shadcn-style + custom components, incl. site-header.tsx / site-footer.tsx
-lib/
-  catalog.ts          # 36-item catalog data, real packaging photos (brand MARZO + sub-lines)
-  nav-links.ts        # shared nav items (header, mobile sheet, side nav)
-  utils.ts            # cn()
-public/
-  images/             # hero-bg.jpg, catalog/01-36.jpg (real), extras/seld-file.jpg
-  videos/             # karta_animation.mp4 (/contacts map background)
-```
+## Источники материалов
 
-## Asset status
+Композиция и поведение навигации/контактов взяты из `ramcad-assets/mockups` и `ramcad-assets/references`. Названия продукции, сведения о предприятии, контакты и новости перенесены из существующих материалов HTTPCHR. Прямой запрос к icechr.ru в облачной среде возвращал HTTP 403; анализ текущей live-версии сайта не подтверждён. Новости явно помечены как архив 2024 года и ведут к исходным статьям.
 
-The client supplied real packaging photography for the catalog (`Ramcard_2.zip`, 41 images: 2 full page mockups used as art-direction reference + 39 individual product shots). 36 of those 39 became `public/images/catalog/01.jpg` … `36.jpg`, cropped onto the brand's frost background and wired into `lib/catalog.ts` with their real printed names (brand MARZO, plus the Бурёнка / My Love / Ванильное небо / Фрукт-Frost sub-lines). One product photo was left out because its packaging art depicted a recognizable third-party cartoon character; everything else is the client's own branding. The catalog is now 36 real, named, photographed items rather than the original 56 fictional entries scraped from icechr.ru with flat-color placeholders — fewer items, but every one of them is real.
-
-Two assets are still flat-color placeholders and need real photos before launch:
-
-- `public/images/hero-bg.jpg` — needs a real background photo, width ≥ 2400px
-- `public/images/extras/seld-file.jpg` — needs a real photo of the herring product
-
-`public/videos/karta_animation.mp4` is the real supplied asset (1920×1080, 14s, H.264) and is already wired into `/contacts`.
-
-The CEO portrait (`/public/images/ceo.jpg`) was intentionally **not** added — the shipped `about-block.tsx` always shows the "МШ" initials avatar, matching the component exactly as specified.
-
-## Content to verify before launch
-
-Copy in blocks 3–5 and contacts was carried over from icechr.ru with the company name swapped to RAMCAD. Confirm before launch:
-
-- Director's name/quote on the home page's About section (currently "Муса Шаванов")
-- The four news items on `/news` (dated 2024, currently linking to the original icechr.ru articles)
-- Address, phone, e-mail, and hours on `/contacts`
-- The map video still shows the original "ООО «Айсберг»" label and blue linework — re-render it in the RAMCAD palette if needed (it fills the whole `/contacts` map layer as a background, so it's more visible than before)
-
-## Design notes
-
-- **Palette: "Морозная сталь" (Frosted Steel)** — chosen over the original cocoa/cream dessert palette via a judge-panel workflow (3 independent proposals, scored by 2 comparative judges on brand fit / accessibility / distinctiveness, then synthesized). The brief: the old cocoa-brown palette read as a confectionery/gelateria brand and said nothing about the cold chain, refrigeration, or the fish line — RAMCAD is a хладокомбинат (cold-storage plant), and the palette should say so.
-  - `#0D1B22` **deepfreeze** (dark) — the inside of a freezer in the dark; a blue-black, not a neutral charcoal
-  - `#F1F6F8` **frost** (light) — frost on a freezer display case glass; ice-blue, not warm cream
-  - `#3E6E85` **steel** (accent) — stainless steel of refrigeration units/compressors; used for cards, borders, glow, buttons, and the catalog section background
-  - All three sit in one narrow blue hue band (~197–202°) — no red/green/yellow anywhere, so error/success states stay icon + brand-color only, as before.
-  - Contrast: dark/light = 16.1:1 (huge margin over AA). Light text on the steel accent = 5.11:1 (passes AA 4.5:1 for body text; not quite the AAA levels the original cocoa/cream pair hit). Steel as a border/glow against dark = 3.15:1 (passes the 3:1 UI-component threshold; not meant for text). The judge panel tried to push the accent-on-dark ratio higher and found every attempt traded away the accent-on-light ratio by a larger amount — `#3E6E85` is the balanced point.
-  - Exactly three colors plus opacity tints of those three — no other hues anywhere, including focus rings and overlays.
-- Section rhythm, now across routes: `/` Hero (dark) → About (frost) → Extras (dark); `/catalog` (steel); `/news` (frost); `/contacts` (dark / frost / steel sticky layers).
-- Reduced motion: marquee freezes, reveal animations are skipped, and the map video shows its final frame without autoplay.
-- **`/catalog`**: `CatalogBlock` (the animated marquee teaser) sits above `CatalogGrid`, a plain responsive grid (2/3/4 columns) of all 36 real products with captions — the marquee alone was a teaser, not a browsable catalog, so the grid is what actually fulfills "a catalog page." Hot items keep the same badge treatment as the marquee.
-- **`/contacts`, map layer**: the map video is a full-bleed background behind the whole sticky section (not a boxed card), with a dark gradient scrim for legibility. The address/phone/e-mail/hours card floats bottom-left as a frosted-glass panel (`bg-background/70` + `backdrop-blur`). Its `currentTime` is scrubbed directly to scroll position — `MapAnimation` reads `section.offsetTop`/`offsetHeight` (stable across the section's own sticky offsetting) against `lenis.scroll` to compute progress, so the route "draws" as the page scrolls rather than autoplaying once. Under `prefers-reduced-motion` it skips the scroll binding entirely and holds the last frame.
+Перед публичным запуском владелец должен проверить актуальность реквизитов, часов работы и сведений о производстве. Видео содержит исходное обозначение «Айсберг»; оно сохранено без изменений.

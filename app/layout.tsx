@@ -1,22 +1,45 @@
 import type { Metadata } from 'next';
-import { Manrope, Playfair_Display } from 'next/font/google';
-import 'lenis/dist/lenis.css';
+import type { CSSProperties } from 'react';
+import localFont from 'next/font/local';
 import './globals.css';
-import { SiteHeader } from '@/components/ui/site-header';
-import { SiteFooter } from '@/components/ui/site-footer';
-import { SideNav } from '@/components/ui/side-nav';
 
-const display = Playfair_Display({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['600', '700'],
+const display = localFont({
+  src: [
+    { path: '../public/fonts/playfair-display-cyrillic-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/playfair-display-cyrillic-600-normal.woff2', weight: '600', style: 'normal' },
+  ],
   variable: '--font-playfair',
   display: 'swap',
+  adjustFontFallback: false,
 });
-const sans = Manrope({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700', '800'],
+const displayLatin = localFont({
+  src: [
+    { path: '../public/fonts/playfair-display-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/playfair-display-latin-600-normal.woff2', weight: '600', style: 'normal' },
+  ],
+  display: 'swap',
+  adjustFontFallback: false,
+});
+const sans = localFont({
+  src: [
+    { path: '../public/fonts/manrope-cyrillic-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/manrope-cyrillic-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/manrope-cyrillic-600-normal.woff2', weight: '600', style: 'normal' },
+    { path: '../public/fonts/manrope-cyrillic-700-normal.woff2', weight: '700', style: 'normal' },
+  ],
   variable: '--font-manrope',
   display: 'swap',
+  adjustFontFallback: false,
+});
+const sansLatin = localFont({
+  src: [
+    { path: '../public/fonts/manrope-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/manrope-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/manrope-latin-600-normal.woff2', weight: '600', style: 'normal' },
+    { path: '../public/fonts/manrope-latin-700-normal.woff2', weight: '700', style: 'normal' },
+  ],
+  display: 'swap',
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
@@ -26,8 +49,14 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Fontsource provides separate alphabet subsets; keep both families in the stack.
+  const fontVariables = {
+    '--font-playfair': `${display.style.fontFamily}, ${displayLatin.style.fontFamily}, Georgia, serif`,
+    '--font-manrope': `${sans.style.fontFamily}, ${sansLatin.style.fontFamily}, Arial, sans-serif`,
+  } as CSSProperties;
+
   return (
-    <html lang='ru' className={`${display.variable} ${sans.variable}`}>
+    <html lang='ru' className={`${display.variable} ${sans.variable}`} style={fontVariables}>
       <body className='bg-background font-sans text-foreground antialiased'>
         <a
           href='#main'
@@ -35,10 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           К содержимому
         </a>
-        <SiteHeader />
-        <SideNav />
         {children}
-        <SiteFooter />
       </body>
     </html>
   );
