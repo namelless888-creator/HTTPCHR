@@ -22,21 +22,21 @@ const displayLatin = localFont({
 });
 const sans = localFont({
   src: [
-    { path: '../public/fonts/manrope-cyrillic-400-normal.woff2', weight: '400', style: 'normal' },
-    { path: '../public/fonts/manrope-cyrillic-500-normal.woff2', weight: '500', style: 'normal' },
-    { path: '../public/fonts/manrope-cyrillic-600-normal.woff2', weight: '600', style: 'normal' },
-    { path: '../public/fonts/manrope-cyrillic-700-normal.woff2', weight: '700', style: 'normal' },
+    { path: '../public/fonts/rubik-cyrillic-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/rubik-cyrillic-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/rubik-cyrillic-600-normal.woff2', weight: '600', style: 'normal' },
+    { path: '../public/fonts/rubik-cyrillic-700-normal.woff2', weight: '700', style: 'normal' },
   ],
-  variable: '--font-manrope',
+  variable: '--font-rubik',
   display: 'swap',
   adjustFontFallback: false,
 });
 const sansLatin = localFont({
   src: [
-    { path: '../public/fonts/manrope-latin-400-normal.woff2', weight: '400', style: 'normal' },
-    { path: '../public/fonts/manrope-latin-500-normal.woff2', weight: '500', style: 'normal' },
-    { path: '../public/fonts/manrope-latin-600-normal.woff2', weight: '600', style: 'normal' },
-    { path: '../public/fonts/manrope-latin-700-normal.woff2', weight: '700', style: 'normal' },
+    { path: '../public/fonts/rubik-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/rubik-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/rubik-latin-600-normal.woff2', weight: '600', style: 'normal' },
+    { path: '../public/fonts/rubik-latin-700-normal.woff2', weight: '700', style: 'normal' },
   ],
   display: 'swap',
   adjustFontFallback: false,
@@ -52,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // Fontsource provides separate alphabet subsets; keep both families in the stack.
   const fontVariables = {
     '--font-playfair': `${display.style.fontFamily}, ${displayLatin.style.fontFamily}, Georgia, serif`,
-    '--font-manrope': `${sans.style.fontFamily}, ${sansLatin.style.fontFamily}, Arial, sans-serif`,
+    '--font-rubik': `${sans.style.fontFamily}, ${sansLatin.style.fontFamily}, Arial, sans-serif`,
   } as CSSProperties;
 
   return (
