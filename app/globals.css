@@ -502,6 +502,9 @@ html { scroll-padding-top: 88px; }
 .header-links a::after { content: ''; position: absolute; height: 1px; background: #10343c; bottom: 14px; left: 0; right: 0; transform: scaleX(0); transform-origin: left; transition: transform .25s; }
 .header-links a.is-active::after, .header-links a:hover::after { transform: scaleX(1); }
 .header-phone { border-radius: 30px; background: #092e3b; color: #f1f6f8!important; padding: 7px 16px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.header-phone { transition: background-color .25s ease,color .25s ease,box-shadow .25s ease,transform .25s ease; }
+.header-phone:is(:hover,:focus-visible) { background: #c4b7df; color: #092e3b!important; box-shadow: 0 5px 18px #10343c22; transform: translateY(-2px); }
+.header-phone:active { transform: translateY(0); }
 .header-menu-toggle { display: none; }
 .reference-hero { position: relative; height: clamp(420px,35.2865vw,650px); overflow: hidden; background: linear-gradient(114deg,#edf1ef 0%,#f3f5f1 43%,#b3c1c5 57%,#143643 74%,#092b37 100%); }
 .reference-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 2% 20%,#ffffffa0,transparent 55%),linear-gradient(0deg,#c8d9df80,transparent 18%); }
@@ -547,3 +550,5 @@ html { scroll-padding-top: 88px; }
   .header-phone { font-size: 9px; padding: 7px 8px; }
   .reference-hero-copy { padding-left: 18px; padding-right: 18px; }
 }
+
+@media (prefers-reduced-motion: reduce) { .header-phone { transition: none; } .header-phone:is(:hover,:focus-visible) { transform: none; } }

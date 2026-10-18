@@ -7,7 +7,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { ArrowRight, ArrowUpRight, ChevronDown, Handshake, Menu, Snowflake, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 
-const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['fish', 'Направления'], ['contacts', 'Контакты']];
+const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
 const CONES = [2, 4, 6, 7, 9, 18, 19, 20];
 const ICE = [3, 10, 13, 14, 28, 36];
@@ -147,7 +147,7 @@ export function Landing() {
               </a>
             </Reveal>
             <Reveal delay={.12}>
-              <a href='#fish' className='direction-card'>
+              <a href='#contacts' className='direction-card'>
                 <div className='direction-photo direction-photo-fish' role='img' aria-label='Свежая рыба и филе лосося на льду'>
                   <Image src='/images/directions/reference.png' alt='' width={1536} height={1024} unoptimized />
                 </div>
@@ -179,7 +179,12 @@ export function Landing() {
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>
         </section>
 
-        <section className='other-section section-pad' id='fish'><SectionTitle number='03' note='Больше, чем мороженое'>Другие направления</SectionTitle><div className='other-grid'><Reveal><article><span className='line-illustration' aria-hidden>≈</span><p className='eyebrow'>Свежесть моря</p><h2>Рыба и<br /><em>морепродукты.</em></h2><p>Бережная переработка и хранение в отдельном цехе. Узнайте о доступной продукции и условиях поставки у нашей команды.</p><a className='pill pill-outline' href='#contacts'>Узнать ассортимент <ArrowUpRight size={18} /></a></article></Reveal><Reveal delay={.15}><article id='ready-to-eat'><span className='line-illustration' aria-hidden>⌁</span><p className='eyebrow'>Для вашего стола</p><h2>Время —<br /><em>для близких.</em></h2><p>Полуфабрикаты для простых домашних решений. Свяжитесь с нами, чтобы уточнить ассортимент и возможности сотрудничества.</p><a className='pill pill-outline' href='#contacts'>Обсудить поставку <ArrowUpRight size={18} /></a></article></Reveal></div></section>
+        <section id='about' className='about-section section-pad'>
+          <SectionTitle number='03' note='Гудермес, Чеченская Республика'>О компании</SectionTitle>
+          <div className='about-layout'><Reveal><h2>Большое дело.<br /><em>Простые ценности.</em></h2><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><a href='#contacts' className='text-link'>Обсудить сотрудничество <ArrowUpRight size={17} /></a></div></Reveal></div>
+          <div className='about-statistics'><Reveal><div><strong>2003</strong><span>год, когда началась наша история</span></div></Reveal><Reveal delay={.1}><div><strong>3<span> цеха</span></strong><span>независимых направления производства</span></div></Reveal><Reveal delay={.2}><div><strong>36<span> вкусов</span></strong><span>в коллекции мороженого</span></div></Reveal></div>
+          <div className='brand-strip' aria-hidden><span>ЗАБОТА В ДЕТАЛЯХ</span><Snowflake /><span>КАЧЕСТВО В ГЛАВНОМ</span><Snowflake /><span>ВКУС В КАЖДОМ МОМЕНТЕ</span></div>
+        </section>
 
         <section id='news' className='news-section section-pad'><SectionTitle number='04' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
 
