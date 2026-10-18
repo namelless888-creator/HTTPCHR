@@ -31,8 +31,8 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
   return <div className={`reveal ${className}`} style={{ transitionDelay: `${delay}s` }}>{children}</div>;
 }
 
-function SectionTitle({ number, children, note }: { number: string; children: React.ReactNode; note: string }) {
-  return <div className='section-kicker'><span>{number} / {children}</span><span>{note}</span></div>;
+function SectionTitle({ number, children, note }: { number: string; children: React.ReactNode; note?: string }) {
+  return <div className='section-kicker'><span>{number} / {children}</span>{note && <span>{note}</span>}</div>;
 }
 
 export function Landing() {
@@ -176,8 +176,8 @@ export function Landing() {
         </section>
 
         <section id='catalog' className='catalog-section section-pad'>
-          <SectionTitle number='02' note='Вкус, к которому хочется возвращаться'>Коллекция MARZO</SectionTitle>
-          <div className='section-heading'><Reveal><h2>Выберите своё<br /><em>маленькое счастье.</em></h2></Reveal><p>Знакомые вкусы и неожиданные сочетания.<br />Найдётся тот самый — ваш.</p></div>
+          <SectionTitle number='02'>Коллекция MARZO</SectionTitle>
+          <div className='section-heading'><Reveal><h2>Выберите своё<br /><em>маленькое счастье.</em></h2></Reveal></div>
           <div className='catalog-toolbar'><div className='filter-tabs' role='group' aria-label='Категории мороженого'>{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div><span aria-live='polite'>{flavorCount(products.length)}</span></div>
           <motion.div className='product-grid' layout={!reduce}>
             {visible.map(item => <motion.button layout={!reduce} key={item.n} className='product-card' onClick={event => { lastProduct.current = event.currentTarget; setSelected(item.n); }} initial={false} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduce ? 0 : .35 }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={20} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></motion.button>)}

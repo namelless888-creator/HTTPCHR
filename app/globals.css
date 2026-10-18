@@ -171,7 +171,7 @@ button { cursor: pointer; }
 .section-pad { padding: 72px 4.8% 85px; }
 .section-kicker { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 18px; margin-bottom: 49px; font-size: 9px; letter-spacing: .09em; }
 .section-kicker > span:first-child { text-transform: uppercase; font-weight: 600; }
-.section-kicker > span:last-child { letter-spacing: .01em; opacity: .65; }
+.section-kicker > span + span { letter-spacing: .01em; opacity: .65; }
 .directions-section { background: radial-gradient(ellipse at 50% 20%,#173d49 0%,#102f39 55%,#0b252e 100%); color: #f1f6f8; border-radius: 26px 26px 0 0; position: relative; }
 .directions-section .section-kicker { border-color: #f1f6f83d; }
 .directions-section h2 { font-family: var(--font-manrope),sans-serif; font-size: clamp(34px,5.2vw,80px); font-weight: 700; line-height: 1.04; letter-spacing: -.055em; }
@@ -402,7 +402,7 @@ button { cursor: pointer; }
   .hero-bottom svg { width: 17px; }
   .section-pad { padding: 43px 22px 52px; }
   .section-kicker { padding-top: 14px; margin-bottom: 32px; font-size: 8px; gap: 10px; align-items: start; }
-  .section-kicker > span:last-child { font-size: 7px; max-width: 130px; text-align: right; line-height: 1.6; }
+  .section-kicker > span + span { font-size: 7px; max-width: 130px; text-align: right; line-height: 1.6; }
   .ramcad h2 { font-size: 37px; }
   .directions-section { border-radius: 20px 20px 0 0; }
   .directions-section h2 { font-size: 32px; line-height: 1.2; }
