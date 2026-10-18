@@ -18,7 +18,7 @@ if (preview) {
   html = html.replace('</body>', '<script>document.querySelector(\'[data-map-view="route"]\').click();</script></body>');
 }
 
-html = html.replace(/\bsrc="(public\/[^"<>]+)"/g, 'data-embedded-src="$1"');
+html = html.replace(/\ssrc="(public\/[^"<>]+)"/g, ' data-embedded-src="$1"');
 const assets = {};
 const mimeTypes = { '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.mp4': 'video/mp4' };
 for (const [, key] of html.matchAll(/data-embedded-src="(public\/[^"<>]+)"/g)) {
