@@ -574,3 +574,26 @@ html { scroll-padding-top: 88px; }
 @media (prefers-reduced-motion: reduce) {
   .reference-hero-photo img,.reference-hero-copy { transform: none!important; will-change: auto!important; }
 }
+
+/* Expanding ice-cream silhouette reveals the company block on scroll. */
+.cone-transition { position: relative; background: #f5f3ed; }
+.cone-pin { position: relative; overflow: hidden; }
+.cone-window { mask-repeat: no-repeat; }
+.cone-illustration { display: none; }
+.cone-transition[data-cone-ready] { height: var(--cone-height,auto); }
+.cone-transition[data-cone-ready] .cone-pin { position: sticky; top: 66px; }
+.cone-transition[data-cone-ready] .cone-illustration { display: block; position: absolute; top: var(--cone-y,350px); left: 50%; width: var(--cone-size,240px); height: auto; transform: translate(-50%,-50%) scale(var(--cone-scale,1)); opacity: var(--cone-opacity,1); transform-origin: center; pointer-events: none; }
+.cone-transition:focus-within .cone-window { mask-image: none!important; }
+.cone-transition:focus-within .cone-illustration { opacity: 0!important; }
+@media (prefers-reduced-motion: reduce) {
+  .cone-transition[data-cone-ready] { height: auto; }
+  .cone-transition[data-cone-ready] .cone-pin { position: relative; top: auto; }
+  .cone-window { mask-image: none!important; }
+  .cone-illustration { display: none!important; }
+}
+
+/* Direct company navigation must remain readable without scrubbing the portal. */
+.cone-transition:has(#about:target) { height: auto!important; }
+.cone-transition:has(#about:target) .cone-pin { position: relative; top: auto; }
+.cone-transition:has(#about:target) .cone-window { mask-image: none!important; }
+.cone-transition:has(#about:target) .cone-illustration { display: none!important; }
