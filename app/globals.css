@@ -286,7 +286,7 @@ button { cursor: pointer; }
 .contact-card .text-link { width: 100%; }
 .map-caption { position: absolute; bottom: 28px; right: 4.8%; color: #10343c; background: #f1f6f8b0; font-size: 8px; letter-spacing: .1em; padding: 7px 9px; pointer-events: none; z-index: 3; }
 .landing-footer { padding: 24px 2% 22px; background: #0c2b33; color: #f1f6f8; }
-.footer-brand { display: block; width: 100%; line-height: 1; }
+.footer-brand { display: block; width: 85%; margin-inline: auto; line-height: 1; }
 .footer-brand svg { display: block; width: 100%; height: auto; overflow: visible; }
 .footer-brand text { fill: currentColor; font-family: var(--font-manrope), sans-serif; font-size: 220px; font-weight: 600; }
 .landing-footer > div { margin: 16px 2.8% 0; border-top: 1px solid #ffffff2b; padding-top: 18px; display: flex; align-items: center; justify-content: space-between; font-size: 9px; color: #b0c3c9; }
