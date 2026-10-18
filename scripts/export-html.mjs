@@ -197,6 +197,20 @@ const runtime = String.raw`
   addEventListener('scroll', () => { if (!scheduled) { scheduled = true; requestAnimationFrame(updateProgress); } }, { passive: true });
   addEventListener('resize', updateProgress); updateProgress();
 
+  const mapViews = [...document.querySelectorAll('[data-map-view]')];
+  const mapFrame = document.querySelector('.contact-map');
+  const routeView = document.querySelector('.map-route');
+  mapViews.forEach(button => button.addEventListener('click', () => {
+    const showMap = button.dataset.mapView === 'map';
+    if (showMap && mapFrame.dataset.mapSrc && !mapFrame.getAttribute('src')) mapFrame.src = mapFrame.dataset.mapSrc;
+    mapFrame.hidden = !showMap;
+    routeView.hidden = showMap;
+    mapViews.forEach(control => control.setAttribute('aria-pressed', String(control === button)));
+    if (routeView instanceof HTMLVideoElement) {
+      if (showMap || reduce.matches) routeView.pause();
+      else routeView.play().catch(() => {});
+    }
+  }));
   const video = document.querySelector('.map-section video');
   video.muted = true;
   let mapVisible = false;

@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
-import { ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronDown, Handshake, Menu, Snowflake, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, Handshake, Menu, Snowflake, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 
 const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
+const MAP_ADDRESS = 'Чеченская Республика, Гудермес, 5-й км трассы Ростов-Баку';
+const MAP_EMBED_URL = `https://yandex.ru/map-widget/v1/?mode=search&text=${encodeURIComponent(MAP_ADDRESS)}&z=13`;
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
 const CONES = [2, 4, 6, 7, 9, 18, 19, 20];
 const ICE = [3, 10, 13, 14, 28, 36];
@@ -35,6 +37,7 @@ export function Landing() {
   const [filter, setFilter] = useState('Все вкусы');
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
+  const [mapView, setMapView] = useState<'map' | 'route'>('map');
   const map = useRef<HTMLVideoElement>(null);
   const lastProduct = useRef<HTMLButtonElement | null>(null);
   const menuToggle = useRef<HTMLButtonElement>(null);
@@ -65,14 +68,14 @@ export function Landing() {
     if (!video) return;
     const seek = () => { if (reduce && Number.isFinite(video.duration)) video.currentTime = Math.max(0, video.duration - .1); };
     video.addEventListener('loadedmetadata', seek);
-    if (reduce) { video.pause(); seek(); }
+    if (reduce || mapView === 'map') { video.pause(); seek(); }
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !reduce) void video.play().catch(() => {});
+      if (entry.isIntersecting && !reduce && mapView === 'route') void video.play().catch(() => {});
       else video.pause();
     }, { threshold: .15 });
     observer.observe(video);
     return () => { observer.disconnect(); video.removeEventListener('loadedmetadata', seek); };
-  }, [reduce]);
+  }, [reduce, mapView]);
 
   const products = CATALOG.map((item, i) => ({ ...item, n: i + 1 })).filter(item => filter === 'Все вкусы' || category(item.n) === filter);
   const visible = expanded ? products : products.slice(0, 8);
@@ -93,7 +96,7 @@ export function Landing() {
       <main id='main'>
         <section id='hero' className='reference-hero'>
           <div className='reference-hero-photo' role='img' aria-label='Мороженое MARZO: солёная карамель, эскимо и шоколадный пломбир на ледяной поверхности'>
-            <Image src='/images/hero-reference.webp' alt='' width={1536} height={1024} unoptimized priority />
+            <Image src='/images/hero-reference.png' alt='' width={1536} height={1024} unoptimized priority />
           </div>
           <div className='reference-hero-copy'><h1>Создаём вкус.<br />Сохраняем свежесть.</h1><a className='pill pill-dark reference-hero-button' href='#catalog'>Смотреть каталог <ArrowRight size={27} /></a></div>
         </section>
@@ -107,7 +110,7 @@ export function Landing() {
             <Reveal>
               <a href='#catalog' className='direction-card'>
                 <div className='direction-photo direction-photo-ice' role='img' aria-label='Вафельный рожок с мороженым и эскимо в шоколадной глазури'>
-                  <Image src='/images/directions/reference.webp' alt='' width={1536} height={1024} unoptimized />
+                  <Image src='/images/directions/reference.png' alt='' width={1536} height={1024} unoptimized />
                 </div>
                 <div className='direction-card-copy'>
                   <h3>Мороженое</h3>
@@ -119,7 +122,7 @@ export function Landing() {
             <Reveal delay={.12}>
               <a href='#fish' className='direction-card'>
                 <div className='direction-photo direction-photo-fish' role='img' aria-label='Свежая рыба и филе лосося на льду'>
-                  <Image src='/images/directions/reference.webp' alt='' width={1536} height={1024} unoptimized />
+                  <Image src='/images/directions/reference.png' alt='' width={1536} height={1024} unoptimized />
                 </div>
                 <div className='direction-card-copy'>
                   <h3>Рыба и морепродукты</h3>
@@ -143,7 +146,7 @@ export function Landing() {
           <div className='section-heading'><Reveal><h2>Выберите своё<br /><em>маленькое счастье.</em></h2></Reveal><p>Знакомые вкусы и неожиданные сочетания.<br />Найдётся тот самый — ваш.</p></div>
           <div className='catalog-toolbar'><div className='filter-tabs' role='group' aria-label='Категории мороженого'>{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div><span aria-live='polite'>{flavorCount(products.length)}</span></div>
           <motion.div className='product-grid' layout={!reduce}>
-            {visible.map(item => <motion.button layout={!reduce} key={item.n} className='product-card' onClick={event => { lastProduct.current = event.currentTarget; setSelected(item.n); }} initial={false} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduce ? 0 : .35 }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} loading='lazy' /><span className='product-open'><ArrowUpRight size={20} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></motion.button>)}
+            {visible.map(item => <motion.button layout={!reduce} key={item.n} className='product-card' onClick={event => { lastProduct.current = event.currentTarget; setSelected(item.n); }} initial={false} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduce ? 0 : .35 }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={20} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></motion.button>)}
           </motion.div>
           {products.length > 8 && <button className='pill pill-outline show-more' onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть коллекцию' : `Все ${products.length} вкусов`}<ChevronDown size={18} style={{ transform: expanded ? 'rotate(180deg)' : undefined }} /></button>}
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>
@@ -151,25 +154,26 @@ export function Landing() {
 
         <section id='about' className='about-section section-pad'>
           <SectionTitle number='03' note='Гудермес, Чеченская Республика'>О компании</SectionTitle>
-          <div className='about-layout'><Reveal><h2>Большое дело.<br /><em>Простые ценности.</em></h2><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><a href='#quality' className='text-link'>Наш подход к качеству <ArrowDown size={17} /></a></div></Reveal></div>
+          <div className='about-layout'><Reveal><h2>Большое дело.<br /><em>Простые ценности.</em></h2><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><a href='#contacts' className='text-link'>Обсудить сотрудничество <ArrowUpRight size={17} /></a></div></Reveal></div>
           <div className='about-statistics'><Reveal><div><strong>2003</strong><span>год, когда началась наша история</span></div></Reveal><Reveal delay={.1}><div><strong>3<span> цеха</span></strong><span>независимых направления производства</span></div></Reveal><Reveal delay={.2}><div><strong>36<span> вкусов</span></strong><span>в коллекции мороженого</span></div></Reveal></div>
           <div className='brand-strip' aria-hidden><span>ЗАБОТА В ДЕТАЛЯХ</span><Snowflake /><span>КАЧЕСТВО В ГЛАВНОМ</span><Snowflake /><span>ВКУС В КАЖДОМ МОМЕНТЕ</span></div>
         </section>
 
-        <section id='quality' className='quality-section section-pad'>
-          <SectionTitle number='04' note='Сохраняем то, что имеет значение'>Философия качества</SectionTitle>
-          <div className='quality-layout'><div className='quality-sticky'><Reveal><h2>Свежесть —<br /><em>в деталях.</em></h2><p>За каждым продуктом — люди,<br />технологии и внимание к мелочам.</p></Reveal><div className='cold-mark'><Snowflake strokeWidth={.7} /><span>НЕПРЕРЫВНАЯ<br />ХОЛОДОВАЯ ЦЕПЬ</span></div></div><div className='quality-steps'>{[['01', 'Начинаем с хорошего сырья', 'Внимательно выбираем ингредиенты. Ведь настоящий вкус начинается задолго до производства.'], ['02', 'У каждого продукта — свой холод', 'Отдельные холодильные камеры для мороженого, рыбы и полуфабрикатов. Точные параметры температуры и влажности.'], ['03', 'Бережно сохраняем результат', 'Контролируем условия на этапах производства и хранения. Качество складывается из ежедневной работы.']].map(([n, title, text]) => <Reveal key={n}><article className='quality-step'><span>{n}</span><div><h3>{title}</h3><p>{text}</p></div><Check size={18} /></article></Reveal>)}</div></div>
-        </section>
+        <section className='other-section section-pad' id='fish'><SectionTitle number='04' note='Больше, чем мороженое'>Другие направления</SectionTitle><div className='other-grid'><Reveal><article><span className='line-illustration' aria-hidden>≈</span><p className='eyebrow'>Свежесть моря</p><h2>Рыба и<br /><em>морепродукты.</em></h2><p>Бережная переработка и хранение в отдельном цехе. Узнайте о доступной продукции и условиях поставки у нашей команды.</p><a className='pill pill-outline' href='#contacts'>Узнать ассортимент <ArrowUpRight size={18} /></a></article></Reveal><Reveal delay={.15}><article id='ready-to-eat'><span className='line-illustration' aria-hidden>⌁</span><p className='eyebrow'>Для вашего стола</p><h2>Время —<br /><em>для близких.</em></h2><p>Полуфабрикаты для простых домашних решений. Свяжитесь с нами, чтобы уточнить ассортимент и возможности сотрудничества.</p><a className='pill pill-outline' href='#contacts'>Обсудить поставку <ArrowUpRight size={18} /></a></article></Reveal></div></section>
 
-        <section className='other-section section-pad' id='fish'><SectionTitle number='05' note='Больше, чем мороженое'>Другие направления</SectionTitle><div className='other-grid'><Reveal><article><span className='line-illustration' aria-hidden>≈</span><p className='eyebrow'>Свежесть моря</p><h2>Рыба и<br /><em>морепродукты.</em></h2><p>Бережная переработка и хранение в отдельном цехе. Узнайте о доступной продукции и условиях поставки у нашей команды.</p><a className='pill pill-outline' href='#contacts'>Узнать ассортимент <ArrowUpRight size={18} /></a></article></Reveal><Reveal delay={.15}><article id='ready-to-eat'><span className='line-illustration' aria-hidden>⌁</span><p className='eyebrow'>Для вашего стола</p><h2>Время —<br /><em>для близких.</em></h2><p>Полуфабрикаты для простых домашних решений. Свяжитесь с нами, чтобы уточнить ассортимент и возможности сотрудничества.</p><a className='pill pill-outline' href='#contacts'>Обсудить поставку <ArrowUpRight size={18} /></a></article></Reveal></div></section>
+        <section id='news' className='news-section section-pad'><SectionTitle number='05' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
 
-        <section id='news' className='news-section section-pad'><SectionTitle number='06' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
-
-        <section id='contacts' className='contacts-section'><div className='contact-intro section-pad'><SectionTitle number='07' note='Открыты к сотрудничеству'>Всегда на связи</SectionTitle><Reveal><h2>Хорошее начинается<br /><em>со знакомства.</em></h2></Reveal><div className='contact-intro-bottom'><p>Розничные сети, магазины и партнёры —<br />давайте создавать хороший вкус вместе.</p><a className='pill pill-light' href='mailto:oooiceberg95@mail.ru?subject=Сотрудничество%20с%20RAMCAD'>Обсудить сотрудничество <ArrowUpRight size={20} /></a></div></div><div className='map-section'><video ref={map} src='/videos/karta_animation.mp4' muted playsInline loop preload='metadata' aria-label='Видео маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><p className='eyebrow'><span />Приезжайте в гости</p><h3>Здесь рождается<br />любимый вкус.</h3><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p><a className='text-link' href='https://yandex.ru/maps/?text=Гудермес%205-й%20км%20трассы%20Ростов-Баку' target='_blank' rel='noopener noreferrer'>Проложить маршрут <ArrowUpRight size={17} /></a></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>
+        <section id='contacts' className='contacts-section'><div className='contact-intro section-pad'><SectionTitle number='06' note='Открыты к сотрудничеству'>Всегда на связи</SectionTitle><Reveal><h2>Хорошее начинается<br /><em>со знакомства.</em></h2></Reveal><div className='contact-intro-bottom'><p>Розничные сети, магазины и партнёры —<br />давайте создавать хороший вкус вместе.</p><a className='pill pill-light' href='mailto:oooiceberg95@mail.ru?subject=Сотрудничество%20с%20RAMCAD'>Обсудить сотрудничество <ArrowUpRight size={20} /></a></div></div><div className='map-section'>
+            <iframe className='contact-map' title='Яндекс Карта — хладокомбинат RAMCAD, Гудермес' src={MAP_EMBED_URL} loading='lazy' referrerPolicy='no-referrer-when-downgrade' allowFullScreen hidden={mapView !== 'map'} />
+            <div className='map-view-controls' role='group' aria-label='Вид карты'>
+              <button type='button' data-map-view='map' aria-pressed={mapView === 'map'} onClick={() => setMapView('map')}>Яндекс Карта</button>
+              <button type='button' data-map-view='route' aria-pressed={mapView === 'route'} onClick={() => setMapView('route')}>Видео-маршрут</button>
+            </div>
+            <video className='map-route' hidden={mapView !== 'route'} ref={map} src='/videos/karta_animation.mp4' muted playsInline loop preload='metadata' aria-label='Видео маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><p className='eyebrow'><span />Приезжайте в гости</p><h3>Здесь рождается<br />любимый вкус.</h3><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p><a className='text-link' href='https://yandex.ru/maps/?text=Гудермес%205-й%20км%20трассы%20Ростов-Баку' target='_blank' rel='noopener noreferrer'>Проложить маршрут <ArrowUpRight size={17} /></a></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>
       </main>
       <footer className='landing-footer'><a href='#hero' className='footer-brand'>RAMCAD<span>СОХРАНЯЕМ ГЛАВНОЕ.</span></a><div><span>© {new Date().getFullYear()} RAMCAD</span><a href='#hero'>В начало <ArrowUpRight size={17} /></a></div></footer>
     </div>
 
-    <Dialog.Root open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}><Dialog.Portal><Dialog.Overlay className='product-overlay' /><Dialog.Content className='product-dialog' onCloseAutoFocus={event => { event.preventDefault(); lastProduct.current?.focus({ preventScroll: true }); }}><Dialog.Close className='dialog-close' aria-label='Закрыть товар'><X size={22} /></Dialog.Close>{product && <><div className='dialog-image'><Image src={product.src} width={600} height={800} alt={product.name} /></div><div className='dialog-copy'><p className='eyebrow'>Коллекция MARZO</p><Dialog.Title>{product.name}</Dialog.Title><Dialog.Description>Любимый вкус для маленьких радостей. Уточните состав, наличие и условия оптовой поставки у нашей команды.</Dialog.Description><a href='#contacts' className='pill pill-dark' onClick={() => setSelected(null)}>Узнать о поставке <ArrowRight size={18} /></a></div></>}</Dialog.Content></Dialog.Portal></Dialog.Root>
+    <Dialog.Root open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}><Dialog.Portal><Dialog.Overlay className='product-overlay' /><Dialog.Content className='product-dialog' onCloseAutoFocus={event => { event.preventDefault(); lastProduct.current?.focus({ preventScroll: true }); }}><Dialog.Close className='dialog-close' aria-label='Закрыть товар'><X size={22} /></Dialog.Close>{product && <><div className='dialog-image'><Image src={product.src} width={600} height={800} unoptimized alt={product.name} /></div><div className='dialog-copy'><p className='eyebrow'>Коллекция MARZO</p><Dialog.Title>{product.name}</Dialog.Title><Dialog.Description>Любимый вкус для маленьких радостей. Уточните состав, наличие и условия оптовой поставки у нашей команды.</Dialog.Description><a href='#contacts' className='pill pill-dark' onClick={() => setSelected(null)}>Узнать о поставке <ArrowRight size={18} /></a></div></>}</Dialog.Content></Dialog.Portal></Dialog.Root>
   </div>;
 }
