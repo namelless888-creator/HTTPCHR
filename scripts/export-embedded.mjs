@@ -9,13 +9,10 @@ let html = await readFile(path.join(root, 'index.html'), 'utf8');
 if (preview) {
   html = html.replace(/<video\b[^>]*>[\s\S]*?<\/video>/,
     '<img class="map-preview map-route" data-embedded-src="public/images/map-preview.webp" alt="Карта маршрута к хладокомбинату в Гудермесе" width="1920" height="1080">');
-  html = html.replace(/(<button\b[^>]*data-map-view="route"[^>]*>)Видео-маршрут(<\/button>)/, '$1Маршрут$2');
-  html = html.replace(/<iframe\b[^>]*class="contact-map"[^>]*>/, tag => tag.replace(/\bsrc=/, 'data-map-src=').replace(/>$/, ' hidden>'));
   const videoInit = "const video = document.querySelector('.map-section video');";
   if (!html.includes(videoInit)) throw new Error('Video runtime changed; review preview export.');
   html = html.replace(videoInit, `${videoInit}\n  if (!video) return;`);
   html = html.replace('</head>', '<style>.map-section>.map-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}@media(max-width:600px){.map-section>.map-preview{object-position:62% 50%}}</style></head>');
-  html = html.replace('</body>', '<script>document.querySelector(\'[data-map-view="route"]\').click();</script></body>');
 }
 
 html = html.replace(/\ssrc="(public\/[^"<>]+)"/g, ' data-embedded-src="$1"');

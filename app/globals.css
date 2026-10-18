@@ -278,11 +278,7 @@ button { cursor: pointer; }
 .contact-intro-bottom p { font-size: 11px; line-height: 1.9; color: #b0c3c9; }
 .map-section { position: relative; height: 690px; background: #d8e3e6; overflow: hidden; }
 .map-section video { position: absolute; width: 100%; height: 100%; object-fit: cover; }
-.contact-map { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1; }
 .map-shade { position: absolute; inset: 0; background: linear-gradient(90deg,#0c2b3320,transparent 60%); pointer-events: none; z-index: 2; }
-.map-view-controls { position: absolute; top: 22px; left: 4.8%; display: flex; padding: 4px; gap: 3px; border: 1px solid #10343c26; border-radius: 30px; background: #f1f6f8f2; box-shadow: 0 5px 20px #10343c16; z-index: 4; }
-.map-view-controls button { border: 0; background: transparent; color: #10343c; padding: 9px 16px; border-radius: 24px; font-size: 11px; font-weight: 600; }
-.map-view-controls button[aria-pressed='true'] { background: #10343c; color: #f1f6f8; }
 .map-section [hidden] { display: none!important; }
 .contact-card { position: absolute; left: 4.8%; bottom: 45px; background: #f1f6f8ee; color: #10343c; backdrop-filter: blur(14px); padding: 30px; width: 335px; border: 1px solid #ffffff75; z-index: 3; }
 .contact-card .eyebrow { font-size: 8px; }
@@ -478,13 +474,11 @@ button { cursor: pointer; }
   .contact-intro h2 { font-size: 38px; }
   .contact-intro-bottom { display: block; margin-top: 22px; }
   .contact-intro-bottom .pill { margin-top: 24px; }
-  .map-section { height: auto; padding-top: 352px; padding-bottom: 22px; }
-  .map-section video, .contact-map { height: 330px; object-position: 62% 50%; }
-  .map-section>.map-shade { bottom: auto; height: 330px; }
-  .map-section>.map-preview { height: 330px!important; }
-  .map-view-controls { top: 16px; left: 22px; }
-  .map-view-controls button { font-size: 10px; padding: 8px 13px; }
-  .contact-card { position: relative; left: auto; right: auto; bottom: auto; padding: 25px; width: auto; max-width: none; margin: 0 22px; }
+  .map-section { height: 620px; }
+  .map-section video { height: 100%; object-position: 62% 50%; }
+  .map-section>.map-shade { height: 100%; }
+  .map-section>.map-preview { height: 100%!important; }
+  .contact-card { position: absolute; left: 22px; right: 22px; bottom: 30px; padding: 25px; width: auto; max-width: 360px; }
   .contact-card h3 { font-size: 31px; }
   .contact-card address { font-size: 10px; }
   .map-caption { display: none; }

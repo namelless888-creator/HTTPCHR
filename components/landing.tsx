@@ -8,8 +8,6 @@ import { ArrowRight, ArrowUpRight, ChevronDown, Handshake, Menu, Snowflake, X } 
 import { CATALOG } from '@/lib/catalog';
 
 const NAV = [['hero', 'Главная'], ['catalog', 'Каталог'], ['about', 'О компании'], ['contacts', 'Контакты']];
-const MAP_ADDRESS = 'Чеченская Республика, Гудермес, 5-й км трассы Ростов-Баку';
-const MAP_EMBED_URL = `https://yandex.ru/map-widget/v1/?mode=search&text=${encodeURIComponent(MAP_ADDRESS)}&z=13`;
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
 const CONES = [2, 4, 6, 7, 9, 18, 19, 20];
 const ICE = [3, 10, 13, 14, 28, 36];
@@ -37,7 +35,6 @@ export function Landing() {
   const [filter, setFilter] = useState('Все вкусы');
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
-  const [mapView, setMapView] = useState<'map' | 'route'>('map');
   const map = useRef<HTMLVideoElement>(null);
   const lastProduct = useRef<HTMLButtonElement | null>(null);
   const menuToggle = useRef<HTMLButtonElement>(null);
@@ -68,14 +65,14 @@ export function Landing() {
     if (!video) return;
     const seek = () => { if (reduce && Number.isFinite(video.duration)) video.currentTime = Math.max(0, video.duration - .1); };
     video.addEventListener('loadedmetadata', seek);
-    if (reduce || mapView === 'map') { video.pause(); seek(); }
+    if (reduce) { video.pause(); seek(); }
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !reduce && mapView === 'route') void video.play().catch(() => {});
+      if (entry.isIntersecting && !reduce) void video.play().catch(() => {});
       else video.pause();
     }, { threshold: .15 });
     observer.observe(video);
     return () => { observer.disconnect(); video.removeEventListener('loadedmetadata', seek); };
-  }, [reduce, mapView]);
+  }, [reduce]);
 
   const products = CATALOG.map((item, i) => ({ ...item, n: i + 1 })).filter(item => filter === 'Все вкусы' || category(item.n) === filter);
   const visible = expanded ? products : products.slice(0, 8);
@@ -164,12 +161,7 @@ export function Landing() {
         <section id='news' className='news-section section-pad'><SectionTitle number='05' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>
 
         <section id='contacts' className='contacts-section'><div className='contact-intro section-pad'><SectionTitle number='06' note='Открыты к сотрудничеству'>Всегда на связи</SectionTitle><Reveal><h2>Хорошее начинается<br /><em>со знакомства.</em></h2></Reveal><div className='contact-intro-bottom'><p>Розничные сети, магазины и партнёры —<br />давайте создавать хороший вкус вместе.</p><a className='pill pill-light' href='mailto:oooiceberg95@mail.ru?subject=Сотрудничество%20с%20RAMCAD'>Обсудить сотрудничество <ArrowUpRight size={20} /></a></div></div><div className='map-section'>
-            <iframe className='contact-map' title='Яндекс Карта — хладокомбинат RAMCAD, Гудермес' src={MAP_EMBED_URL} loading='lazy' referrerPolicy='no-referrer-when-downgrade' allowFullScreen hidden={mapView !== 'map'} />
-            <div className='map-view-controls' role='group' aria-label='Вид карты'>
-              <button type='button' data-map-view='map' aria-pressed={mapView === 'map'} onClick={() => setMapView('map')}>Яндекс Карта</button>
-              <button type='button' data-map-view='route' aria-pressed={mapView === 'route'} onClick={() => setMapView('route')}>Видео-маршрут</button>
-            </div>
-            <video className='map-route' hidden={mapView !== 'route'} ref={map} src='/videos/karta_animation.mp4' muted playsInline loop preload='metadata' aria-label='Видео маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><p className='eyebrow'><span />Приезжайте в гости</p><h3>Здесь рождается<br />любимый вкус.</h3><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p><a className='text-link' href='https://yandex.ru/maps/?text=Гудермес%205-й%20км%20трассы%20Ростов-Баку' target='_blank' rel='noopener noreferrer'>Проложить маршрут <ArrowUpRight size={17} /></a></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>
+            <video className='map-route' ref={map} src='/videos/karta_animation.mp4' muted playsInline loop preload='metadata' aria-label='Видео маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><p className='eyebrow'><span />Приезжайте в гости</p><h3>Здесь рождается<br />любимый вкус.</h3><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>
       </main>
       <footer className='landing-footer'><a href='#hero' className='footer-brand'>RAMCAD<span>СОХРАНЯЕМ ГЛАВНОЕ.</span></a><div><span>© {new Date().getFullYear()} RAMCAD</span><a href='#hero'>В начало <ArrowUpRight size={17} /></a></div></footer>
     </div>
