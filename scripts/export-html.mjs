@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mountHeroParallax } from '../lib/hero-parallax.mjs';
 import { mountMapIntro } from '../lib/map-intro.mjs';
+import { mountCatalogIntro } from '../lib/catalog-intro.mjs';
 
 // Run after `npm run build`. Each route becomes an independent HTML page
 // with embedded styles and fonts; local images and videos stay in public/.
@@ -50,10 +51,12 @@ const cards = entries.map(item => {
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
 const introRuntime = `(${mountMapIntro.toString()})(video);`;
+const catalogIntroRuntime = `(${mountCatalogIntro.toString()})(document.querySelector('.catalog-intro video'));`;
 const runtime = String.raw`
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   ${heroRuntime}
+  ${catalogIntroRuntime}
   const grid = document.querySelector('.product-grid');
   const source = document.getElementById('static-products');
   if (grid && source) {

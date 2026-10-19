@@ -8,6 +8,7 @@ import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, M
 import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
 import { SceneBackdrop } from '@/components/scene-backdrop';
+import { CatalogIntro } from '@/components/catalog-intro';
 import { getProduct, PRODUCTS, productCategory as category, productHref } from '@/lib/products';
 import { mountMapIntro } from '@/lib/map-intro.mjs';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
@@ -179,11 +180,14 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         </section>
         </>}
 
+        {page === 'catalog' && <CatalogIntro />}
         {(page === 'home' || page === 'catalog') && <section id='catalog' className='catalog-section section-pad scene-section'>
           <SceneBackdrop />
+          {page === 'home' ? <>
           <SectionTitle number='02'>Коллекция MARZO</SectionTitle>
           <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} unoptimized loading='lazy' /></div>)}</div></Reveal></div>
-          <div className='catalog-toolbar'><div className='filter-tabs' role='group' aria-label='Категории мороженого'>{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div><span aria-live='polite'>{flavorCount(products.length)}</span></div>
+          </> : <h2 className='sr-only'>Каталог мороженого MARZO</h2>}
+          <div id='catalog-products' className='catalog-toolbar'><div className='filter-tabs' role='group' aria-label='Категории мороженого'>{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div><span aria-live='polite'>{flavorCount(products.length)}</span></div>
           <motion.div className='product-grid' layout={!reduce}>
             {visible.map(item => <MotionLink layout={!reduce} key={item.n} className='product-card' href={productHref(item)} initial={false} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduce ? 0 : .35 }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={20} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></MotionLink>)}
           </motion.div>

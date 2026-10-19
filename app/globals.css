@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "./product-details.css";
 @import "./scene-backdrop.css";
+@import "./catalog-intro.css";
 
 @theme inline {
   --color-background: var(--background);
