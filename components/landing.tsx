@@ -9,6 +9,7 @@ import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
 import { SceneBackdrop } from '@/components/scene-backdrop';
 import { CatalogIntro } from '@/components/catalog-intro';
+import { HomeHeroFilm } from '@/components/home-hero-film';
 import { getProduct, PRODUCTS, productCategory as category, productHref } from '@/lib/products';
 import { mountMapIntro } from '@/lib/map-intro.mjs';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
@@ -134,9 +135,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         {page === 'home' && <>
           <section id='hero' className='reference-hero scene-section'>
           <SceneBackdrop priority />
-          <div className='reference-hero-photo' role='img' aria-label='Мороженое MARZO: солёная карамель, эскимо и шоколадный пломбир на ледяной поверхности'>
-            <Image src='/images/hero-reference.png' alt='' width={1536} height={1024} unoptimized priority />
-          </div>
+          <HomeHeroFilm />
           <div className='reference-hero-copy'><h1>Создаём вкус.<br />Сохраняем свежесть.</h1><Link className='pill pill-dark reference-hero-button' href='/catalog'>Смотреть каталог <ArrowRight size={27} /></Link></div>
         </section>
 

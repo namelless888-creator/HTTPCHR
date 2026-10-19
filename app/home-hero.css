@@ -1,0 +1,78 @@
+.reference-hero .hero-film {
+  left: 44%;
+  width: 56%;
+  background: #0b2936;
+  mask-image: linear-gradient(90deg,transparent,#000 24%);
+}
+.reference-hero .hero-film > :is(img,video) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  transform: none;
+  will-change: auto;
+}
+.hero-film-control {
+  position: absolute;
+  z-index: 2;
+  right: 25px;
+  bottom: 23px;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #f1f6f840;
+  border-radius: 40px;
+  background: #082a38b8;
+  backdrop-filter: blur(12px);
+  color: #f1f6f8;
+  font-size: 11px!important;
+  transition: background .25s,border-color .25s;
+}
+.hero-film-control:hover { background: #10343c; border-color: #f1f6f8a0; }
+.hero-film-control[hidden],.hero-film-control > svg { display: none; }
+.hero-film-control[data-state='playing'] .film-icon-pause,
+.hero-film-control[data-state='paused'] .film-icon-play,
+.hero-film-control[data-state='ended'] .film-icon-repeat { display: block; }
+.film-unavailable .hero-film-video { display: none; }
+@media (min-width: 1001px) {
+  .reference-hero .scene-backdrop::after {
+    background: linear-gradient(90deg,#f1f6f860 0%,#f1f6f870 38%,#f1f6f8b8 50%,transparent 68%);
+  }
+}
+@media (max-width: 1000px) {
+  .reference-hero .scene-backdrop::after {
+    background: linear-gradient(180deg,#f1f6f8c7 0%,#f1f6f8c7 330px,transparent 460px);
+  }
+}
+@media (max-width: 1000px) and (min-width: 701px) {
+  .site-page-home .reference-hero { height: calc(330px + 57.5vw); }
+  .reference-hero .reference-hero-copy { height: 330px; padding: 100px 5% 0; }
+  .reference-hero .reference-hero-copy h1 { max-width: 100%; line-height: 1.02; }
+  .reference-hero .reference-hero-copy .reference-hero-button { margin-top: 24px; }
+  .reference-hero .hero-film {
+    inset: 330px 0 auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1280/736;
+    mask-image: linear-gradient(180deg,transparent,#000 9%);
+  }
+}
+@media (max-width: 700px) {
+  .reference-hero .hero-film {
+    inset: 372px 0 auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 768/542;
+    mask-image: linear-gradient(180deg,transparent,#000 9%);
+  }
+  .hero-film-control { right: 16px; bottom: 16px; width: 44px; height: 44px; padding: 0; justify-content: center; }
+  .hero-film-control > span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-film-video,.hero-film-control { display: none!important; }
+}

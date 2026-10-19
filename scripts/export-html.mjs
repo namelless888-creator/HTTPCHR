@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mountHeroParallax } from '../lib/hero-parallax.mjs';
+import { mountHomeHero } from '../lib/home-hero.mjs';
 import { mountMapIntro } from '../lib/map-intro.mjs';
 import { mountCatalogIntro } from '../lib/catalog-intro.mjs';
 
@@ -50,12 +51,14 @@ const cards = entries.map(item => {
 }).join('');
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
+const homeFilmRuntime = `(${mountHomeHero.toString()})(document.querySelector('.hero-film-video'));`;
 const introRuntime = `(${mountMapIntro.toString()})(video);`;
 const catalogIntroRuntime = `(${mountCatalogIntro.toString()})(document.querySelector('.catalog-intro video'));`;
 const runtime = String.raw`
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   ${heroRuntime}
+  ${homeFilmRuntime}
   ${catalogIntroRuntime}
   const grid = document.querySelector('.product-grid');
   const source = document.getElementById('static-products');
