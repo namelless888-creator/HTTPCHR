@@ -7,6 +7,7 @@ import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, Menu, PackageCheck, Snowflake, UtensilsCrossed, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
+import { SceneBackdrop } from '@/components/scene-backdrop';
 import { getProduct, PRODUCTS, productCategory as category, productHref } from '@/lib/products';
 import { mountMapIntro } from '@/lib/map-intro.mjs';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
@@ -129,7 +130,8 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
     <div className='page-content'>
       <main id='main'>
         {page === 'home' && <>
-          <section id='hero' className='reference-hero'>
+          <section id='hero' className='reference-hero scene-section'>
+          <SceneBackdrop priority />
           <div className='reference-hero-photo' role='img' aria-label='Мороженое MARZO: солёная карамель, эскимо и шоколадный пломбир на ледяной поверхности'>
             <Image src='/images/hero-reference.png' alt='' width={1536} height={1024} unoptimized priority />
           </div>
@@ -177,7 +179,8 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         </section>
         </>}
 
-        {(page === 'home' || page === 'catalog') && <section id='catalog' className='catalog-section section-pad'>
+        {(page === 'home' || page === 'catalog') && <section id='catalog' className='catalog-section section-pad scene-section'>
+          <SceneBackdrop />
           <SectionTitle number='02'>Коллекция MARZO</SectionTitle>
           <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} unoptimized loading='lazy' /></div>)}</div></Reveal></div>
           <div className='catalog-toolbar'><div className='filter-tabs' role='group' aria-label='Категории мороженого'>{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div><span aria-live='polite'>{flavorCount(products.length)}</span></div>
@@ -188,7 +191,8 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>
         </section>}
 
-        {(page === 'home' || page === 'about') && <section id='about' className='about-section section-pad'>
+        {(page === 'home' || page === 'about') && <section id='about' className='about-section section-pad scene-section'>
+          <SceneBackdrop />
           <SectionTitle number='03' note='Гудермес, Чеченская Республика'>О компании</SectionTitle>
           <div className='about-layout'><Reveal><ContentHeading className='page-title'>Большое дело.<br /><em>Простые ценности.</em></ContentHeading><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><Link href='/contacts' className='text-link'>Обсудить сотрудничество <ArrowUpRight size={17} /></Link></div></Reveal></div>
           <div className='about-advantages' aria-label='Преимущества хладокомбината'>
@@ -202,7 +206,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             <video className='map-route' ref={map} data-map-mode={page === 'contacts' ? 'intro' : 'scroll'} src={page === 'contacts' ? '/videos/karta-intro.mp4' : '/videos/karta-scroll.mp4'} poster={page === 'contacts' ? '/images/map-start.webp' : undefined} muted playsInline preload='auto' aria-label='Анимация маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><header className='contact-card-heading'><p className='eyebrow'><span />Приезжайте в гости</p><ContentHeading id='contacts-heading'>Контакты</ContentHeading></header><div className='contact-card-body'><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><div className='contact-card-links'><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div></div><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>}
         {page === 'product' && product && <ProductDetails product={product} />}
       </main>
-      <footer className='landing-footer'><Link href='/' className='footer-brand' aria-label='RAMCAD — на главную'><svg viewBox='0 0 1000 180' role='img' aria-label='RAMCAD'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg></Link><div><span>© {new Date().getFullYear()} RAMCAD</span><nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}</nav><a href='#main'>В начало <ArrowUpRight size={17} /></a></div></footer>
+      <footer className='landing-footer scene-section'><SceneBackdrop /><Link href='/' className='footer-brand' aria-label='RAMCAD — на главную'><svg viewBox='0 0 1000 180' role='img' aria-label='RAMCAD'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg></Link><div><span>© {new Date().getFullYear()} RAMCAD</span><nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}</nav><a href='#main'>В начало <ArrowUpRight size={17} /></a></div></footer>
     </div>
 
 

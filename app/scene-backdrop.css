@@ -1,0 +1,32 @@
+.scene-section { position: relative; isolation: isolate; }
+.scene-backdrop { position: absolute; inset: 0; z-index: -1; display: block; overflow: hidden; pointer-events: none; }
+.scene-backdrop > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.scene-backdrop::after { content: ''; position: absolute; inset: 0; }
+
+.reference-hero .scene-backdrop > img { object-position: center 55%; }
+.reference-hero .scene-backdrop::after { background: linear-gradient(90deg,#f1f6f88c 0%,#f1f6f870 40%,transparent 64%); }
+
+.catalog-section .scene-backdrop { bottom: auto; height: 460px; mask-image: linear-gradient(#000 0%,#000 50%,transparent 100%); }
+.catalog-section .scene-backdrop > img { object-position: center 32%; }
+.catalog-section .scene-backdrop::after { background: linear-gradient(90deg,#f5f3eddb 0%,#f5f3ede6 58%,#f5f3edf0 100%); }
+
+.about-section .scene-backdrop { bottom: auto; height: min(100%,850px); mask-image: linear-gradient(#000 0%,#000 64%,transparent 100%); }
+.about-section .scene-backdrop > img { object-position: 35% 25%; }
+.about-section .scene-backdrop::after { background: linear-gradient(90deg,#e8eff0d6 0%,#e8eff0e6 60%,#e8eff0db 100%); }
+
+.product-sales-note .scene-backdrop > img { object-position: center 45%; }
+.product-sales-note .scene-backdrop::after { background: linear-gradient(90deg,#f1f6f8f0 0%,#f1f6f8e6 42%,#f1f6f8b8 100%); }
+
+.landing-footer .scene-backdrop > img { object-position: 80% 62%; }
+.landing-footer .scene-backdrop::after { background: linear-gradient(90deg,#0c2b33e6 0%,#0c2b33bd 100%); }
+
+@media (max-width: 600px) {
+  .reference-hero .scene-backdrop > img { object-position: 26% top; }
+  .reference-hero .scene-backdrop::after { background: linear-gradient(180deg,#f1f6f8b8 0%,#f1f6f88c 40%,transparent 70%); }
+  .catalog-section .scene-backdrop { height: 340px; }
+  .catalog-section .scene-backdrop > img { object-position: 28% top; }
+  .about-section .scene-backdrop { height: 580px; }
+  .about-section .scene-backdrop > img { object-position: 25% top; }
+  .product-sales-note .scene-backdrop > img { object-position: 25% center; }
+  .product-sales-note .scene-backdrop::after { background: #f1f6f8eb; }
+}

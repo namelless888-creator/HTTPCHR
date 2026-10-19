@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./product-details.css";
+@import "./scene-backdrop.css";
 
 @theme inline {
   --color-background: var(--background);
@@ -521,7 +522,6 @@ html { scroll-padding-top: 88px; }
 .header-phone:active { transform: translateY(0); }
 .header-menu-toggle { display: none; }
 .reference-hero { position: relative; height: clamp(420px,35.2865vw,650px); overflow: hidden; background: linear-gradient(114deg,#edf1ef 0%,#f3f5f1 43%,#b3c1c5 57%,#143643 74%,#092b37 100%); }
-.reference-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 2% 20%,#ffffffa0,transparent 55%),linear-gradient(0deg,#c8d9df80,transparent 18%); }
 .reference-hero-photo { position: absolute; inset: 0 0 0 50%; overflow: hidden; mask-image: linear-gradient(90deg,transparent,#000 7%); }
 .reference-hero-photo img { position: absolute; max-width: none; width: 200%; height: auto; left: -100%; top: -11.99262%; }
 .reference-hero-copy { position: relative; z-index: 2; height: 100%; padding: 8.1% 5% 4.3%; display: flex; flex-direction: column; align-items: start; pointer-events: none; }
