@@ -1,44 +1,53 @@
-.catalog-intro { height: clamp(480px,34vw,560px); overflow: hidden; background: #dce7e8; }
-.catalog-intro .scene-backdrop > img { object-position: center 58%; }
-.catalog-intro .scene-backdrop::after { background: linear-gradient(90deg,#f1f6f8cc 0%,#f1f6f8b8 31%,transparent 65%); }
-.catalog-intro::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg,#f1f6f850 0%,#f1f6f880 32%,#f1f6f8bf 42%,transparent 54%); pointer-events: none; }
-.catalog-intro::after { content: ''; position: absolute; inset: auto 0 0; height: 100px; z-index: 1; background: linear-gradient(transparent,#f5f3ed); pointer-events: none; }
-.catalog-intro-media { position: absolute; inset: 0 0 0 auto; width: 68%; mask-image: linear-gradient(90deg,transparent,#000 14%); }
-.catalog-intro-media video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 55% center; }
-.catalog-intro-copy { position: relative; z-index: 2; width: 53%; height: 100%; padding: 60px 20px 80px 4.8%; display: flex; flex-direction: column; align-items: start; justify-content: center; }
-.catalog-intro-eyebrow { display: flex; align-items: center; gap: 13px; color: #45636c; font-size: 9px; text-transform: uppercase; letter-spacing: .12em; }
-.catalog-intro-eyebrow > span { width: 3px; height: 3px; background: currentColor; border-radius: 50%; }
-.ramcad .catalog-intro h1 { margin: 25px 0 30px; font-size: clamp(42px,4.15vw,68px); line-height: 1.13; letter-spacing: -.045em; }
-.catalog-intro-link { min-width: 205px; min-height: 52px; font-size: 12px; }
-.catalog-intro-link:hover svg { transform: translateY(3px); }
-.catalog-intro-controls { position: absolute; right: 4.8%; bottom: 45px; z-index: 3; }
-.catalog-intro-replay { display: inline-flex; align-items: center; gap: 9px; padding: 10px 14px; border: 1px solid #ffffff85; border-radius: 30px; background: #f1f6f8e6; color: #10343c; font-size: 10px; cursor: pointer; transition: background .2s; }
-.catalog-intro-replay:hover { background: #fff; }
-.catalog-intro-replay[hidden] { display: none; }
-.catalog-intro :is(a,button):focus-visible { outline: 2px solid #8976af; outline-offset: 5px; }
-.site-page-catalog .catalog-section { padding-top: 18px; }
+.catalog-intro { --catalog-header-height: 66px; --catalog-progress: 0; position: relative; height: 300svh; background: #143847; }
+.catalog-intro-stage { position: sticky; top: var(--catalog-header-height); height: calc(100svh - var(--catalog-header-height)); width: 100%; overflow: hidden; isolation: isolate; }
+.catalog-intro-video, .catalog-intro-still { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+.catalog-intro-still { display: none; }
+.catalog-callout { --callout-progress: 0; position: absolute; inset: 0; z-index: 2; opacity: var(--callout-progress); pointer-events: none; }
+.catalog-callout-label { position: absolute; left: 6%; display: flex; align-items: start; gap: 13px; padding: 16px 20px; border: 1px solid #ffffffa6; border-radius: 12px; background: #f1f6f8e8; color: #10343c; box-shadow: 0 8px 32px #06263316; backdrop-filter: blur(14px); }
+.catalog-callout-label > span { padding-top: 5px; color: #69858d; font-size: 9px; letter-spacing: .1em; }
+.ramcad .catalog-callout-label h3 { font-family: var(--font-playfair),Georgia,serif; font-size: clamp(21px,1.8vw,29px); font-weight: 500; line-height: 1.2; letter-spacing: -.025em; }
+.ramcad .catalog-callout-label p { margin-top: 5px; font-size: 10px; line-height: 1.6; color: #587078; }
+.catalog-callout-cream .catalog-callout-label { top: 23%; }
+.catalog-callout-caramel .catalog-callout-label { top: 43%; }
+.catalog-callout-waffle .catalog-callout-label { top: 69%; }
+.catalog-callout-arrow { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; }
+.catalog-callout-shadow, .catalog-callout-line { stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--callout-progress)); }
+.catalog-callout-shadow { stroke: #06263370; stroke-width: 4; }
+.catalog-callout-line { stroke: #f1f6f8; stroke-width: 1.6; }
+.catalog-callout-head { stroke: #f1f6f8; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 1px #062633); }
+.catalog-callout-target { fill: #f1f6f8; stroke: #10343c; stroke-width: 1.2; }
+.catalog-intro-hint { position: absolute; left: 4.8%; bottom: 30px; z-index: 3; display: flex; align-items: center; gap: 15px; padding: 12px 16px; background: #f1f6f8df; color: #10343c; border-radius: 30px; font-size: 11px; pointer-events: none; }
+.catalog-intro-skip { position: absolute; right: 4.8%; bottom: 30px; z-index: 3; display: flex; align-items: center; gap: 24px; padding: 13px 19px; background: #f1f6f8ed; border: 1px solid #ffffffa6; color: #10343c; border-radius: 30px; font-size: 11px; transition: background .2s; }
+.catalog-intro-skip:hover { background: #fff; }
+.catalog-intro-progress { position: absolute; inset: auto 0 0; height: 3px; z-index: 3; background: #ffffff20; }
+.catalog-intro-progress > span { display: block; height: 100%; background: #c4b7df; transform: scaleX(var(--catalog-progress)); transform-origin: left; }
+.site-page-catalog .catalog-section { padding-top: 38px; }
 .site-page-catalog .catalog-section > .scene-backdrop { display: none; }
 .site-page-catalog .catalog-toolbar { margin-top: 0; }
 #catalog-products { scroll-margin-top: 95px; }
 
 @media (max-width: 1000px) {
-  .catalog-intro { height: auto; display: flex; flex-direction: column; }
-  .catalog-intro::before { display: none; }
-  .catalog-intro .scene-backdrop > img { object-position: 25% top; }
-  .catalog-intro .scene-backdrop::after { background: linear-gradient(180deg,#f1f6f8d9 0%,#f1f6f8cc 45%,transparent 75%); }
-  .catalog-intro-copy { order: 0; width: 100%; height: auto; padding: 40px 22px 15px; }
-  .catalog-intro-eyebrow { font-size: 8px; gap: 10px; }
-  .ramcad .catalog-intro h1 { font-size: clamp(36px,9vw,53px); margin: 20px 0 24px; }
-  .catalog-intro-link { min-height: 46px; min-width: 180px; padding: 12px 20px; font-size: 11px; }
-  .catalog-intro-media { order: 1; position: relative; inset: auto; width: 100%; aspect-ratio: 1280/736; mask-image: linear-gradient(180deg,transparent,#000 12%); }
-  .catalog-intro-media::after { content: ''; position: absolute; inset: auto 0 0; height: 40px; background: linear-gradient(transparent,#f5f3ed); pointer-events: none; }
-  .catalog-intro-media video { object-fit: contain; }
-  .catalog-intro::after { display: none; }
-  .catalog-intro-controls { order: 2; position: relative; inset: auto; display: flex; justify-content: flex-end; align-items: center; height: 56px; padding: 8px 22px 14px; background: #f5f3ed; }
-  .catalog-intro-replay { padding: 8px 11px; font-size: 9px; }
-  .site-page-catalog .catalog-section { padding-top: 24px; }
+  .catalog-callout-label { left: 4%; padding: 13px 15px; gap: 9px; }
+  .ramcad .catalog-callout-label h3 { font-size: 21px; }
 }
-@media (max-width: 360px) {
-  .catalog-intro-copy { padding-inline: 18px; }
-  .ramcad .catalog-intro h1 { font-size: 34px; }
+@media (max-width: 600px) {
+  .catalog-intro-video, .catalog-intro-still { object-position: 38% 50%; }
+  .catalog-callout-label { left: 16px; max-width: 174px; padding: 10px 12px; gap: 8px; border-radius: 10px; }
+  .catalog-callout-label > span { font-size: 7px; padding-top: 4px; }
+  .ramcad .catalog-callout-label h3 { font-size: 19px; }
+  .ramcad .catalog-callout-label p { font-size: 8px; margin-top: 4px; }
+  .catalog-callout-cream .catalog-callout-label { top: 13%; }
+  .catalog-callout-caramel .catalog-callout-label { top: 46%; left: auto; right: 16px; max-width: 169px; }
+  .catalog-callout-waffle .catalog-callout-label { top: 77%; }
+  .catalog-intro-hint { left: 50%; bottom: 85px; transform: translateX(-50%); padding: 10px 14px; white-space: nowrap; font-size: 10px; }
+  .catalog-intro-skip { right: 16px; bottom: 20px; gap: 20px; padding: 11px 16px; font-size: 10px; }
+  .site-page-catalog .catalog-section { padding-top: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-intro { height: calc(100svh - var(--catalog-header-height)); }
+  .catalog-intro-stage { position: relative; top: auto; }
+  .catalog-intro-video { visibility: hidden; }
+  .catalog-intro-still { display: block; }
+  .catalog-callout { --callout-progress: 1; }
+  .catalog-intro-hint { display: none; }
 }
