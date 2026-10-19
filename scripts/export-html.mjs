@@ -12,14 +12,6 @@ const pages = [
   { route: '/about', build: 'about.html', output: 'about.html' },
   { route: '/contacts', build: 'contacts.html', output: 'contacts.html' },
 ];
-const routeFiles = new Map(pages.map(page => [page.route, page.output]));
-const staticHref = value => {
-  if (!value.startsWith('/') || value.startsWith('//')) return value;
-  const url = new URL(value, 'https://local.invalid');
-  const file = routeFiles.get(url.pathname.replace(/\/+$/, '') || '/');
-  return file ? file + url.search + url.hash : value;
-};
-
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const decodeEntities = value => value.replaceAll('&amp;', '&').replaceAll('&#x27;', "'").replaceAll('&quot;', '"');
 const catalogSource = await readFile(path.join(root, 'lib/catalog.ts'), 'utf8');
@@ -32,6 +24,18 @@ if (entries.length !== 36 || entries.some((entry, index) => entry.n !== index + 
   throw new Error('Expected 36 consecutively numbered catalog entries; review the catalog parser.');
 }
 
+pages.push(...entries.map(item => {
+  const id = String(item.n).padStart(2, '0');
+  return { route: `/product/${id}`, build: `product/${id}.html`, output: `product-${id}.html` };
+}));
+const routeFiles = new Map(pages.map(page => [page.route, page.output]));
+const staticHref = value => {
+  if (!value.startsWith('/') || value.startsWith('//')) return value;
+  const url = new URL(value, 'https://local.invalid');
+  const file = routeFiles.get(url.pathname.replace(/\/+$/, '') || '/');
+  return file ? file + url.search + url.hash : value;
+};
+
 const category = n => [2, 4, 6, 7, 9, 18, 19, 20].includes(n) ? 'Рожки'
   : [3, 10, 13, 14, 28, 36].includes(n) ? 'Фруктовый лёд'
   : [16, 17, 32, 33, 34, 35].includes(n) ? 'Для семьи'
@@ -40,10 +44,8 @@ const arrow = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" vi
 const cards = entries.map(item => {
   const number = String(item.n).padStart(2, '0');
   const name = escapeHtml(item.name);
-  return `<button type="button" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span>${item.hot ? '<span class="product-label">Любимый вкус</span>' : ''}<img src="public/images/products/${number}.png" alt="${name}" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>MARZO / ${number}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3></div></button>`;
+  return `<a href="product-${number}.html" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span>${item.hot ? '<span class="product-label">Любимый вкус</span>' : ''}<img src="public/images/products/${number}.png" alt="${name}" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>MARZO / ${number}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3></div></a>`;
 }).join('');
-
-const dialog = `<dialog id="product-detail" class="product-dialog" aria-labelledby="product-title" aria-describedby="product-description"><button type="button" class="dialog-close" aria-label="Закрыть товар"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg></button><div class="dialog-image"><img width="600" height="800" alt=""></div><div class="dialog-copy"><p class="eyebrow">Коллекция MARZO</p><h2 id="product-title"></h2><p id="product-description">Любимый вкус для маленьких радостей. Уточните состав, наличие и условия оптовой поставки у нашей команды.</p><a href="contacts.html" class="pill pill-dark">Узнать о поставке ${arrow}</a></div></dialog>`;
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
 const runtime = String.raw`
@@ -78,36 +80,6 @@ const runtime = String.raw`
     }));
     more.addEventListener('click', () => { expanded = !expanded; render(); });
     render();
-
-    const dialog = document.getElementById('product-detail');
-    let trigger = null;
-    grid.addEventListener('click', event => {
-      const card = event.target.closest('.product-card');
-      if (!card) return;
-      trigger = card;
-      const image = card.querySelector('img');
-      const preview = dialog.querySelector('img');
-      preview.src = image.getAttribute('src'); preview.alt = image.alt;
-      document.getElementById('product-title').textContent = image.alt;
-      dialog.showModal();
-      dialog.querySelector('.dialog-close').focus();
-    });
-    dialog.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => trigger?.focus({ preventScroll: true }));
-    dialog.addEventListener('keydown', event => {
-      if (event.key !== 'Tab') return;
-      const controls = [...dialog.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')].filter(element => element.getClientRects().length);
-      const first = controls[0], last = controls.at(-1);
-      if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
-        event.preventDefault(); last?.focus();
-      } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
-        event.preventDefault(); first?.focus();
-      }
-    });
-    dialog.addEventListener('click', event => {
-      const rect = dialog.getBoundingClientRect();
-      if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
-    });
   }
 
   const toggle = document.querySelector('.mobile-toggle');
@@ -188,11 +160,7 @@ const runtime = String.raw`
 `;
 
 const staticStyles = `
-dialog.product-dialog{margin:0;border:0;padding:0}
-dialog.product-dialog:not([open]){display:none}
-dialog.product-dialog::backdrop{background:#0c2b33a8;backdrop-filter:blur(7px)}
 .show-more[hidden]{display:none!important}
-html:has(dialog[open]){overflow:hidden}
 `;
 
 const builtPages = await Promise.all(pages.map(async page => {
@@ -243,7 +211,7 @@ for (const page of builtPages) {
   html = html.replace('</head>', `<style>${styles.join('\n')}\n${staticStyles}</style></head>`);
 
   html = html.replace(/\bhref="([^"]+)"/g, (_, raw) => `href="${escapeHtml(staticHref(decodeEntities(raw)))}"`);
-  const catalog = page.route === '/' || page.route === '/catalog' ? `<template id="static-products">${cards}</template>${dialog}` : '';
+  const catalog = page.route === '/' || page.route === '/catalog' ? `<template id="static-products">${cards}</template>` : '';
   html = html.replace('</body>', `${catalog}<script>${runtime}</script></body>`);
   if (html.includes('/_next/')) throw new Error(`An unresolved Next.js asset remains in ${page.output}.`);
   await writeFile(path.join(root, page.output), html);

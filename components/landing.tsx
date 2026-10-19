@@ -4,18 +4,16 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import * as Dialog from '@radix-ui/react-dialog';
 import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, Menu, PackageCheck, Snowflake, UtensilsCrossed, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
+import { ProductDetails } from '@/components/product-details';
+import { getProduct, PRODUCTS, productCategory as category, productHref } from '@/lib/products';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
 
 const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Каталог'], ['about', '/about', 'О компании'], ['contacts', '/contacts', 'Контакты']] as const;
-export type SitePage = typeof NAV[number][0];
+export type SitePage = typeof NAV[number][0] | 'product';
+const MotionLink = motion.create(Link);
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
-const CONES = [2, 4, 6, 7, 9, 18, 19, 20];
-const ICE = [3, 10, 13, 14, 28, 36];
-const FAMILY = [16, 17, 32, 33, 34, 35];
-const category = (n: number) => CONES.includes(n) ? 'Рожки' : ICE.includes(n) ? 'Фруктовый лёд' : FAMILY.includes(n) ? 'Для семьи' : [23, 24, 25].includes(n) ? 'Стаканчики' : 'Эскимо';
 const flavorCount = (n: number) => `${n} ${n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов'}`;
 const NEWS = [
   { date: '06.03.2024', iso: '2024-03-06', type: 'События', title: 'Когда хороший вкус объединяет', text: 'MARZO — партнёр интеллектуального вечера «Недвижимый квиз».', slug: '2024/03/06/estate-quiz/', image: 4 },
@@ -38,15 +36,14 @@ function SectionTitle({ number, children, note }: { number: string; children: Re
   return <div className='section-kicker'><span>{number} / {children}</span>{note && <span>{note}</span>}</div>;
 }
 
-export function Landing({ page = 'home' }: { page?: SitePage }) {
+export function Landing({ page = 'home', productId }: { page?: SitePage; productId?: string }) {
+  const activePage = page === 'product' ? 'catalog' : page;
   const reduce = useReducedMotion();
   const ContentHeading = page === 'home' ? 'h2' : 'h1';
   const [menu, setMenu] = useState(false);
   const [filter, setFilter] = useState('Все вкусы');
   const [expanded, setExpanded] = useState(false);
-  const [selected, setSelected] = useState<number | null>(null);
   const map = useRef<HTMLVideoElement>(null);
-  const lastProduct = useRef<HTMLButtonElement | null>(null);
   const menuToggle = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
@@ -112,16 +109,16 @@ export function Landing({ page = 'home' }: { page?: SitePage }) {
     };
   }, [reduce, page]);
 
-  const products = CATALOG.map((item, i) => ({ ...item, n: i + 1 })).filter(item => filter === 'Все вкусы' || category(item.n) === filter);
+  const products = PRODUCTS.filter(item => filter === 'Все вкусы' || category(item.n) === filter);
   const visible = expanded ? products : products.slice(0, 8);
-  const product = selected === null ? null : CATALOG[selected - 1];
+  const product = productId ? getProduct(productId) : undefined;
 
   return <div className={`ramcad site-page-${page}`}>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
     <header className='main-header'>
       <Link href='/' className='header-brand' aria-label='RAMCAD — на главную'>RAMCAD</Link>
       <nav id='main-navigation' className={menu ? 'header-links is-open' : 'header-links'} aria-label='Основная навигация'>
-        {NAV.map(([id, href, label]) => <Link key={id} href={href} className={page === id ? 'is-active' : ''} aria-current={page === id ? 'page' : undefined} onClick={() => setMenu(false)}>{label}</Link>)}
+        {NAV.map(([id, href, label]) => <Link key={id} href={href} className={activePage === id ? 'is-active' : ''} aria-current={activePage === id ? 'page' : undefined} onClick={() => setMenu(false)}>{label}</Link>)}
       </nav>
       <a className='header-phone' href='tel:+79389042323'>8 (938) 904-23-23</a>
       <button ref={menuToggle} className='mobile-toggle header-menu-toggle' aria-label={menu ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={menu} aria-controls='main-navigation' onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button>
@@ -183,7 +180,7 @@ export function Landing({ page = 'home' }: { page?: SitePage }) {
           <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} unoptimized loading='lazy' /></div>)}</div></Reveal></div>
           <div className='catalog-toolbar'><div className='filter-tabs' role='group' aria-label='Категории мороженого'>{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div><span aria-live='polite'>{flavorCount(products.length)}</span></div>
           <motion.div className='product-grid' layout={!reduce}>
-            {visible.map(item => <motion.button layout={!reduce} key={item.n} className='product-card' onClick={event => { lastProduct.current = event.currentTarget; setSelected(item.n); }} initial={false} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduce ? 0 : .35 }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={20} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></motion.button>)}
+            {visible.map(item => <MotionLink layout={!reduce} key={item.n} className='product-card' href={productHref(item)} initial={false} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduce ? 0 : .35 }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={20} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></MotionLink>)}
           </motion.div>
           {products.length > 8 && <button className='pill pill-outline show-more' onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть коллекцию' : `Все ${products.length} вкусов`}<ChevronDown size={18} style={{ transform: expanded ? 'rotate(180deg)' : undefined }} /></button>}
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>
@@ -201,10 +198,11 @@ export function Landing({ page = 'home' }: { page?: SitePage }) {
 
         {(page === 'home' || page === 'contacts') && <section id='contacts' className='contacts-section' aria-labelledby='contacts-heading'><div className='map-section'>
             {page === 'contacts' ? <Image className='map-still' src='/images/map-preview.webp' alt='Карта маршрута к хладокомбинату в Гудермесе' width={1920} height={1080} unoptimized priority /> : <video className='map-route' ref={map} src='/videos/karta-scroll.mp4' muted playsInline preload='auto' aria-label='Видео маршрута к хладокомбинату в Гудермесе' />}<div className='map-shade' /><div className='contact-card'><header className='contact-card-heading'><p className='eyebrow'><span />Приезжайте в гости</p><ContentHeading id='contacts-heading'>Контакты</ContentHeading></header><div className='contact-card-body'><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><div className='contact-card-links'><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div></div><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>}
+        {page === 'product' && product && <ProductDetails product={product} />}
       </main>
-      <footer className='landing-footer'><Link href='/' className='footer-brand' aria-label='RAMCAD — на главную'><svg viewBox='0 0 1000 180' role='img' aria-label='RAMCAD'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg></Link><div><span>© {new Date().getFullYear()} RAMCAD</span><nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={page === id ? 'page' : undefined}>{label}</Link>)}</nav><a href='#main'>В начало <ArrowUpRight size={17} /></a></div></footer>
+      <footer className='landing-footer'><Link href='/' className='footer-brand' aria-label='RAMCAD — на главную'><svg viewBox='0 0 1000 180' role='img' aria-label='RAMCAD'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg></Link><div><span>© {new Date().getFullYear()} RAMCAD</span><nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}</nav><a href='#main'>В начало <ArrowUpRight size={17} /></a></div></footer>
     </div>
 
-    {(page === 'home' || page === 'catalog') && <Dialog.Root open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}><Dialog.Portal><Dialog.Overlay className='product-overlay' /><Dialog.Content className='product-dialog' onCloseAutoFocus={event => { event.preventDefault(); lastProduct.current?.focus({ preventScroll: true }); }}><Dialog.Close className='dialog-close' aria-label='Закрыть товар'><X size={22} /></Dialog.Close>{product && <><div className='dialog-image'><Image src={product.src} width={600} height={800} unoptimized alt={product.name} /></div><div className='dialog-copy'><p className='eyebrow'>Коллекция MARZO</p><Dialog.Title>{product.name}</Dialog.Title><Dialog.Description>Любимый вкус для маленьких радостей. Уточните состав, наличие и условия оптовой поставки у нашей команды.</Dialog.Description><Link href='/contacts' className='pill pill-dark' onClick={() => setSelected(null)}>Узнать о поставке <ArrowRight size={18} /></Link></div></>}</Dialog.Content></Dialog.Portal></Dialog.Root>}
+
   </div>;
 }

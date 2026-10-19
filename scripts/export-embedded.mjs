@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const preview = process.argv.includes('--preview');
 const prefix = preview ? 'preview' : 'ramcad';
-const pages = ['index', 'catalog', 'about', 'contacts'].map(page => ({
+const productPages = Array.from({ length: 36 }, (_, index) => `product-${String(index + 1).padStart(2, '0')}`);
+const pages = ['index', 'catalog', 'about', 'contacts', ...productPages].map(page => ({
   input: `${page}.html`,
   output: `${prefix}${page === 'index' ? '' : `-${page}`}.html`,
 }));
@@ -16,9 +17,9 @@ const mimeTypes = { '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/w
 for (const { input, output } of pages) {
   let html = await readFile(path.join(root, input), 'utf8');
   html = html.replace(/(\shref\s*=\s*)(["'])([^"'<>]*)\2/g, (attribute, start, quote, href) => {
-    const internal = href.match(/^(?:\.\/|\/)?(index|catalog|about|contacts)\.html([?#].*)?$/);
-    if (!internal) return attribute;
-    return `${start}${quote}${destinations.get(`${internal[1]}.html`)}${internal[2] ?? ''}${quote}`;
+    const internal = href.match(/^(?:\.\/|\/)?([^/?#]+\.html)([?#].*)?$/);
+    if (!internal || !destinations.has(internal[1])) return attribute;
+    return `${start}${quote}${destinations.get(internal[1])}${internal[2] ?? ''}${quote}`;
   });
   html = html.replace(/\ssrc="(public\/[^"<>]+)"/g, ' data-embedded-src="$1"');
   const assets = {};
