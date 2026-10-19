@@ -21,9 +21,9 @@ for (const { input, output } of pages) {
     if (!internal || !destinations.has(internal[1])) return attribute;
     return `${start}${quote}${destinations.get(internal[1])}${internal[2] ?? ''}${quote}`;
   });
-  html = html.replace(/\ssrc="(public\/[^"<>]+)"/g, ' data-embedded-src="$1"');
+  html = html.replace(/\s(src|poster)="(public\/[^"<>]+)"/g, (_, attribute, asset) => ` data-embedded-${attribute}="${asset}"`);
   const assets = {};
-  for (const [, key] of html.matchAll(/data-embedded-src="(public\/[^"<>]+)"/g)) {
+  for (const [, key] of html.matchAll(/data-embedded-(?:src|poster)="(public\/[^"<>]+)"/g)) {
     if (Object.hasOwn(assets, key)) continue;
     let local = preview ? key.replace(/public\/images\/products\/(\d+)\.png$/, 'public/images/preview-products/$1.webp') : key;
     if (preview && key === 'public/images/hero-reference.png') local = 'public/images/preview-hero.webp';
@@ -37,7 +37,7 @@ for (const { input, output } of pages) {
     assets[key] = `data:${mime};base64,${bytes.toString('base64')}`;
   }
 
-  const boot = `<script type="application/json" id="embedded-assets">${JSON.stringify(assets)}</script><script>(()=>{const assets=JSON.parse(document.getElementById('embedded-assets').textContent);const hydrate=root=>root.querySelectorAll('[data-embedded-src]').forEach(el=>{el.src=assets[el.getAttribute('data-embedded-src')];el.removeAttribute('data-embedded-src')});hydrate(document);document.querySelectorAll('template').forEach(t=>hydrate(t.content));})();</script>`;
+  const boot = `<script type="application/json" id="embedded-assets">${JSON.stringify(assets)}</script><script>(()=>{const assets=JSON.parse(document.getElementById('embedded-assets').textContent);const hydrate=root=>['src','poster'].forEach(attribute=>root.querySelectorAll('[data-embedded-'+attribute+']').forEach(el=>{el[attribute]=assets[el.getAttribute('data-embedded-'+attribute)];el.removeAttribute('data-embedded-'+attribute)}));hydrate(document);document.querySelectorAll('template').forEach(t=>hydrate(t.content));})();</script>`;
   if (!html.includes('<script>')) throw new Error(`Static runtime script is missing from ${input}.`);
   html = html.replace('<script>', boot + '<script>');
   await writeFile(path.join(root, output), html);

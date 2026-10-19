@@ -8,6 +8,7 @@ import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, M
 import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
 import { getProduct, PRODUCTS, productCategory as category, productHref } from '@/lib/products';
+import { mountMapIntro } from '@/lib/map-intro.mjs';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
 
 const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Каталог'], ['about', '/about', 'О компании'], ['contacts', '/contacts', 'Контакты']] as const;
@@ -49,6 +50,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
   useEffect(() => mountHeroParallax(document.getElementById('hero')), [page]);
+  useEffect(() => page === 'contacts' ? mountMapIntro(map.current) : undefined, [page]);
 
   useEffect(() => {
     const revealObserver = new IntersectionObserver(entries => {
@@ -67,7 +69,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
 
   useEffect(() => {
     const video = map.current;
-    if (!video) return;
+    if (!video || page === 'contacts') return;
     let frame = 0;
     let lastTick = 0;
     const sync = () => {
@@ -197,7 +199,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         {page === 'home' && <section id='news' className='news-section section-pad'><SectionTitle number='04' note='Из жизни компании · архив 2024'>Наши истории</SectionTitle><Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal><div className='news-grid'>{NEWS.map(item => <Reveal key={item.slug}><a className='news-card' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'><div className='news-image'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /><span>{item.type}</span><ArrowUpRight size={24} /></div><time dateTime={item.iso}>{item.date}</time><h3>{item.title}</h3><p>{item.text}</p><span className='news-source'>Читать на icechr.ru <ArrowUpRight size={14} /></span></a></Reveal>)}</div></section>}
 
         {(page === 'home' || page === 'contacts') && <section id='contacts' className='contacts-section' aria-labelledby='contacts-heading'><div className='map-section'>
-            {page === 'contacts' ? <Image className='map-still' src='/images/map-preview.webp' alt='Карта маршрута к хладокомбинату в Гудермесе' width={1920} height={1080} unoptimized priority /> : <video className='map-route' ref={map} src='/videos/karta-scroll.mp4' muted playsInline preload='auto' aria-label='Видео маршрута к хладокомбинату в Гудермесе' />}<div className='map-shade' /><div className='contact-card'><header className='contact-card-heading'><p className='eyebrow'><span />Приезжайте в гости</p><ContentHeading id='contacts-heading'>Контакты</ContentHeading></header><div className='contact-card-body'><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><div className='contact-card-links'><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div></div><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>}
+            <video className='map-route' ref={map} data-map-mode={page === 'contacts' ? 'intro' : 'scroll'} src='/videos/karta-scroll.mp4' poster={page === 'contacts' ? '/images/map-start.webp' : undefined} muted playsInline preload='auto' aria-label='Анимация маршрута к хладокомбинату в Гудермесе' /><div className='map-shade' /><div className='contact-card'><header className='contact-card-heading'><p className='eyebrow'><span />Приезжайте в гости</p><ContentHeading id='contacts-heading'>Контакты</ContentHeading></header><div className='contact-card-body'><address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address><div className='contact-card-links'><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23 <ArrowUpRight size={20} /></a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div></div><p className='opening-hours'>Пн–Сб · 08:00–18:00<br />Воскресенье — выходной</p></div><span className='map-caption'>ГУДЕРМЕС / RAMCAD</span></div></section>}
         {page === 'product' && product && <ProductDetails product={product} />}
       </main>
       <footer className='landing-footer'><Link href='/' className='footer-brand' aria-label='RAMCAD — на главную'><svg viewBox='0 0 1000 180' role='img' aria-label='RAMCAD'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg></Link><div><span>© {new Date().getFullYear()} RAMCAD</span><nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}</nav><a href='#main'>В начало <ArrowUpRight size={17} /></a></div></footer>

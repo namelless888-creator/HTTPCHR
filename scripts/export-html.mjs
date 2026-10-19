@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mountHeroParallax } from '../lib/hero-parallax.mjs';
+import { mountMapIntro } from '../lib/map-intro.mjs';
 
 // Run after `npm run build`. Each route becomes an independent HTML page
 // with embedded styles and fonts; local images and videos stay in public/.
@@ -48,6 +49,7 @@ const cards = entries.map(item => {
 }).join('');
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
+const introRuntime = `(${mountMapIntro.toString()})(video);`;
 const runtime = String.raw`
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
@@ -117,7 +119,9 @@ const runtime = String.raw`
   addEventListener('resize', updateProgress); updateProgress();
 
   const video = document.querySelector('.map-section video');
-  if (video) {
+  if (video?.dataset.mapMode === 'intro') {
+    ${introRuntime}
+  } else if (video) {
     video.muted = true;
     let mapFrame = 0;
     let mapLastTick = 0;
