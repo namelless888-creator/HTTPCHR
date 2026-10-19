@@ -95,7 +95,8 @@ const runtime = String.raw`
     nav.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
-    toggle.innerHTML = open ? closeIcon : menuIcon;
+    toggle.innerHTML = (open ? closeIcon : menuIcon) + '<span class="header-menu-label">Меню</span>';
+    if (open) nav.querySelector('a')?.focus();
   };
   toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
   document.addEventListener('keydown', event => {

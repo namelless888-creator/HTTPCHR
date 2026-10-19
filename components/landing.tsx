@@ -64,6 +64,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
 
   useEffect(() => {
     if (!menu) return;
+    document.querySelector<HTMLAnchorElement>('#main-navigation a')?.focus();
     const close = (event: KeyboardEvent) => { if (event.key === 'Escape') { setMenu(false); menuToggle.current?.focus(); } };
     window.addEventListener('keydown', close);
     return () => window.removeEventListener('keydown', close);
@@ -125,7 +126,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         {NAV.map(([id, href, label]) => <Link key={id} href={href} className={activePage === id ? 'is-active' : ''} aria-current={activePage === id ? 'page' : undefined} onClick={() => setMenu(false)}>{label}</Link>)}
       </nav>
       <a className='header-phone' href='tel:+79389042323'>8 (938) 904-23-23</a>
-      <button ref={menuToggle} className='mobile-toggle header-menu-toggle' aria-label={menu ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={menu} aria-controls='main-navigation' onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button>
+      <button ref={menuToggle} className='mobile-toggle header-menu-toggle' aria-label={menu ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={menu} aria-controls='main-navigation' onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}<span className='header-menu-label'>Меню</span></button>
     </header>
 
     <div className='page-content'>
