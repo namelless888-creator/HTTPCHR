@@ -12,6 +12,7 @@ import { CatalogIntro } from '@/components/catalog-intro';
 import { HomeHeroFilm } from '@/components/home-hero-film';
 import { getProduct, PRODUCTS, productCategory as category, productHref } from '@/lib/products';
 import { mountMapIntro } from '@/lib/map-intro.mjs';
+import { mountMapScroll } from '@/lib/map-scroll.mjs';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
 
 const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Каталог'], ['about', '/about', 'О компании'], ['contacts', '/contacts', 'Контакты']] as const;
@@ -50,7 +51,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   const map = useRef<HTMLVideoElement>(null);
   const menuToggle = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const progress = useSpring(scrollYProgress, { stiffness: 65, damping: 30, mass: 1.2 });
 
   useEffect(() => mountHeroParallax(document.getElementById('hero')), [page]);
   useEffect(() => page === 'contacts' ? mountMapIntro(map.current) : undefined, [page]);
@@ -71,49 +72,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
     return () => window.removeEventListener('keydown', close);
   }, [menu]);
 
-  useEffect(() => {
-    const video = map.current;
-    if (!video || page === 'contacts') return;
-    let frame = 0;
-    let lastTick = 0;
-    const sync = () => {
-      frame = 0;
-      video.pause();
-      if (!Number.isFinite(video.duration) || video.seeking) return;
-      const rect = video.closest('.contacts-section')!.getBoundingClientRect();
-      const viewport = window.innerHeight;
-      const headerHeight = document.querySelector('.main-header')!.getBoundingClientRect().height;
-      const sectionTop = window.scrollY + rect.top;
-      const start = Math.max(0, sectionTop - viewport);
-      const naturalEnd = sectionTop + rect.height - headerHeight - .1 * (viewport - headerHeight);
-      const maxScroll = document.documentElement.scrollHeight - viewport;
-      const end = Math.max(start + 1, Math.min(naturalEnd, maxScroll - 64));
-      const progress = reduce ? 1 : Math.min(1, Math.max(0,
-        (window.scrollY - start) / (end - start)));
-      const target = progress * Math.max(0, video.duration - .05);
-      const now = performance.now();
-      const elapsed = lastTick ? Math.min(64, now - lastTick) : 16.7;
-      lastTick = now;
-      const distance = target - video.currentTime;
-      if (Math.abs(distance) <= .015) { lastTick = 0; return; }
-      const time = reduce || Math.abs(distance) < .04
-        ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 220));
-      video.currentTime = time;
-    };
-    const schedule = () => { if (!frame) frame = requestAnimationFrame(sync); };
-    video.addEventListener('loadedmetadata', schedule);
-    video.addEventListener('seeked', schedule);
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule);
-    schedule();
-    return () => {
-      cancelAnimationFrame(frame);
-      video.removeEventListener('loadedmetadata', schedule);
-      video.removeEventListener('seeked', schedule);
-      window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', schedule);
-    };
-  }, [reduce, page]);
+  useEffect(() => page === 'home' ? mountMapScroll(map.current) : undefined, [page]);
 
   const products = PRODUCTS.filter(item => filter === 'Все вкусы' || category(item.n) === filter);
   const visible = expanded ? products : products.slice(0, 8);
@@ -189,7 +148,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           </> : <h2 className='sr-only'>Каталог мороженого MARZO</h2>}
           <div id='catalog-products' className='catalog-toolbar'><div className='filter-tabs' role='group' aria-label='Категории мороженого'>{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div><span aria-live='polite'>{flavorCount(products.length)}</span></div>
           <motion.div className='product-grid' layout={!reduce}>
-            {visible.map(item => <MotionLink layout={!reduce} key={item.n} className='product-card' href={productHref(item)} initial={false} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduce ? 0 : .35 }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={20} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></MotionLink>)}
+            {visible.map(item => <MotionLink layout={!reduce} key={item.n} className='product-card' href={productHref(item)} initial={false} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduce ? 0 : .6, ease: [.22, .61, .36, 1] }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={20} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></MotionLink>)}
           </motion.div>
           {products.length > 8 && <button className='pill pill-outline show-more' onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть коллекцию' : `Все ${products.length} вкусов`}<ChevronDown size={18} style={{ transform: expanded ? 'rotate(180deg)' : undefined }} /></button>}
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>

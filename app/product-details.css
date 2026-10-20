@@ -9,9 +9,9 @@
 .product-stage-topline > :first-child { font-size: 15px; font-weight: 600; letter-spacing: .1em; }
 .product-stage-watermark { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); color: #10343c0b; font-size: clamp(60px,7.8vw,125px); font-weight: 600; letter-spacing: -.07em; white-space: nowrap; user-select: none; z-index: -1; }
 .product-stage-orbit { position: absolute; width: 100%; aspect-ratio: 1; border: 1px solid #10343c12; border-radius: 50%; transform: rotate(-24deg) scaleY(.65); z-index: -1; }
-.product-floating-package { width: 100%; display: flex; justify-content: center; position: relative; z-index: 1; animation: product-float 7s ease-in-out infinite; transform-origin: 50% 55%; }
+.product-floating-package { width: 100%; display: flex; justify-content: center; position: relative; z-index: 1; animation: product-float 10s ease-in-out infinite; transform-origin: 50% 55%; }
 .product-floating-package img { display: block; width: 84%; height: clamp(430px,36vw,570px); object-fit: contain; max-width: 100%; }
-.product-stage-shadow { position: absolute; width: 43%; height: 18px; left: 28.5%; bottom: 52px; background: #10343c28; border-radius: 50%; filter: blur(12px); animation: product-shadow 7s ease-in-out infinite; }
+.product-stage-shadow { position: absolute; width: 43%; height: 18px; left: 28.5%; bottom: 52px; background: #10343c28; border-radius: 50%; filter: blur(12px); animation: product-shadow 10s ease-in-out infinite; }
 .product-stage-bottomline { position: absolute; bottom: 23px; left: 27px; right: 27px; display: flex; align-items: center; justify-content: center; gap: 11px; font-size: 7px; letter-spacing: .16em; opacity: .65; }
 .product-detail-copy { padding: 17px 0 0; min-width: 0; }
 .product-detail-eyebrow { display: flex; align-items: center; gap: 11px; font-size: 9px; text-transform: uppercase; letter-spacing: .1em; line-height: 1.8; color: #587078; }
@@ -20,7 +20,7 @@
 .product-detail-intro { max-width: 500px; font-size: 13px; line-height: 1.9; color: #587078; }
 .product-price-panel { padding: 27px 0 30px; border-bottom: 1px solid #10343c25; }
 .product-price-panel > p { font-size: 10px; color: #587078; margin-bottom: 12px; }
-.product-price-button { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 17px 23px; min-height: 58px; background: #10343c; color: #f1f6f8!important; border-radius: 40px; font-size: 12px; transition: background .25s, transform .25s; }
+.product-price-button { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 17px 23px; min-height: 58px; background: #10343c; color: #f1f6f8!important; border-radius: 40px; font-size: 12px; transition: background .38s ease, transform .4s ease; }
 .product-price-button:hover { background: #244d56; transform: translateY(-2px); }
 .product-sales-phone { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 11px; font-weight: 600; margin-top: 16px; }
 .product-facts { margin: 0; padding: 15px 0; }
@@ -31,7 +31,7 @@
 .product-information details:last-child { border-bottom: 1px solid #10343c25; }
 .product-information summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 0; font-size: 12px; font-weight: 600; cursor: pointer; list-style: none; }
 .product-information summary::-webkit-details-marker { display: none; }
-.product-information summary svg { flex-shrink: 0; transition: transform .25s; }
+.product-information summary svg { flex-shrink: 0; transition: transform .4s cubic-bezier(.25,.46,.45,.94); }
 .product-information details[open] summary svg { transform: rotate(180deg); }
 .product-information details > div { padding: 0 0 22px; font-size: 11px; color: #587078; line-height: 1.9; }
 .product-information details > div p + p { margin-top: 13px; }
@@ -45,9 +45,9 @@
 .product-related-card { min-width: 0; }
 .product-related-visual { position: relative; display: flex; justify-content: center; align-items: center; background: var(--product-stage-background,#cecfda); aspect-ratio: 1; overflow: hidden; }
 .product-related-visual > span:first-child { position: absolute; top: 17px; left: 18px; text-transform: uppercase; letter-spacing: .08em; font-size: 7px; z-index: 1; }
-.product-related-visual img { width: 86%; height: 86%; object-fit: contain; transition: transform .55s cubic-bezier(.22,1,.36,1); }
-.product-related-card:hover .product-related-visual img { transform: translateY(-8px) rotate(-2deg); }
-.product-related-arrow { position: absolute; right: 15px; bottom: 15px; display: grid; place-items: center; width: 37px; height: 37px; border-radius: 50%; background: #f5f3ede0; transition: background .25s; }
+.product-related-visual img { width: 86%; height: 86%; object-fit: contain; transition: transform .9s cubic-bezier(.25,.46,.45,.94); }
+.product-related-card:hover .product-related-visual img { transform: translateY(-4px) rotate(-1deg); }
+.product-related-arrow { position: absolute; right: 15px; bottom: 15px; display: grid; place-items: center; width: 37px; height: 37px; border-radius: 50%; background: #f5f3ede0; transition: background .38s ease; }
 .product-related-card:hover .product-related-arrow { background: #fff; }
 .product-related-caption { display: flex; justify-content: space-between; align-items: start; gap: 15px; padding-top: 16px; }
 .ramcad .product-related-caption h3 { font-size: 12px; font-weight: 500; line-height: 1.7; }
@@ -59,8 +59,8 @@
 .product-sales-actions > a:first-child { display: flex; align-items: center; justify-content: space-between; gap: 50px; border-radius: 40px; background: #10343c; color: #f1f6f8; padding: 17px 24px; font-size: 12px; min-width: 260px; }
 .product-sales-actions > a:last-child { display: flex; align-items: center; gap: 10px; font-size: 11px; }
 .product-details :is(a,summary):focus-visible { outline: 2px solid #8976af; outline-offset: 6px; }
-@keyframes product-float { 0%,100% { transform: translateY(3px) rotate(-2deg); } 50% { transform: translateY(-15px) rotate(1.5deg); } }
-@keyframes product-shadow { 0%,100% { opacity: .65; transform: scaleX(1); } 50% { opacity: .4; transform: scaleX(.82); } }
+@keyframes product-float { 0%,100% { transform: translateY(2px) rotate(-1deg); } 50% { transform: translateY(-8px) rotate(.75deg); } }
+@keyframes product-shadow { 0%,100% { opacity: .65; transform: scaleX(1); } 50% { opacity: .5; transform: scaleX(.9); } }
 @media (max-width: 1000px) {
   .product-detail-layout { gap: 32px; }
   .product-stage { height: 600px; }

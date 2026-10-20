@@ -17,10 +17,12 @@ const run = args => execFileSync('ffmpeg', [
 ], { stdio: 'inherit' });
 const encode = (name, intro) => run([
   '-ss', '3.1', '-t', duration, '-i', source, '-an',
-  '-vf', `${intro ? 'setpts=(PTS-STARTPTS)/3,' : ''}${enhance},fps=${intro ? 60 : 30}`,
+  // Cross-fade intermediate drawing frames without bending map labels/roads.
+  '-vf', `${intro ? 'setpts=(PTS-STARTPTS)/2,' : 'tpad=stop_mode=clone:stop_duration=0.1,minterpolate=fps=60:mi_mode=blend,'}${enhance},fps=60`,
+  '-frames:v', intro ? '257' : '514',
   '-c:v', 'libx264', '-preset', 'slow', '-crf', '15',
   '-pix_fmt', 'yuv420p', '-threads', '2',
-  '-g', intro ? '30' : '5', '-keyint_min', intro ? '30' : '5',
+  '-g', intro ? '30' : '6', '-keyint_min', intro ? '30' : '6',
   '-sc_threshold', '0', '-bf', '0', '-movflags', '+faststart',
   path.join(temporary, name),
 ]);

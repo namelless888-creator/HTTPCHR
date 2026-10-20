@@ -31,7 +31,7 @@
   backdrop-filter: blur(12px);
   color: #f1f6f8;
   font-size: 11px!important;
-  transition: background .25s,border-color .25s;
+  transition: background .38s ease,border-color .38s ease;
 }
 .hero-film-control:hover { background: #10343c; border-color: #f1f6f8a0; }
 .hero-film-control[hidden],.hero-film-control > svg { display: none; }

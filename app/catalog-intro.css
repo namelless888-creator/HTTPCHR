@@ -1,8 +1,8 @@
-.catalog-intro { --catalog-progress: 0; position: relative; height: 300svh; background: #143847; }
+.catalog-intro { --catalog-progress: 0; position: relative; height: 350svh; background: #143847; }
 .catalog-intro-stage { position: sticky; top: 0; height: 100svh; width: 100%; overflow: hidden; isolation: isolate; }
 .catalog-intro-video, .catalog-intro-still { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 .catalog-intro-still { display: none; }
-.catalog-callout { --callout-progress: 0; position: absolute; inset: 0; z-index: 2; opacity: var(--callout-progress); pointer-events: none; }
+.catalog-callout { --callout-progress: 0; position: absolute; inset: 0; z-index: 2; opacity: var(--callout-progress); pointer-events: none; transition: opacity .7s cubic-bezier(.25,.1,.25,1); }
 .catalog-callout-label { position: absolute; left: 6%; display: flex; align-items: start; gap: 13px; padding: 16px 20px; border: 1px solid #ffffffa6; border-radius: 12px; background: #f1f6f8e8; color: #10343c; box-shadow: 0 8px 32px #06263316; backdrop-filter: blur(14px); }
 .catalog-callout-label > span { padding-top: 5px; color: #69858d; font-size: 9px; letter-spacing: .1em; }
 .ramcad .catalog-callout-label h3 { font-family: var(--font-playfair),Georgia,serif; font-size: clamp(21px,1.8vw,29px); font-weight: 500; line-height: 1.2; letter-spacing: -.025em; }
@@ -11,7 +11,7 @@
 .catalog-callout-caramel .catalog-callout-label { top: 43%; }
 .catalog-callout-waffle .catalog-callout-label { top: 69%; }
 .catalog-callout-arrow { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; }
-.catalog-callout-shadow, .catalog-callout-line { stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--callout-progress)); }
+.catalog-callout-shadow, .catalog-callout-line { stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--callout-progress)); transition: stroke-dashoffset .75s cubic-bezier(.25,.1,.25,1); }
 .catalog-callout-shadow { stroke: #06263370; stroke-width: 4; }
 .catalog-callout-line { stroke: #f1f6f8; stroke-width: 1.6; }
 .catalog-callout-head { stroke: #f1f6f8; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 1px #062633); }
@@ -50,4 +50,5 @@
   .catalog-intro-still { display: block; }
   .catalog-callout { --callout-progress: 1; }
   .catalog-intro-hint { display: none; }
+  .catalog-callout,.catalog-callout-shadow,.catalog-callout-line { transition: none; }
 }

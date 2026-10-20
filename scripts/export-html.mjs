@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { mountHeroParallax } from '../lib/hero-parallax.mjs';
 import { mountHomeHero } from '../lib/home-hero.mjs';
 import { mountMapIntro } from '../lib/map-intro.mjs';
+import { mountMapScroll } from '../lib/map-scroll.mjs';
 import { mountCatalogIntro } from '../lib/catalog-intro.mjs';
 
 // Run after `npm run build`. Each route becomes an independent HTML page
@@ -53,6 +54,7 @@ const cards = entries.map(item => {
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
 const homeFilmRuntime = `(${mountHomeHero.toString()})(document.querySelector('.hero-film-video'));`;
 const introRuntime = `(${mountMapIntro.toString()})(video);`;
+const mapScrollRuntime = `(${mountMapScroll.toString()})(video);`;
 const catalogIntroRuntime = `(${mountCatalogIntro.toString()})(document.querySelector('.catalog-intro video'));`;
 const runtime = String.raw`
 (() => {
@@ -129,39 +131,7 @@ const runtime = String.raw`
   if (video?.dataset.mapMode === 'intro') {
     ${introRuntime}
   } else if (video) {
-    video.muted = true;
-    let mapFrame = 0;
-    let mapLastTick = 0;
-    const syncVideo = () => {
-      mapFrame = 0;
-      video.pause();
-      if (!Number.isFinite(video.duration) || video.seeking) return;
-      const rect = video.closest('.contacts-section').getBoundingClientRect();
-      const headerHeight = document.querySelector('.main-header').getBoundingClientRect().height;
-      const sectionTop = scrollY + rect.top;
-      const start = Math.max(0, sectionTop - innerHeight);
-      const naturalEnd = sectionTop + rect.height - headerHeight - .1 * (innerHeight - headerHeight);
-      const maxScroll = document.documentElement.scrollHeight - innerHeight;
-      const end = Math.max(start + 1, Math.min(naturalEnd, maxScroll - 64));
-      const progress = reduce.matches ? 1 : Math.min(1, Math.max(0,
-        (scrollY - start) / (end - start)));
-      const target = progress * Math.max(0, video.duration - .05);
-      const now = performance.now();
-      const elapsed = mapLastTick ? Math.min(64, now - mapLastTick) : 16.7;
-      mapLastTick = now;
-      const distance = target - video.currentTime;
-      if (Math.abs(distance) <= .015) { mapLastTick = 0; return; }
-      const time = reduce.matches || Math.abs(distance) < .04
-        ? target : video.currentTime + distance * (1 - Math.exp(-elapsed / 220));
-      video.currentTime = time;
-    };
-    const scheduleMap = () => { if (!mapFrame) mapFrame = requestAnimationFrame(syncVideo); };
-    video.addEventListener('loadedmetadata', scheduleMap);
-    video.addEventListener('seeked', scheduleMap);
-    addEventListener('scroll', scheduleMap, { passive: true });
-    addEventListener('resize', scheduleMap);
-    reduce.addEventListener('change', scheduleMap);
-    syncVideo();
+    ${mapScrollRuntime}
   }
   reduce.addEventListener('change', () => {
     if (reduce.matches) reveals.forEach(element => element.classList.add('is-visible'));
@@ -172,6 +142,7 @@ const runtime = String.raw`
 
 const staticStyles = `
 .show-more[hidden]{display:none!important}
+.reading-progress{transition:transform .25s ease-out}
 `;
 
 const builtPages = await Promise.all(pages.map(async page => {
