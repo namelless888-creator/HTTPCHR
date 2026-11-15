@@ -17,6 +17,8 @@
 .product-sales-note .scene-backdrop > img { object-position: center 45%; }
 .product-sales-note .scene-backdrop::after { background: linear-gradient(90deg,#f1f6f8f0 0%,#f1f6f8e6 42%,#f1f6f8b8 100%); }
 
+.product-detail-layout .scene-backdrop > img { object-position: center 72%; }
+
 .landing-footer .scene-backdrop > img { object-position: 80% 62%; }
 .landing-footer .scene-backdrop::after { background: linear-gradient(90deg,#0c2b33e6 0%,#0c2b33bd 100%); }
 
