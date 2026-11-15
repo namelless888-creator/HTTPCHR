@@ -9,3 +9,12 @@
 - Baseline rollback branch: `backup/pre-component-swap-20261115-28dda84`
 - Baseline commit: `28dda8484a09b95798999bbba025e9dcec99c5ee`
 - The seven uploaded TSX components were installed for evaluation on 2026-11-15.
+
+## REF integration
+
+- Pre-REF rollback branch: `backup/pre-ref-merge-20261115-14be2f4`
+- Pre-REF commit: `14be2f4aab3586fe33202e304fa265fdeb7f9982`
+- REF source snapshot inspected: `26fa2a4c93e1cb4176a8a97bc08139c5b857ab17`.
+- Git commit dates, rather than checkout file mtimes, are used to identify newer REF files.
+- REF supplies the herring routes, product data, and component styles, but does not contain their referenced product photography.
+- Missing REF media is tracked by path: `public/images/herring/` needs `fish-fillets.webp`, `fish-oil-180.webp`, `fish-oil-500.webp`, `fish-ruby.webp`, `fish-spices.webp`, `fish-steaks.webp`, `hero-scene.webp`, all eight `label-*.webp` files, `packaging-tub.webp`, `studio-ice.webp`, and `waves.svg`; `public/images/` also needs `product-stage-bg.png`, `product-podium-cutout.png`, and `product-reference-cutout.png`.
