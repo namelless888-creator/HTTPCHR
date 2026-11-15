@@ -10,12 +10,6 @@ const stageStyle = (product: Product): CSSProperties => ({
   '--product-stage-background': product.n < 19 ? '#cecfda' : product.n === 19 ? '#c9cdde' : '#c9cddd',
 } as CSSProperties);
 
-// Product 11 (Шоколадное, ГОСТ 31457-2012) ships a hand-cut transparent PNG
-// that matches reference/approved-page.png pixel-for-pixel. The other 35
-// products still carry their own rectangular background, so they fall back
-// to the same photo with the soft radial fade used on the catalog cards.
-const REFERENCE_CUTOUT = { n: 11, src: '/images/product-reference-cutout.png', width: 1024, height: 1536 };
-
 export function ProductDetails({ product }: { product: Product }) {
   const related = [
     ...PRODUCTS.filter(item => item.n !== product.n && item.category === product.category),
@@ -36,15 +30,12 @@ export function ProductDetails({ product }: { product: Product }) {
     </nav>
 
     <div className='product-detail-layout scene-section'>
-      <SceneBackdrop priority src='/images/product-stage-bg.png' />
+      <SceneBackdrop priority />
       <div className='product-showcase'>
         <div className='showcase-meta'><strong>{product.brand}</strong><span>{String(product.n).padStart(2, '0')} / {PRODUCTS.length}</span></div>
         <span className='podium-shadow' aria-hidden='true' />
-        <Image className='podium-layer' src='/images/product-podium-cutout.png' alt='' width={2172} height={724} unoptimized aria-hidden='true' />
         <span className='product-contact-shadow' aria-hidden='true' />
-        {product.n === REFERENCE_CUTOUT.n
-          ? <Image className='product-layer' src={REFERENCE_CUTOUT.src} alt={product.name} width={REFERENCE_CUTOUT.width} height={REFERENCE_CUTOUT.height} unoptimized priority />
-          : <Image className='product-layer product-layer-fade' src={product.src} alt={product.name} width={600} height={800} unoptimized priority />}
+        <Image className='product-layer product-layer-fade' src={product.src} alt={product.name} width={600} height={800} unoptimized priority />
         <p className='showcase-caption'><Snowflake size={18} strokeWidth={1.5} aria-hidden='true' /><span>Сохраняем любимый вкус</span></p>
       </div>
 
