@@ -74,4 +74,5 @@ export const PRODUCTS: Product[] = CATALOG.map((item, index) => ({
 }));
 
 export const productHref = (product: Pick<Product, 'id'>) => `/product/${product.id}`;
+export const productCutout = (product: Pick<Product, 'id'>) => `/images/product-cutouts/${product.id}.webp`;
 export const getProduct = (id: string) => PRODUCTS.find(product => product.id === id);
