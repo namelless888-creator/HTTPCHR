@@ -10,6 +10,7 @@ import { mountCatalogIntro } from '../lib/catalog-intro.mjs';
 // Run after `npm run build`. Each route becomes an independent HTML page
 // with embedded styles and fonts; local images and videos stay in public/.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const outputDirectory = process.argv[2] ? path.resolve(process.argv[2]) : root;
 const pages = [
   { route: '/', build: 'index.html', output: 'index.html' },
   { route: '/catalog', build: 'catalog.html', output: 'catalog.html' },
@@ -19,10 +20,9 @@ const pages = [
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const decodeEntities = value => value.replaceAll('&amp;', '&').replaceAll('&#x27;', "'").replaceAll('&quot;', '"');
 const catalogSource = await readFile(path.join(root, 'lib/catalog.ts'), 'utf8');
-const entries = [...catalogSource.matchAll(/\{\s*src:\s*img\((\d+)\),\s*name:\s*'((?:\\.|[^'\\])*)'([^}]*)\}/g)].map(([, number, name, rest]) => ({
+const entries = [...catalogSource.matchAll(/\{\s*src:\s*img\((\d+)\),\s*name:\s*'((?:\\.|[^'\\])*)'/g)].map(([, number, name]) => ({
   n: Number(number),
   name: name.replace(/\\(['\\])/g, '$1'),
-  hot: /hot:\s*true/.test(rest),
 }));
 if (entries.length !== 36 || entries.some((entry, index) => entry.n !== index + 1)) {
   throw new Error('Expected 36 consecutively numbered catalog entries; review the catalog parser.');
@@ -36,6 +36,8 @@ const routeFiles = new Map(pages.map(page => [page.route, page.output]));
 const staticHref = value => {
   if (!value.startsWith('/') || value.startsWith('//')) return value;
   const url = new URL(value, 'https://local.invalid');
+  // The preview doesn't include the source-only fish pages, whose photos are unavailable.
+  if (url.pathname.startsWith('/herring/')) return 'contacts.html';
   const file = routeFiles.get(url.pathname.replace(/\/+$/, '') || '/');
   return file ? file + url.search + url.hash : value;
 };
@@ -48,7 +50,8 @@ const arrow = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" vi
 const cards = entries.map(item => {
   const number = String(item.n).padStart(2, '0');
   const name = escapeHtml(item.name);
-  return `<a href="product-${number}.html" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span>${item.hot ? '<span class="product-label">Любимый вкус</span>' : ''}<img src="public/images/products/${number}.png" alt="${name}" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>MARZO / ${number}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3></div></a>`;
+  const brand = item.name.startsWith('MARZO') ? 'MARZO' : item.name.includes('Бурёнка') ? 'Бурёнка' : item.name.includes('My Love') ? 'My Love' : 'RAMCAD';
+  return `<a href="product-${number}.html" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span><img src="public/images/product-cutouts/${number}.webp" alt="" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>${brand}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3></div></a>`;
 }).join('');
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
@@ -92,23 +95,6 @@ const runtime = String.raw`
     render();
   }
 
-  const toggle = document.querySelector('.mobile-toggle');
-  const nav = document.getElementById('main-navigation');
-  const menuIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
-  const closeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg>';
-  const setMenu = open => {
-    nav.classList.toggle('is-open', open);
-    toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
-    toggle.innerHTML = (open ? closeIcon : menuIcon) + '<span class="header-menu-label">Меню</span>';
-    if (open) nav.querySelector('a')?.focus();
-  };
-  toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && nav.classList.contains('is-open')) { setMenu(false); toggle.focus(); }
-  });
-  nav.querySelectorAll('a').forEach(anchor => anchor.addEventListener('click', () => setMenu(false)));
-
   const reveals = [...document.querySelectorAll('.reveal')];
   if (typeof IntersectionObserver === 'function') {
     const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
@@ -128,6 +114,21 @@ const runtime = String.raw`
   addEventListener('resize', updateProgress); updateProgress();
 
   const video = document.querySelector('.map-section video');
+  const panel = document.querySelector('.map-section .contact-panel');
+  if (panel && video) {
+    const showPanel = () => {
+      panel.style.opacity = '1';
+      panel.style.transform = 'none';
+    };
+    const showAtEnd = () => {
+      if (video.duration > 0 && video.currentTime >= video.duration - .08) showPanel();
+    };
+    panel.style.transition = 'opacity .75s ease, transform .75s ease';
+    video.addEventListener('timeupdate', showAtEnd);
+    video.addEventListener('ended', showPanel);
+    video.addEventListener('error', showPanel);
+    if (reduce.matches || video.error) showPanel();
+  }
   if (video?.dataset.mapMode === 'intro') {
     ${introRuntime}
   } else if (video) {
@@ -173,7 +174,7 @@ for (const page of builtPages) {
       const font = await readFile(fontPath);
       css = css.replaceAll(resource, `data:font/woff2;base64,${font.toString('base64')}`);
     }
-    styles.push(css);
+    styles.push(css.replace(/url\((['"]?)(\/(?:images|videos)\/[^)'"]+)\1\)/g, 'url($1public$2$1)'));
     html = html.replace(tag, '');
   }
 
@@ -183,6 +184,7 @@ for (const page of builtPages) {
     .replace(/<meta\b[^>]*name="next-size-adjust"[^>]*>/gi, '')
     .replace(/\s+srcSet="[^"]*"/gi, '')
     .replace(/\s+data-nimg="[^"]*"/gi, '')
+    .replace(/<button\b[^>]*>Рыба и морепродукты<\/button>/g, '')
     .replace(/\b(src|poster)="([^"]+)"/g, (match, attr, raw) => {
       let value = decodeEntities(raw);
       if (value.startsWith('/_next/image?')) value = new URL(value, 'https://local.invalid').searchParams.get('url') ?? value;
@@ -196,6 +198,6 @@ for (const page of builtPages) {
   const catalog = page.route === '/' || page.route === '/catalog' ? `<template id="static-products">${cards}</template>` : '';
   html = html.replace('</body>', `${catalog}<script>${runtime}</script></body>`);
   if (html.includes('/_next/')) throw new Error(`An unresolved Next.js asset remains in ${page.output}.`);
-  await writeFile(path.join(root, page.output), html);
+  await writeFile(path.join(outputDirectory, page.output), html);
   console.log(`Exported ${page.output} with embedded CSS and local fonts${catalog ? `; ${entries.length} catalog products` : ''}.`);
 }

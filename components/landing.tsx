@@ -4,14 +4,14 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, Menu, PackageCheck, Snowflake, UtensilsCrossed, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, PackageCheck, Snowflake, UtensilsCrossed } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
 import { HerringDetails } from '@/components/herring-details';
 import { SceneBackdrop } from '@/components/scene-backdrop';
 import { CatalogIntro } from '@/components/catalog-intro';
 import { HomeHeroFilm } from '@/components/home-hero-film';
-import { getProduct, PRODUCTS, productCategory as category, productHref } from '@/lib/products';
+import { getProduct, PRODUCTS, productCategory as category, productCutout, productHref } from '@/lib/products';
 import { getHerringProduct, HERRING_PRODUCTS, herringProductHref } from '@/lib/herring';
 import { mountMapIntro } from '@/lib/map-intro.mjs';
 import { mountMapScroll } from '@/lib/map-scroll.mjs';
@@ -63,14 +63,12 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   const activePage = page === 'product' || page === 'herring' ? 'catalog' : page;
   const reduce = useReducedMotion();
   const ContentHeading = page === 'home' ? 'h2' : 'h1';
-  const [menu, setMenu] = useState(false);
   const [department, setDepartment] = useState<typeof DEPARTMENTS[number]>(DEPARTMENTS[0]);
   const [filter, setFilter] = useState('Все вкусы');
   const [expanded, setExpanded] = useState(false);
   const [mapDrawn, setMapDrawn] = useState(false);
   const [filterIndicator, setFilterIndicator] = useState<{ x: number; width: number } | null>(null);
   const map = useRef<HTMLVideoElement>(null);
-  const menuToggle = useRef<HTMLButtonElement>(null);
   const filterTabsRef = useRef<HTMLDivElement>(null);
   const productGridRef = useRef<HTMLDivElement>(null);
   const cardRectsRef = useRef<Map<number, DOMRect>>(new Map());
@@ -87,14 +85,6 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
     document.querySelectorAll('.reveal').forEach(el => { el.classList.add('reveal-ready'); revealObserver.observe(el); });
     return () => revealObserver.disconnect();
   }, [page]);
-
-  useEffect(() => {
-    if (!menu) return;
-    document.querySelector<HTMLAnchorElement>('#main-navigation a')?.focus();
-    const close = (event: KeyboardEvent) => { if (event.key === 'Escape') { setMenu(false); menuToggle.current?.focus(); } };
-    window.addEventListener('keydown', close);
-    return () => window.removeEventListener('keydown', close);
-  }, [menu]);
 
   useEffect(() => page === 'home' ? mountMapScroll(map.current) : undefined, [page]);
 
@@ -194,17 +184,13 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
 
   return <div className={`ramcad site-page-${page}`}>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
-    <motion.header className='main-header' initial={reduce ? false : { opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, ease: [.22, .61, .36, 1] }}>
+    <header className='main-header'>
       <Link href='/' className='header-brand' aria-label='RAMCAD — на главную'>RAMCAD</Link>
-      <nav id='main-navigation' className={menu ? 'header-links is-open' : 'header-links'} aria-label='Основная навигация'>
-        {NAV.map(([id, href, label]) => <Link key={id} href={href} className={activePage === id ? 'is-active' : ''} aria-current={activePage === id ? 'page' : undefined} onClick={() => setMenu(false)}>
-          {activePage === id && <motion.span className='header-link-pill' layoutId='header-link-pill' transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }} />}
-          <span className='header-link-label'>{label}</span>
-        </Link>)}
+      <nav id='main-navigation' className='header-links' aria-label='Основная навигация'>
+        {NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}
       </nav>
       <a className='header-phone' href='tel:+79389042323'>8 (938) 904-23-23</a>
-      <button ref={menuToggle} className='mobile-toggle header-menu-toggle' aria-label={menu ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={menu} aria-controls='main-navigation' onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}<span className='header-menu-label'>Меню</span></button>
-    </motion.header>
+    </header>
 
     <div className='page-content'>
       <main id='main'>
@@ -212,11 +198,11 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           <section id='hero' className='reference-hero scene-section'>
           <HomeHeroFilm />
           <span className='hero-frost' aria-hidden='true'>{FROST_PARTICLES.map((particle, index) => <span key={index} style={{ left: particle.left, '--size': `${particle.size}px`, '--dur': `${particle.duration}s`, '--delay': `${particle.delay}s` } as React.CSSProperties} />)}</span>
-          <motion.div className='reference-hero-copy' initial={reduce ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .9, delay: .15, ease: [.22, .61, .36, 1] }}>
+          <div className='reference-hero-copy'>
             <span className='hero-index' aria-hidden='true'>01</span>
             <h1>Создаём вкус.<br />Сохраняем свежесть.</h1>
             <Link className='pill pill-dark reference-hero-button' href='/catalog'>Смотреть каталог <ArrowRight size={27} /></Link>
-          </motion.div>
+          </div>
           <span className='hero-scroll-cue' aria-hidden='true'><ChevronDown size={18} strokeWidth={1.5} /></span>
         </section>
 
@@ -229,8 +215,8 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           <div className='direction-cards'>
             <Reveal className='direction-card-feature-wrap'>
               <Link href='/catalog' className='direction-card direction-card-feature' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
-                <div className='direction-photo direction-photo-ice' role='img' aria-label='Вафельный рожок с мороженым и эскимо в шоколадной глазури'>
-                  <Image src='/images/directions/reference.png' alt='' width={1672} height={941} unoptimized />
+                <div className='direction-photo direction-photo-ice'>
+                  <Image src='/images/catalog-intro-poster.webp' alt='Вафельный рожок и упаковка мороженого MARZO на льду' width={1280} height={736} unoptimized />
                 </div>
                 <div className='direction-card-copy'>
                   <span className='direction-card-index'>01</span>
@@ -242,8 +228,8 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             </Reveal>
             <Reveal delay={.12}>
               <Link href='/herring/herring-oil-500' className='direction-card' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
-                <div className='direction-photo direction-photo-fish' role='img' aria-label='Сельдь кусочками на колотом льду и упаковка Айсберг'>
-                  <Image src='/images/herring/hero-scene.webp' alt='' width={1774} height={887} unoptimized />
+                <div className='direction-photo direction-photo-fish'>
+                  <Image src='/images/directions/fish-on-ice.webp' alt='Рыба и лососевые стейки на колотом льду' width={734} height={397} unoptimized />
                 </div>
                 <div className='direction-card-copy'>
                   <span className='direction-card-index'>02</span>
@@ -275,7 +261,14 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           <div id='catalog-products' className='catalog-toolbar'>{department === DEPARTMENTS[0] ? <div className='filter-tabs' ref={filterTabsRef} role='group' aria-label='Категории мороженого'>{filterIndicator && <motion.span className='filter-tab-indicator' initial={false} animate={{ x: filterIndicator.x, width: filterIndicator.width }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }} />}{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div> : <p className='catalog-toolbar-note'>Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.</p>}<span className='catalog-count' aria-live='polite'><AnimatePresence mode='popLayout' initial={false}><motion.span key={activeCount} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -8 }} transition={{ duration: .3, ease: [.22, .61, .36, 1] }}>{department === DEPARTMENTS[0] ? flavorCount(activeCount) : itemCount(activeCount)}</motion.span></AnimatePresence></span></div>
           <div className='product-grid' ref={productGridRef}>
             {department === DEPARTMENTS[0]
-              ? visible.map(item => <MotionLink data-card-n={item.n} key={item.n} className='product-card' href={productHref(item)} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} aria-label={`Подробнее: ${item.name}`}><div className='product-visual'><span className='product-category'>{category(item.n)}</span>{item.hot && <span className='product-label'>Любимый вкус</span>}<Image src={item.src} alt={item.name} width={600} height={800} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={18} /></span></div><div className='product-info'><span>MARZO / {String(item.n).padStart(2, '0')}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div></MotionLink>)
+              ? visible.map(item => <MotionLink data-card-n={item.n} key={item.n} className='product-card' href={productHref(item)} initial={false} aria-label={`Подробнее: ${item.name}`}>
+                <div className='product-visual'>
+                  <span className='product-category'>{item.category}</span>
+                  <Image src={productCutout(item)} alt='' width={600} height={800} unoptimized loading='lazy' />
+                  <span className='product-open'><ArrowUpRight size={18} aria-hidden='true' /></span>
+                </div>
+                <div className='product-info'><span>{item.brand}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div>
+              </MotionLink>)
               : HERRING_PRODUCTS.map((item, index) => <MotionLink data-card-n={1000 + index} key={item.id} className='product-card' href={herringProductHref(item)} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} aria-label={`Подробнее: ${item.title} ${item.subtitle}, ${item.weight}`}><div className='product-visual'><span className='product-category'>{item.weight}</span><Image src={item.fishImage} alt={`${item.title} ${item.subtitle}`} width={1254} height={1254} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={18} /></span></div><div className='product-info'><span>{item.brand} / {item.format}</span><h3>{item.title} {item.subtitle}</h3></div></MotionLink>)}
           </div>
           {department === DEPARTMENTS[0] && products.length > 8 && <button className='pill pill-outline show-more' onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть коллекцию' : `Все ${products.length} вкусов`}<ChevronDown size={18} style={{ transform: expanded ? 'rotate(180deg)' : undefined }} /></button>}
