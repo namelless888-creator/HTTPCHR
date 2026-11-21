@@ -1,0 +1,600 @@
+{
+  "schemaVersion": 1,
+  "productCount": 8,
+  "referenceSize": [
+    1774,
+    887
+  ],
+  "files": [
+    {
+      "path": "CLAUDE_PROMPT.md",
+      "bytes": 9845,
+      "sha256": "df1543adc8b06f3f60fd8a41c1be80ff0808a91373b61f71d5bd75087882bc10"
+    },
+    {
+      "path": "START_HERE.md",
+      "bytes": 5722,
+      "sha256": "e2b273eff67276972850bc556d56d51f9b8dfa7eecec688fea819939059747b0"
+    },
+    {
+      "path": "assets/brand/favicon.svg",
+      "bytes": 240,
+      "sha256": "560fa684f3d6122bac5f325a68cef3ff9a7d9fb8ff177b295f2115c9595c29b0"
+    },
+    {
+      "path": "assets/brand/ramcad-wordmark.svg",
+      "bytes": 1820,
+      "sha256": "5aa093fab3c9d2c5671a38c605c07c7987657ff45831cf9aa75e63fafaca3a37"
+    },
+    {
+      "path": "assets/fish/fillets.png",
+      "bytes": 1960851,
+      "sha256": "c87d2a98afc2e639c55bad75edc32ad76482b9bf21065229bfbdb4d1f6a64859"
+    },
+    {
+      "path": "assets/fish/oil-180.png",
+      "bytes": 4845009,
+      "sha256": "9655fc76fff86c34bbc694f975486c4724b882c23dcef7e0e597b47da2d4889f"
+    },
+    {
+      "path": "assets/fish/oil-500.png",
+      "bytes": 1470248,
+      "sha256": "1078090622201034f369c2b791f88ea3d574b08514aa0917a02f6a6d96550fa5"
+    },
+    {
+      "path": "assets/fish/ruby.png",
+      "bytes": 4894011,
+      "sha256": "b922e575584d95254fa4ceae3628ef620b97ca82fdeda4f9d979aa23d038c4f1"
+    },
+    {
+      "path": "assets/fish/source/fillets-on-plate.png",
+      "bytes": 8758086,
+      "sha256": "9e6b52dc750a5a5e977464607757f8efa53acc734171316c0fbc84e642c28870"
+    },
+    {
+      "path": "assets/fish/source/oil-500-original.png",
+      "bytes": 221260,
+      "sha256": "f2311275baa43ea41389e204bfbe2de58e4465d719a2f2d0dbb8baa7fdece52b"
+    },
+    {
+      "path": "assets/fish/source/steaks-on-plate.png",
+      "bytes": 2863051,
+      "sha256": "d8ddc70c5bd03f4a35cb35c1b9a75977abecdd22c7f274a14f692fb4822528de"
+    },
+    {
+      "path": "assets/fish/spices.png",
+      "bytes": 5515032,
+      "sha256": "628f63ce998e4c72630a34635fea3eb0a0dd7fd7e7c3a56420e5350929d4ffae"
+    },
+    {
+      "path": "assets/fish/steaks.png",
+      "bytes": 2385447,
+      "sha256": "f8ac8aa19c809fb16022bcc33b539ac2c118234ae2c39a6bb173f764d16bef35"
+    },
+    {
+      "path": "assets/fonts/Manrope-Variable.ttf",
+      "bytes": 164700,
+      "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+    },
+    {
+      "path": "assets/fonts/OFL-Manrope.txt",
+      "bytes": 4388,
+      "sha256": "4f67b767d602edc0065ca540cfb36d15e3d5e41eecb4c32f768a5f6d396d56fb"
+    },
+    {
+      "path": "assets/fonts/OFL-Prata.txt",
+      "bytes": 4384,
+      "sha256": "d11d830108702fd12aa5298770b50c0eeef4f4f8a345eb647a7a231d6c2d069d"
+    },
+    {
+      "path": "assets/fonts/Prata-Regular.ttf",
+      "bytes": 101284,
+      "sha256": "3b2b880737be3bda5f03554297b758516876157c88f9e3b3bae8fa1fc96a2c2c"
+    },
+    {
+      "path": "assets/icons/arrow-left.svg",
+      "bytes": 199,
+      "sha256": "2d957afeeae685ae735ca9fd8ab41410084aa22efd6cb3eafc79957ef30ed409"
+    },
+    {
+      "path": "assets/icons/arrow-up-right.svg",
+      "bytes": 199,
+      "sha256": "229de575be4b1e700096fcf5c5d0edf1a1a88fd41a4973874f2c4a0bf573af03"
+    },
+    {
+      "path": "assets/icons/chevron-down.svg",
+      "bytes": 191,
+      "sha256": "200f42fbe186d01415f6f6f84479068467dd014c1009ed92b6a5fbd9520bd7ca"
+    },
+    {
+      "path": "assets/icons/chevron-right.svg",
+      "bytes": 191,
+      "sha256": "2fd371476509018b773bbec758e0088f6c05c70b0d290416a7126d875d749e44"
+    },
+    {
+      "path": "assets/icons/close.svg",
+      "bytes": 199,
+      "sha256": "f06712652c3cc8c787e578126de65ca26a2842bf57e34c661bfdf96319134e6b"
+    },
+    {
+      "path": "assets/icons/menu.svg",
+      "bytes": 202,
+      "sha256": "eca30ee1d874cc9102228eabf2c9b707a2f452af8bf3be9b1eb3c97b7af13c49"
+    },
+    {
+      "path": "assets/packaging/tub-blank.png",
+      "bytes": 1756441,
+      "sha256": "9be2ef8ca938d242af46f98984b32da3cf0a628521177e107e50f81e64aa0b85"
+    },
+    {
+      "path": "assets/patterns/studio-gradient.svg",
+      "bytes": 1121,
+      "sha256": "c1e3f087a479da4f84f31f39790f34565f569ad4fb58fa42c555c1b7f0bd0fa8"
+    },
+    {
+      "path": "assets/patterns/waves.svg",
+      "bytes": 1222,
+      "sha256": "d12f625afd4c14722433b0f9c1d6625401085140c88954be98d3cb2f0fd391b6"
+    },
+    {
+      "path": "assets/studio/ice-background.png",
+      "bytes": 2138153,
+      "sha256": "113faf4c67ad7b15f442aa88891688b5db7d263b2c9b1f910f4d40e8528c4b05"
+    },
+    {
+      "path": "constructor.html",
+      "bytes": 14719,
+      "sha256": "f1466a40d302f40729a5dce2016e0563f5970863ba88f1794d84355e67bfffce"
+    },
+    {
+      "path": "docs/assets.md",
+      "bytes": 6257,
+      "sha256": "85455c72ec64f241e7a14a9dccff94120c13105d8cf838926a5de7a19f0e202b"
+    },
+    {
+      "path": "docs/components.md",
+      "bytes": 2930,
+      "sha256": "cfcaa36f457ad321338620be433e03a3959b01edd6a83bfd0e8f6568082271ed"
+    },
+    {
+      "path": "docs/design-spec.md",
+      "bytes": 4840,
+      "sha256": "10341b74454d9878a1ddb52fe84350a3375e7e235c8a70ec377566f69783ddd3"
+    },
+    {
+      "path": "docs/product-mapping.md",
+      "bytes": 3966,
+      "sha256": "16ab283bba5121d08a6d8208bf8abe19331151db8b2488753e9e2d46fe694b61"
+    },
+    {
+      "path": "docs/qa.md",
+      "bytes": 3509,
+      "sha256": "cb77b169cd68e8adcca5e5d7f8b03a62a905f711d45fddaf9f84e9432fe69ea8"
+    },
+    {
+      "path": "index.html",
+      "bytes": 6625,
+      "sha256": "d3295e6a3c11b9ae502f7c299f81c5644d862fd218e75a5e23aaddfc3adc08ca"
+    },
+    {
+      "path": "previews/collection-overview.png",
+      "bytes": 4956730,
+      "sha256": "38bf03e89ed02529f104debe2b97b445b7c5a25e1bfb2d1584782b7b06f2ed17"
+    },
+    {
+      "path": "previews/collection-overview.svg",
+      "bytes": 109133,
+      "sha256": "39f05d526ada33a72676abceaa7ac01b72ca82231dcbbfb4efc3afc1f30d98b6"
+    },
+    {
+      "path": "products/herring-fillet-2000/index.html",
+      "bytes": 8718,
+      "sha256": "017122b2e8e5ddc6f4e22e32b58ef69e93a5ffb0c3e17f683f3e1deb6e0cf23e"
+    },
+    {
+      "path": "products/herring-fillet-2000/label.png",
+      "bytes": 1484976,
+      "sha256": "2ee11c1e33af40a2105ce983f55f2e20fb819c380eaab918df6cf4990f7ad465"
+    },
+    {
+      "path": "products/herring-fillet-2000/layout.svg",
+      "bytes": 125534,
+      "sha256": "ddca395e7966e97bae00885160f8f087de1c49be700013a1cefd18c9357d97a6"
+    },
+    {
+      "path": "products/herring-fillet-2000/mockup.png",
+      "bytes": 2832278,
+      "sha256": "735f0d968c2e13947bb7b0515cfdce15be821254a3d5c20daa4aa1b3274f056d"
+    },
+    {
+      "path": "products/herring-fillet-2000/packshot.svg",
+      "bytes": 490,
+      "sha256": "fb4d4294e46c8c286ca439bd8612a13394935a9df8196dce6fccf732c1873820"
+    },
+    {
+      "path": "products/herring-fillet-2000/photo-layers.svg",
+      "bytes": 1202,
+      "sha256": "c89a041780025e8c956c186937340aaa622674a8f446bf78673007fec2ec1bb8"
+    },
+    {
+      "path": "products/herring-fillet-2000/product.json",
+      "bytes": 1282,
+      "sha256": "6bb9124012bc6c7135dae2e57790360eaf0d4316ce4e07dcbade1c23dfac2f82"
+    },
+    {
+      "path": "products/herring-fillet-2000/source-label.pdf",
+      "bytes": 26278216,
+      "sha256": "f68fd8548e20152bdc9e46d551b36decc54d56553a792d4ad7df3add0a10fafe"
+    },
+    {
+      "path": "products/herring-fillet-900/index.html",
+      "bytes": 8712,
+      "sha256": "55856fb0b6cb6e8227e68545d8f631da7fd5f452e040a6c9078f942af4cdd704"
+    },
+    {
+      "path": "products/herring-fillet-900/label.png",
+      "bytes": 1474605,
+      "sha256": "29c5ac703e96c2747b4fd7b442ecdebac98f8029bd241956eb3cde52a4d464b4"
+    },
+    {
+      "path": "products/herring-fillet-900/layout.svg",
+      "bytes": 126309,
+      "sha256": "829e3b932441f13382a2f3a632571f388c04deb52970f797854908498a268b97"
+    },
+    {
+      "path": "products/herring-fillet-900/mockup.png",
+      "bytes": 2836912,
+      "sha256": "f5a75f6f4dce5f1b0537417d55e5643c6fd0502810ebf42de9306791575a4f6e"
+    },
+    {
+      "path": "products/herring-fillet-900/packshot.svg",
+      "bytes": 488,
+      "sha256": "1f0beebd6fb948078a1cc1739d9b93be5259c54cacdb2f10bceb712e3b71e913"
+    },
+    {
+      "path": "products/herring-fillet-900/photo-layers.svg",
+      "bytes": 1203,
+      "sha256": "3e4e28434a048c6dcf0705e947878946383bc90900bbb4a0aef6d61ab4639952"
+    },
+    {
+      "path": "products/herring-fillet-900/product.json",
+      "bytes": 1274,
+      "sha256": "6258b16435c69ed15b4e30379cb88bddfa2be11bc4c4cef2cfd417740ba2ac1b"
+    },
+    {
+      "path": "products/herring-fillet-900/source-label.pdf",
+      "bytes": 26279060,
+      "sha256": "af83804e4702da56b9004d993169c0cbebf5c1dc316a70a173e97a9baf616a42"
+    },
+    {
+      "path": "products/herring-oil-180/index.html",
+      "bytes": 8800,
+      "sha256": "91365a3b796f3b1881ee41de9ceed6333336117a1f70035bcf184e5e8f56d339"
+    },
+    {
+      "path": "products/herring-oil-180/label.png",
+      "bytes": 1525749,
+      "sha256": "1fa90602504ef150ca109cb6878f379016ca9a5a213d3b331cc905b53423736d"
+    },
+    {
+      "path": "products/herring-oil-180/layout.svg",
+      "bytes": 131022,
+      "sha256": "048a21fdd7e1eaaf3a09988a8b78caa6453595adff47d1413f306c0032ae361a"
+    },
+    {
+      "path": "products/herring-oil-180/mockup.png",
+      "bytes": 2771650,
+      "sha256": "289d7ee76d310230e911d05572b1e3495f199ae5fa70c2e383c21a0f1afca761"
+    },
+    {
+      "path": "products/herring-oil-180/packshot.svg",
+      "bytes": 482,
+      "sha256": "60bd29e4f32c625c24c4f1892fb8c71b9bcfebe5f768d6928745a578590795c9"
+    },
+    {
+      "path": "products/herring-oil-180/photo-layers.svg",
+      "bytes": 1196,
+      "sha256": "07c331c27c856b705c7855de8e0be491d57938fcc325ea32abc045ca6bb84917"
+    },
+    {
+      "path": "products/herring-oil-180/product.json",
+      "bytes": 1283,
+      "sha256": "e6cfadfa90f1af2a3c0fa1aeca3224a1277690b72cdf31bd44c50a1a24b9cb4a"
+    },
+    {
+      "path": "products/herring-oil-180/source-label.pdf",
+      "bytes": 15351987,
+      "sha256": "5e27fcd6e811d4f969d0fdce4ce04535f83e9e3546bfe6573dcec31312bec02c"
+    },
+    {
+      "path": "products/herring-oil-500/index.html",
+      "bytes": 8800,
+      "sha256": "d1dfc0dac771f272cb3d4c40e673e2fa9ac8fc401f314072dee26fa043ca17ca"
+    },
+    {
+      "path": "products/herring-oil-500/label.png",
+      "bytes": 1508772,
+      "sha256": "c0c795695bbb4e08bafb2a39d16b84980f35bcede440096913783441ee244a75"
+    },
+    {
+      "path": "products/herring-oil-500/layout.svg",
+      "bytes": 129890,
+      "sha256": "514e2c653da3ee24ed2b4d76ab5da65d11c64b1cedff2b4d1d0bfda0424f7566"
+    },
+    {
+      "path": "products/herring-oil-500/mockup.png",
+      "bytes": 2825492,
+      "sha256": "56867a95b0242f5bda9fa1c528fe7cf4164b3c02973a7187ab5ddb9a487174df"
+    },
+    {
+      "path": "products/herring-oil-500/packshot.svg",
+      "bytes": 482,
+      "sha256": "a15513eadcdb803555f77bb9862322687cfa35803499bd6f86700d2363c665e7"
+    },
+    {
+      "path": "products/herring-oil-500/photo-layers.svg",
+      "bytes": 1198,
+      "sha256": "6201bb5f43ee2e96db7e1be92ae83e8fd56bb71c233ca1f37903bf6f7b0917b3"
+    },
+    {
+      "path": "products/herring-oil-500/product.json",
+      "bytes": 1300,
+      "sha256": "f5429c72b68bf712cbe5de4cbe84c49b8a4066cca4b422470ae29809f5132ad8"
+    },
+    {
+      "path": "products/herring-oil-500/source-label.pdf",
+      "bytes": 2558207,
+      "sha256": "0eeab7d53419d29db4a2ff728c4c19e52e9669f2497243936224f3b54703928d"
+    },
+    {
+      "path": "products/herring-ruby-500/.source-label.pdf.MbcaRx",
+      "bytes": 14417920,
+      "sha256": "292d3b3062cb7fbeaa4fa44a28b79a6d3ddbc02ff5ffab70f1ef3b1089ed9587"
+    },
+    {
+      "path": "products/herring-ruby-500/index.html",
+      "bytes": 8772,
+      "sha256": "7480a811788c6576c957b85db3acc6d83517e936bb5ab4cdb185469ee019d8a4"
+    },
+    {
+      "path": "products/herring-ruby-500/label.png",
+      "bytes": 1564229,
+      "sha256": "6834380e1ae4a35042e2085688cd2a84542528bd0ddc5bd7da1f3974a66a09a3"
+    },
+    {
+      "path": "products/herring-ruby-500/layout.svg",
+      "bytes": 135797,
+      "sha256": "d4fa58444aa2469b1ab0d74ca83f165ee4189483a8e4d0ab92bb826b86b58fcc"
+    },
+    {
+      "path": "products/herring-ruby-500/mockup.png",
+      "bytes": 2774813,
+      "sha256": "5666ddffa2aa65b6ac6c31476b23533c1c77885b576b774f15c282e8b6e22eeb"
+    },
+    {
+      "path": "products/herring-ruby-500/packshot.svg",
+      "bytes": 484,
+      "sha256": "837632fe19c41dcfb271bcaefbdc224cd86987eda6ed0c87d65f492584025e55"
+    },
+    {
+      "path": "products/herring-ruby-500/photo-layers.svg",
+      "bytes": 1197,
+      "sha256": "b3eeb850604032df4e0bcaf828b5baf4dd98dc6291d149c9c416d15aa9c9f9d0"
+    },
+    {
+      "path": "products/herring-ruby-500/product.json",
+      "bytes": 1295,
+      "sha256": "0e637800c5794c821033c3c9a6b8193ecdbfcdedcb654ba5b37c5d3c3c64d9d6"
+    },
+    {
+      "path": "products/herring-ruby-500/source-label.pdf",
+      "bytes": 15523213,
+      "sha256": "8736e998e97c2118176ff989698f9a477b41cf27cbb6bb92bfff3724ae7973ba"
+    },
+    {
+      "path": "products/herring-spices-180/index.html",
+      "bytes": 8782,
+      "sha256": "244325a74e9b8e948c525d2e549acfad2c6b82d61321c43be3e492879b937917"
+    },
+    {
+      "path": "products/herring-spices-180/label.png",
+      "bytes": 1485397,
+      "sha256": "76d8b1b0a77e75a58ae22ac9a54421760dbc9ff6bd28299a4767afeddd54d798"
+    },
+    {
+      "path": "products/herring-spices-180/layout.svg",
+      "bytes": 132527,
+      "sha256": "2d742c85dbb3f59606de5737f1d8159841e14af14f7996ac030f88ee5ed222b0"
+    },
+    {
+      "path": "products/herring-spices-180/mockup.png",
+      "bytes": 2770363,
+      "sha256": "751c3566c971d2aa1623d482240cae8db9260ced3d6121f76de107e1cbf15097"
+    },
+    {
+      "path": "products/herring-spices-180/packshot.svg",
+      "bytes": 488,
+      "sha256": "412c6f00610edff14e40a738e54cb742b651d8f28028e4d15e3ee0456156d490"
+    },
+    {
+      "path": "products/herring-spices-180/photo-layers.svg",
+      "bytes": 1201,
+      "sha256": "792a3cad9206db2f5eec7ad400afb99397dabf1f582d66d0cb18d664dc780044"
+    },
+    {
+      "path": "products/herring-spices-180/product.json",
+      "bytes": 1318,
+      "sha256": "4555ef47fcb1dca81491a5857e3b8c800f6aecbabbff70a6065efd9cc1f6b8a3"
+    },
+    {
+      "path": "products/herring-spices-180/source-label.pdf",
+      "bytes": 17769028,
+      "sha256": "0c7b2f5dac75d9ef358947dc54a2ef82052a7c978c2e2a12aafd039a2cb3bcb4"
+    },
+    {
+      "path": "products/herring-spices-500/index.html",
+      "bytes": 8782,
+      "sha256": "5521a59bb62dcede901743ef99581971ee8992e19fb3b362652eaac99d3136ef"
+    },
+    {
+      "path": "products/herring-spices-500/label.png",
+      "bytes": 1485148,
+      "sha256": "e0b2348a0d2b5bf71f4e306ae8966cd62591dcb233893c276a909926c41aecc7"
+    },
+    {
+      "path": "products/herring-spices-500/layout.svg",
+      "bytes": 131395,
+      "sha256": "be7180a0433f9cc49e07391922c44c0e7cd72f0c027e05827f18b6a2f136b8d5"
+    },
+    {
+      "path": "products/herring-spices-500/mockup.png",
+      "bytes": 2770427,
+      "sha256": "287375a1aafcdf3a42711b6e4153c6033752fb341a47b12a2254a4fc1459c3ea"
+    },
+    {
+      "path": "products/herring-spices-500/packshot.svg",
+      "bytes": 488,
+      "sha256": "55d00a7169c0ec70de8a5a5cc5b47480bc3bbac26ecd4b66b04487b1350f5593"
+    },
+    {
+      "path": "products/herring-spices-500/photo-layers.svg",
+      "bytes": 1203,
+      "sha256": "6796be621bc7dc95bb91735f8863eda7feda7ded7f0a62ccac9867e95df41579"
+    },
+    {
+      "path": "products/herring-spices-500/product.json",
+      "bytes": 1319,
+      "sha256": "64d09f6025718015578a4e07accbbef78c7885cfbaa4510040d5c33eb815cc63"
+    },
+    {
+      "path": "products/herring-spices-500/source-label.pdf",
+      "bytes": 17746398,
+      "sha256": "97330705c8ad1d93876d608959c2aaffe92b3664f7d47f496e071a5ad99614d5"
+    },
+    {
+      "path": "products/herring-steaks-725/index.html",
+      "bytes": 8774,
+      "sha256": "a3cd68a07cb38fb196c78a57e6b759fe1e4f54feee50873cf3a1d51240e11cc4"
+    },
+    {
+      "path": "products/herring-steaks-725/label.png",
+      "bytes": 1460761,
+      "sha256": "a5d8c0ffa8bfd461a3d5aa1e891262c5cd16b08f87774580ce64443e80654d1e"
+    },
+    {
+      "path": "products/herring-steaks-725/layout.svg",
+      "bytes": 128761,
+      "sha256": "ac9ba72cc627915b237528d25b6fd12a37d2076b02104e45c25a455e8d474143"
+    },
+    {
+      "path": "products/herring-steaks-725/mockup.png",
+      "bytes": 2831630,
+      "sha256": "fc3d6a5381ac6b37382f4b4d870e8e6f39d51b98722b16f1b84e61803af195e0"
+    },
+    {
+      "path": "products/herring-steaks-725/packshot.svg",
+      "bytes": 488,
+      "sha256": "eb6b62bfd7f05b6ff40e3a191df6f80da5dec7fe35cf321140301264d79c7d63"
+    },
+    {
+      "path": "products/herring-steaks-725/photo-layers.svg",
+      "bytes": 1201,
+      "sha256": "c7ec771576f2afa70633a6d1cb2654f31178e828f7228e7ce8dc4c501940a7dc"
+    },
+    {
+      "path": "products/herring-steaks-725/product.json",
+      "bytes": 1301,
+      "sha256": "808b26e72a02f305d16b44306e5a3381173448f3a057ff65d74762555ac9c867"
+    },
+    {
+      "path": "products/herring-steaks-725/source-label.pdf",
+      "bytes": 10414117,
+      "sha256": "19830feb5f46d19178834e86215a456299f204c6c8234e7802cd19a519f7d18a"
+    },
+    {
+      "path": "products.json",
+      "bytes": 11151,
+      "sha256": "56f95f8e7b41880b0d0dd6aca994a75253ef965955497e0ff01fbdc54fa75a6a"
+    },
+    {
+      "path": "reference/previous-style.png",
+      "bytes": 2224687,
+      "sha256": "8066ff3d4e6d97ec667382aec79f5965737d1ebea7704e49d27218b15e716270"
+    },
+    {
+      "path": "scripts/constructor.js",
+      "bytes": 7384,
+      "sha256": "aa3197ed65c8b8b00da6653ac518829b14b13b39de9f5258b45ddf800c6ddf3e"
+    },
+    {
+      "path": "scripts/page.js",
+      "bytes": 3277,
+      "sha256": "e13021a788da0fa8f3e64bc583941db00862704c57f97c9f3d94053896212aff"
+    },
+    {
+      "path": "scripts/products.js",
+      "bytes": 11177,
+      "sha256": "024bd6ecb6544eed16b6b33899334b4dd325ef20a6cfdb31932361712687f1c3"
+    },
+    {
+      "path": "scripts/site-config.js",
+      "bytes": 245,
+      "sha256": "9fdf081aa511882522d1650d7426fd718de6d34cc878795851d5e18e048a3140"
+    },
+    {
+      "path": "styles/catalog.css",
+      "bytes": 2116,
+      "sha256": "e4a01a1320b6f2fadf635a63ad86b158d0db286e7d06007293b784018e87ae48"
+    },
+    {
+      "path": "styles/collection.css",
+      "bytes": 2505,
+      "sha256": "cd40852b520974f04dbe392c8676d11f8862498e6ee24f99530c0053a855a0af"
+    },
+    {
+      "path": "styles/constructor-base.css",
+      "bytes": 8764,
+      "sha256": "090e10b5d19747b6b2ce1695a0abb151a5f56322b9cc7f30e037fc4b0182c3f4"
+    },
+    {
+      "path": "styles/constructor.css",
+      "bytes": 1393,
+      "sha256": "dc57f2387f075ddf81e10a6ae6ac96fef0bcc6475e013d1dd300ae63606b9ed4"
+    },
+    {
+      "path": "styles/page-base.css",
+      "bytes": 13399,
+      "sha256": "3607ebb44a1de9eeb7f884c98888825e4c11bd64c54572153d19ad4372ea2d17"
+    },
+    {
+      "path": "styles/tokens.css",
+      "bytes": 1273,
+      "sha256": "6260255d103986ae4bb5247fca738351982e93d45d3abf6994e712f5b732bbc8"
+    },
+    {
+      "path": "tools/build.py",
+      "bytes": 14235,
+      "sha256": "7dfda6c21315d65dc12eeb6b6a5a10fcf02a5b638611992246360167ccbae273"
+    },
+    {
+      "path": "tools/check.py",
+      "bytes": 3750,
+      "sha256": "0ec69e00b2d0b6a8af6329fef4f6dc0c05105f88df245d8ac2a7c0ab4ebe1acc"
+    },
+    {
+      "path": "tools/overview.py",
+      "bytes": 1726,
+      "sha256": "ab15f221b2804cccdc5d0bdb7957d9f5d751cfe9b1ee0fdd5f76299f74cb96c5"
+    },
+    {
+      "path": "tools/product-template.html",
+      "bytes": 7906,
+      "sha256": "3f6ef3c6e524d4438bf2e7070eeaaf348adad1c296c90fba07eb75ad3296e00e"
+    },
+    {
+      "path": "tools/render.cjs",
+      "bytes": 1782,
+      "sha256": "ac5b42a52c9183e3831c47ccc5c98fd32fb85abc8f0cd74ec564a10717ba944c"
+    }
+  ]
+}

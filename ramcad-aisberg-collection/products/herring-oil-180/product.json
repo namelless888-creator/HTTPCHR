@@ -1,0 +1,48 @@
+{
+  "id": "herring-oil-180",
+  "order": 1,
+  "brand": "Айсберг",
+  "siteBrand": "RAMCAD",
+  "title": "Сельдь",
+  "subtitle": "кусочками в масле",
+  "format": "Филе кусочками",
+  "weightGrams": 180,
+  "weightLabel": "180 г",
+  "family": "oil",
+  "accent": "#C99A3C",
+  "accentTint": "#E6CA91",
+  "description": "Сельдь кусочками в масле. Масса нетто — 180 г.",
+  "shortDescription": "Сельдь кусочками в масле · 180 г",
+  "about": "Сельдь кусочками в масле.",
+  "fish": "assets/fish/oil-180.png",
+  "label": "products/herring-oil-180/label.png",
+  "sourcePdf": "products/herring-oil-180/source-label.pdf",
+  "page": "products/herring-oil-180/index.html",
+  "preview": "products/herring-oil-180/mockup.png",
+  "fishBox": [
+    164.06,
+    230.59,
+    751.72,
+    751.72
+  ],
+  "packBox": [
+    52,
+    132,
+    495,
+    495
+  ],
+  "labelBoxInPack": [
+    167,
+    156,
+    942,
+    748
+  ],
+  "packCanvas": [
+    1254,
+    1254
+  ],
+  "fishSourceMethod": "original-pdf-image",
+  "fishReferenceSource": "assets/fish/oil-180.png",
+  "sourceFilename": "сельдь  кусочками в масле 180 гр 10х10 см копия.pdf",
+  "isConceptPackaging": true
+}

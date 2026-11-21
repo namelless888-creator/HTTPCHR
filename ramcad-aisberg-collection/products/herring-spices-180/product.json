@@ -1,0 +1,48 @@
+{
+  "id": "herring-spices-180",
+  "order": 6,
+  "brand": "Айсберг",
+  "siteBrand": "RAMCAD",
+  "title": "Сельдь",
+  "subtitle": "с пряностями",
+  "format": "Филе кусочками",
+  "weightGrams": 180,
+  "weightLabel": "180 г",
+  "family": "spices",
+  "accent": "#1B8273",
+  "accentTint": "#BFE2D9",
+  "description": "Филе кусочками в масле. Масса нетто — 180 г.",
+  "shortDescription": "Филе кусочками в масле · 180 г",
+  "about": "Сельдь филе кусочками в масле с пряностями.",
+  "fish": "assets/fish/spices.png",
+  "label": "products/herring-spices-180/label.png",
+  "sourcePdf": "products/herring-spices-180/source-label.pdf",
+  "page": "products/herring-spices-180/index.html",
+  "preview": "products/herring-spices-180/mockup.png",
+  "fishBox": [
+    164.49,
+    247.66,
+    750.53,
+    750.53
+  ],
+  "packBox": [
+    52,
+    132,
+    495,
+    495
+  ],
+  "labelBoxInPack": [
+    167,
+    156,
+    942,
+    748
+  ],
+  "packCanvas": [
+    1254,
+    1254
+  ],
+  "fishSourceMethod": "original-pdf-image",
+  "fishReferenceSource": "assets/fish/spices.png",
+  "sourceFilename": "сельдь кусочками с пряностями 180 10х10см копия.pdf",
+  "isConceptPackaging": true
+}

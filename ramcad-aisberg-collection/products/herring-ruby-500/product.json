@@ -1,0 +1,48 @@
+{
+  "id": "herring-ruby-500",
+  "order": 8,
+  "brand": "Айсберг",
+  "siteBrand": "RAMCAD",
+  "title": "Сельдь",
+  "subtitle": "«Рубиновая»",
+  "format": "Филе кусочками",
+  "weightGrams": 500,
+  "weightLabel": "500 г",
+  "family": "ruby",
+  "accent": "#B92E37",
+  "accentTint": "#E8BEC2",
+  "description": "Филе кусочками в масле. Масса нетто — 500 г.",
+  "shortDescription": "Филе кусочками в масле · 500 г",
+  "about": "Сельдь филе кусочками в масле «Рубиновая».",
+  "fish": "assets/fish/ruby.png",
+  "label": "products/herring-ruby-500/label.png",
+  "sourcePdf": "products/herring-ruby-500/source-label.pdf",
+  "page": "products/herring-ruby-500/index.html",
+  "preview": "products/herring-ruby-500/mockup.png",
+  "fishBox": [
+    155.07,
+    247.85,
+    780.15,
+    780.15
+  ],
+  "packBox": [
+    25,
+    106,
+    540,
+    540
+  ],
+  "labelBoxInPack": [
+    167,
+    156,
+    942,
+    748
+  ],
+  "packCanvas": [
+    1254,
+    1254
+  ],
+  "fishSourceMethod": "original-pdf-image",
+  "fishReferenceSource": "assets/fish/ruby.png",
+  "sourceFilename": "сельдь кусочками рубиновая 500 10х10см копия.pdf",
+  "isConceptPackaging": true
+}

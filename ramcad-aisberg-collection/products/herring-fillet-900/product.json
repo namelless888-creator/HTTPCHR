@@ -1,0 +1,48 @@
+{
+  "id": "herring-fillet-900",
+  "order": 4,
+  "brand": "Айсберг",
+  "siteBrand": "RAMCAD",
+  "title": "Сельдь",
+  "subtitle": "филе в масле",
+  "format": "Филе",
+  "weightGrams": 900,
+  "weightLabel": "900 г",
+  "family": "fillet",
+  "accent": "#BA8835",
+  "accentTint": "#E6CA91",
+  "description": "Сельдь филе в масле. Масса нетто — 900 г.",
+  "shortDescription": "Сельдь филе в масле · 900 г",
+  "about": "Сельдь филе в масле.",
+  "fish": "assets/fish/fillets.png",
+  "label": "products/herring-fillet-900/label.png",
+  "sourcePdf": "products/herring-fillet-900/source-label.pdf",
+  "page": "products/herring-fillet-900/index.html",
+  "preview": "products/herring-fillet-900/mockup.png",
+  "fishBox": [
+    298.88,
+    245.23,
+    653.3,
+    612.95
+  ],
+  "packBox": [
+    25,
+    106,
+    540,
+    540
+  ],
+  "labelBoxInPack": [
+    167,
+    156,
+    942,
+    748
+  ],
+  "packCanvas": [
+    1254,
+    1254
+  ],
+  "fishSourceMethod": "reference-preserving-plate-removal",
+  "fishReferenceSource": "assets/fish/source/fillets-on-plate.png",
+  "sourceFilename": "сельдь  кусочками в масле 900 гр. 10х10 см копия.pdf",
+  "isConceptPackaging": true
+}

@@ -1,0 +1,48 @@
+{
+  "id": "herring-oil-500",
+  "order": 2,
+  "brand": "Айсберг",
+  "siteBrand": "RAMCAD",
+  "title": "Сельдь",
+  "subtitle": "кусочками в масле",
+  "format": "Филе кусочками",
+  "weightGrams": 500,
+  "weightLabel": "500 г",
+  "family": "oil",
+  "accent": "#C99A3C",
+  "accentTint": "#E6CA91",
+  "description": "Сельдь кусочками в масле. Масса нетто — 500 г.",
+  "shortDescription": "Сельдь кусочками в масле · 500 г",
+  "about": "Сельдь кусочками в масле.",
+  "fish": "assets/fish/oil-500.png",
+  "label": "products/herring-oil-500/label.png",
+  "sourcePdf": "products/herring-oil-500/source-label.pdf",
+  "page": "products/herring-oil-500/index.html",
+  "preview": "products/herring-oil-500/mockup.png",
+  "fishBox": [
+    167.89,
+    231.45,
+    741.32,
+    741.32
+  ],
+  "packBox": [
+    25,
+    106,
+    540,
+    540
+  ],
+  "labelBoxInPack": [
+    167,
+    156,
+    942,
+    748
+  ],
+  "packCanvas": [
+    1254,
+    1254
+  ],
+  "fishSourceMethod": "reference-preserving-upscale",
+  "fishReferenceSource": "assets/fish/source/oil-500-original.png",
+  "sourceFilename": "сельдь  кусочками  масле 500 гр. 10х10 см(1).pdf",
+  "isConceptPackaging": true
+}

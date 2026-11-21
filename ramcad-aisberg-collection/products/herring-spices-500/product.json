@@ -1,0 +1,48 @@
+{
+  "id": "herring-spices-500",
+  "order": 7,
+  "brand": "Айсберг",
+  "siteBrand": "RAMCAD",
+  "title": "Сельдь",
+  "subtitle": "с пряностями",
+  "format": "Филе кусочками",
+  "weightGrams": 500,
+  "weightLabel": "500 г",
+  "family": "spices",
+  "accent": "#1B8273",
+  "accentTint": "#BFE2D9",
+  "description": "Филе кусочками в масле. Масса нетто — 500 г.",
+  "shortDescription": "Филе кусочками в масле · 500 г",
+  "about": "Сельдь филе кусочками в масле с пряностями.",
+  "fish": "assets/fish/spices.png",
+  "label": "products/herring-spices-500/label.png",
+  "sourcePdf": "products/herring-spices-500/source-label.pdf",
+  "page": "products/herring-spices-500/index.html",
+  "preview": "products/herring-spices-500/mockup.png",
+  "fishBox": [
+    164.49,
+    247.66,
+    750.53,
+    750.53
+  ],
+  "packBox": [
+    25,
+    106,
+    540,
+    540
+  ],
+  "labelBoxInPack": [
+    167,
+    156,
+    942,
+    748
+  ],
+  "packCanvas": [
+    1254,
+    1254
+  ],
+  "fishSourceMethod": "original-pdf-image",
+  "fishReferenceSource": "assets/fish/spices.png",
+  "sourceFilename": "сельдь кусочками с пряностями 500 10х10 см копия.pdf",
+  "isConceptPackaging": true
+}

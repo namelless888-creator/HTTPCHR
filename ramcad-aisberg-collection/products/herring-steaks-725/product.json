@@ -1,0 +1,48 @@
+{
+  "id": "herring-steaks-725",
+  "order": 3,
+  "brand": "Айсберг",
+  "siteBrand": "RAMCAD",
+  "title": "Сельдь",
+  "subtitle": "кусковая в масле",
+  "format": "Кусковая",
+  "weightGrams": 725,
+  "weightLabel": "725 г",
+  "family": "steaks",
+  "accent": "#3E638B",
+  "accentTint": "#BCD6E7",
+  "description": "Сельдь кусковая в масле. Масса нетто — 725 г.",
+  "shortDescription": "Сельдь кусковая в масле · 725 г",
+  "about": "Сельдь кусковая в масле.",
+  "fish": "assets/fish/steaks.png",
+  "label": "products/herring-steaks-725/label.png",
+  "sourcePdf": "products/herring-steaks-725/source-label.pdf",
+  "page": "products/herring-steaks-725/index.html",
+  "preview": "products/herring-steaks-725/mockup.png",
+  "fishBox": [
+    327.88,
+    274.05,
+    596.75,
+    596.75
+  ],
+  "packBox": [
+    20,
+    112,
+    530,
+    530
+  ],
+  "labelBoxInPack": [
+    167,
+    156,
+    942,
+    748
+  ],
+  "packCanvas": [
+    1254,
+    1254
+  ],
+  "fishSourceMethod": "reference-preserving-plate-removal",
+  "fishReferenceSource": "assets/fish/source/steaks-on-plate.png",
+  "sourceFilename": "Сельдь кусочки в масле 10х10 см. 725 грам.pdf",
+  "isConceptPackaging": true
+}

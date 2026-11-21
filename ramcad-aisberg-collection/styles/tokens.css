@@ -1,0 +1,31 @@
+/* Единый набор переменных. Значения также описаны в docs/design-spec.md. */
+@font-face { font-family: "Prata"; src: url("../assets/fonts/Prata-Regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url("../assets/fonts/Manrope-Variable.ttf") format("truetype"); font-style: normal; font-weight: 200 800; font-display: swap; }
+
+:root {
+  --navy: #082f46;
+  --marine: #215c86;
+  --ice: #ddecf4;
+  --snow: #f7fbff;
+  --gold: #c99a3c;
+  --gold-light: #e6ca91;
+  --nav-active-fill: linear-gradient(135deg, #eacd92, #dfc797);
+  --muted: #416b87;
+  --button: #003e50;
+  --button-hover: #07566b;
+  --font-body: "Manrope", Arial, sans-serif;
+  --font-display: "Prata", Georgia, serif;
+  --panel-radius: 18px;
+  --pill-radius: 999px;
+  --panel-padding: 28px;
+  --panel-alpha: .90;
+  --panel-fill: linear-gradient(125deg, rgba(244,250,255,var(--panel-alpha)), rgba(221,236,246,.88));
+  --panel-border: 1px solid rgba(255,255,255,.88);
+  --panel-shadow: 0 12px 30px rgba(1,27,44,.07), inset 0 1px 0 rgba(255,255,255,.45);
+  --panel-blur: 18px;
+  --page-width: 88.8%;
+  --page-max-width: 1720px;
+  --column-gap: 32px;
+  --stack-gap: 12px;
+  --duration: 180ms;
+}
