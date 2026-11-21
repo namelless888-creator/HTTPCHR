@@ -23,3 +23,9 @@
 
 - The user-supplied ZIP `Премиальное мороженое MARZO на льду.zip` contains both exact photographs for the “Эксперты в холоде” cards: `Премиальное мороженое MARZO на льду.png` for the left ice cream card and `04-cold-haze.png` for the right fish card. They are installed as byte-for-byte PNG copies in `public/images/directions/`.
 - Rollback branch: `backup/pre-exact-directions-20261121`.
+
+## Fish catalog integration
+
+- Rollback branch: `backup/pre-fish-catalog-20261121`.
+- The uploaded `ramcad-aisberg-collection (1).zip` exceeds the environment's 32 MiB transfer limit. Its product files are still pending; request smaller ZIP parts or a direct download link.
+- The current source describes eight Айсберг products in `lib/herring.ts`, but `public/images/herring/` is still missing. The catalog navigation and standalone HTML export are prepared for these products; do not publish the fish catalog until the archive assets are installed and checked.

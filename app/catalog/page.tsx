@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Landing } from '@/components/landing';
 
 export const metadata: Metadata = {
-  title: 'Каталог мороженого MARZO — RAMCAD',
-  description: '36 вкусов мороженого MARZO: рожки, эскимо, стаканчики, фруктовый лёд и семейная коллекция.',
+  title: 'Каталог мороженого MARZO и рыбы Айсберг — RAMCAD',
+  description: 'Мороженое MARZO и рыбные пресервы Айсберг в каталоге RAMCAD.',
 };
 
 export default function Page() {

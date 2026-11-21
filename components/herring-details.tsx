@@ -40,7 +40,7 @@ export function HerringDetails({ product }: { product: HerringProduct }) {
   return <article className='herring-details' data-gallery={gallery} style={herringSceneStyle(product)}>
     <nav className='product-breadcrumbs' aria-label='Хлебные крошки'>
       <Link href='/'>Главная</Link><ChevronRight size={12} aria-hidden='true' />
-      <Link href='/#directions'>Рыба и морепродукты</Link><ChevronRight size={12} aria-hidden='true' />
+      <Link href='/catalog?department=fish#catalog-products'>Рыба и морепродукты</Link><ChevronRight size={12} aria-hidden='true' />
       <span aria-current='page'>{name}</span>
     </nav>
 
@@ -89,7 +89,7 @@ export function HerringDetails({ product }: { product: HerringProduct }) {
             </details>
           </div>
 
-          <Link href='/#directions' className='herring-back-link'><ArrowLeft size={20} strokeWidth={1.6} aria-hidden='true' /><span>Рыба и морепродукты</span></Link>
+          <Link href='/catalog?department=fish#catalog-products' className='herring-back-link'><ArrowLeft size={20} strokeWidth={1.6} aria-hidden='true' /><span>Весь каталог рыбы</span></Link>
         </section>
       </div>
     </div>
