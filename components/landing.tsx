@@ -287,7 +287,18 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
                 </div>
                 <div className='product-info'><span>{item.brand}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div>
               </MotionLink>)
-              : HERRING_PRODUCTS.map((item, index) => <MotionLink data-card-n={1000 + index} key={item.id} className='product-card' href={herringProductHref(item)} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} aria-label={`Подробнее: ${item.title} ${item.subtitle}, ${item.weight}`}><div className='product-visual'><span className='product-category'>{item.weight}</span><Image src={item.fishImage} alt={`${item.title} ${item.subtitle}`} width={1254} height={1254} unoptimized loading='lazy' /><span className='product-open'><ArrowUpRight size={18} /></span></div><div className='product-info'><span>{item.brand} / {item.format}</span><h3>{item.title} {item.subtitle}</h3></div></MotionLink>)}
+              : HERRING_PRODUCTS.map((item, index) => <MotionLink data-card-n={1000 + index} key={item.id} className='product-card' href={herringProductHref(item)} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} aria-label={`Подробнее: ${item.title} ${item.subtitle}, ${item.weight}`}>
+                  <div className='product-visual product-visual-fish'>
+                    <span className='product-category'>{item.weight}</span>
+                    <div className='herring-card-pack' aria-hidden='true'>
+                      <Image className='herring-card-pack-base' src='/images/herring/packaging-tub.png' alt='' width={1254} height={1254} unoptimized loading='lazy' />
+                      <Image className='herring-card-pack-label' src={item.labelImage} alt='' width={1401} height={1401} unoptimized loading='lazy' />
+                    </div>
+                    <Image className='herring-card-fish' src={item.fishImage} alt='' width={1254} height={1254} unoptimized loading='lazy' />
+                    <span className='product-open'><ArrowUpRight size={18} /></span>
+                  </div>
+                  <div className='product-info'><span>{item.brand} / {item.format}</span><h3>{item.title} {item.subtitle}</h3></div>
+                </MotionLink>)}
           </div>
           {department === DEPARTMENTS[0] && products.length > 8 && <button className='pill pill-outline show-more' onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть коллекцию' : `Все ${products.length} вкусов`}<ChevronDown size={18} style={{ transform: expanded ? 'rotate(180deg)' : undefined }} /></button>}
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>

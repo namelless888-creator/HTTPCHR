@@ -17,7 +17,7 @@
 - REF source snapshot inspected: `26fa2a4c93e1cb4176a8a97bc08139c5b857ab17`.
 - Git commit dates, rather than checkout file mtimes, are used to identify newer REF files.
 - REF supplies the herring routes, product data, and component styles, but does not contain their referenced product photography.
-- Missing REF media is tracked by path: `public/images/herring/` needs `fish-fillets.webp`, `fish-oil-180.webp`, `fish-oil-500.webp`, `fish-ruby.webp`, `fish-spices.webp`, `fish-steaks.webp`, `hero-scene.webp`, all eight `label-*.webp` files, `packaging-tub.webp`, `studio-ice.webp`, and `waves.svg`; `public/images/` also needs `product-stage-bg.png`, `product-podium-cutout.png`, and `product-reference-cutout.png`.
+- The herring media missing from REF has been supplied by the collection added in HTTPCHR commit `531d8d1` (branch `claude/sleepy-euler-puv12g`). The unused `hero-scene.webp` is not needed by the current composition. Other REF media still missing: `public/images/product-stage-bg.png`, `product-podium-cutout.png`, and `product-reference-cutout.png`.
 
 ## Direction card photos
 
@@ -27,5 +27,5 @@
 ## Fish catalog integration
 
 - Rollback branch: `backup/pre-fish-catalog-20261121`.
-- The uploaded `ramcad-aisberg-collection (1).zip` exceeds the environment's 32 MiB transfer limit. Its product files are still pending; request smaller ZIP parts or a direct download link.
-- The current source describes eight Айсберг products in `lib/herring.ts`, but `public/images/herring/` is still missing. The catalog navigation and standalone HTML export are prepared for these products; do not publish the fish catalog until the archive assets are installed and checked.
+- The uploaded ZIP exceeded the environment's 32 MiB transfer limit, but the same collection was found in HTTPCHR commit `531d8d1`. Its `products.json` contains eight products. All eight current entries in `lib/herring.ts` were checked against the source metadata and scene coordinates.
+- The fish catalog and standalone HTML export include all eight products. Web assets copied from the collection are the six fish cutouts, eight original label renders, shared ice background, packaging shell, and wave pattern. Rollback branch before installing these assets: `backup/pre-fish-assets-20261121`.
