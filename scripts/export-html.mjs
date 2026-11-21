@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 import { mountHeroParallax } from '../lib/hero-parallax.mjs';
 import { mountHomeHero } from '../lib/home-hero.mjs';
 import { mountMapIntro } from '../lib/map-intro.mjs';
@@ -27,17 +28,30 @@ const entries = [...catalogSource.matchAll(/\{\s*src:\s*img\((\d+)\),\s*name:\s*
 if (entries.length !== 36 || entries.some((entry, index) => entry.n !== index + 1)) {
   throw new Error('Expected 36 consecutively numbered catalog entries; review the catalog parser.');
 }
+const herringSource = await readFile(path.join(root, 'lib/herring.ts'), 'utf8');
+const herringModule = { exports: {} };
+const herringCode = ts.transpileModule(herringSource, {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+}).outputText;
+new Function('module', 'exports', herringCode)(herringModule, herringModule.exports);
+const herringProducts = herringModule.exports.HERRING_PRODUCTS;
+if (!Array.isArray(herringProducts) || !herringProducts.length || herringProducts.some(item => !/^[a-z0-9-]+$/.test(item.id))) {
+  throw new Error('Expected herring products with safe route IDs in lib/herring.ts.');
+}
 
 pages.push(...entries.map(item => {
   const id = String(item.n).padStart(2, '0');
   return { route: `/product/${id}`, build: `product/${id}.html`, output: `product-${id}.html` };
 }));
+pages.push(...herringProducts.map(item => ({
+  route: `/herring/${item.id}`,
+  build: `herring/${item.id}.html`,
+  output: `herring-${item.id}.html`,
+})));
 const routeFiles = new Map(pages.map(page => [page.route, page.output]));
 const staticHref = value => {
   if (!value.startsWith('/') || value.startsWith('//')) return value;
   const url = new URL(value, 'https://local.invalid');
-  // The preview doesn't include the source-only fish pages, whose photos are unavailable.
-  if (url.pathname.startsWith('/herring/')) return 'contacts.html';
   const file = routeFiles.get(url.pathname.replace(/\/+$/, '') || '/');
   return file ? file + url.search + url.hash : value;
 };
@@ -52,6 +66,10 @@ const cards = entries.map(item => {
   const name = escapeHtml(item.name);
   const brand = item.name.startsWith('MARZO') ? 'MARZO' : item.name.includes('Бурёнка') ? 'Бурёнка' : item.name.includes('My Love') ? 'My Love' : 'RAMCAD';
   return `<a href="product-${number}.html" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span><img src="public/images/product-cutouts/${number}.webp" alt="" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>${brand}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3></div></a>`;
+}).join('');
+const fishCards = herringProducts.map(item => {
+  const name = `${item.title} ${item.subtitle}`;
+  return `<a href="herring-${escapeHtml(item.id)}.html" class="product-card" aria-label="Подробнее: ${escapeHtml(name)}, ${escapeHtml(item.weight)}"><div class="product-visual"><span class="product-category">${escapeHtml(item.weight)}</span><img src="public${escapeHtml(item.fishImage)}" alt="${escapeHtml(name)}" width="1254" height="1254" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>${escapeHtml(item.brand)} / ${escapeHtml(item.format)}</span><h3>${escapeHtml(name)}</h3></div></a>`;
 }).join('');
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
@@ -69,30 +87,82 @@ const runtime = String.raw`
   const source = document.getElementById('static-products');
   if (grid && source) {
     const products = [...source.content.querySelectorAll('.product-card')];
+    const fishSource = document.getElementById('static-fish-products');
+    const fishProducts = fishSource ? [...fishSource.content.querySelectorAll('.product-card')] : [];
     const filters = [...document.querySelectorAll('.filter-tabs button')];
+    const filterBar = document.querySelector('.filter-tabs');
+    const departmentButtons = [...document.querySelectorAll('.department-tabs button')];
     const count = document.querySelector('.catalog-toolbar > span');
     const more = document.querySelector('.show-more');
+    const note = document.createElement('p');
+    note.className = 'catalog-toolbar-note';
+    note.textContent = 'Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.';
+    note.hidden = true;
+    count?.before(note);
+    let department = departmentButtons.length && new URL(location.href).searchParams.get('department') === 'fish' ? 'fish' : 'ice';
     let filter = 'Все вкусы';
     let expanded = false;
     const flavorCount = n => n + ' ' + (n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов');
+    const itemCount = n => n + ' ' + (n > 10 && n < 15 ? 'товаров' : n % 10 === 1 ? 'товар' : n % 10 >= 2 && n % 10 <= 4 ? 'товара' : 'товаров');
     const render = () => {
-      const matching = products.filter(card => filter === 'Все вкусы' || card.dataset.category === filter);
-      grid.replaceChildren(...(expanded ? matching : matching.slice(0, 8)).map(card => card.cloneNode(true)));
-      count.textContent = flavorCount(matching.length);
+      const isFish = department === 'fish';
+      const matching = isFish ? fishProducts : products.filter(card => filter === 'Все вкусы' || card.dataset.category === filter);
+      grid.replaceChildren(...(isFish || expanded ? matching : matching.slice(0, 8)).map(card => card.cloneNode(true)));
+      if (count) count.textContent = isFish ? itemCount(matching.length) : flavorCount(matching.length);
+      if (filterBar) filterBar.style.display = isFish ? 'none' : '';
+      note.hidden = !isFish;
       filters.forEach(button => {
         const selected = button.textContent.trim() === filter;
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', String(selected));
       });
-      more.hidden = matching.length <= 8;
-      more.firstChild.textContent = expanded ? 'Свернуть коллекцию' : 'Все ' + matching.length + ' вкусов';
-      more.querySelector('svg').style.transform = expanded ? 'rotate(180deg)' : '';
+      departmentButtons.forEach((button, index) => {
+        const selected = isFish ? index === 1 : index === 0;
+        button.classList.toggle('selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+      if (more) {
+        more.hidden = isFish || matching.length <= 8;
+        more.firstChild.textContent = expanded ? 'Свернуть коллекцию' : 'Все ' + matching.length + ' вкусов';
+        more.querySelector('svg').style.transform = expanded ? 'rotate(180deg)' : '';
+      }
     };
     filters.forEach(button => button.addEventListener('click', () => {
       filter = button.textContent.trim(); expanded = false; render();
     }));
-    more.addEventListener('click', () => { expanded = !expanded; render(); });
+    departmentButtons.forEach((button, index) => button.addEventListener('click', () => {
+      department = index === 1 ? 'fish' : 'ice';
+      expanded = false;
+      const url = new URL(location.href);
+      if (department === 'fish') url.searchParams.set('department', 'fish');
+      else url.searchParams.delete('department');
+      history.replaceState(null, '', url);
+      render();
+    }));
+    more?.addEventListener('click', () => { expanded = !expanded; render(); });
     render();
+  }
+
+  const herring = document.querySelector('.herring-details');
+  if (herring) {
+    const galleryButtons = [...herring.querySelectorAll('.herring-gallery-dots button')];
+    const galleryLabels = ['Рыба и упаковка на льду', 'Упаковка крупным планом', 'Рыба на льду крупным планом'];
+    galleryButtons.forEach((button, index) => button.addEventListener('click', () => {
+      herring.dataset.gallery = ['scene', 'pack', 'fish'][index];
+      galleryButtons.forEach((other, otherIndex) => {
+        const selected = otherIndex === index;
+        other.classList.toggle('is-active', selected);
+        other.setAttribute('aria-pressed', String(selected));
+      });
+      const live = herring.querySelector('.herring-gallery .sr-only[aria-live]');
+      if (live) live.textContent = galleryLabels[index];
+    }));
+    const dialog = herring.querySelector('.herring-dialog');
+    const opener = herring.querySelector('.herring-wholesale button');
+    opener?.addEventListener('click', () => dialog?.showModal());
+    dialog?.querySelector('.herring-dialog-close')?.addEventListener('click', () => dialog.close());
+    dialog?.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+    dialog?.addEventListener('close', () => opener?.focus());
   }
 
   const reveals = [...document.querySelectorAll('.reveal')];
@@ -184,7 +254,6 @@ for (const page of builtPages) {
     .replace(/<meta\b[^>]*name="next-size-adjust"[^>]*>/gi, '')
     .replace(/\s+srcSet="[^"]*"/gi, '')
     .replace(/\s+data-nimg="[^"]*"/gi, '')
-    .replace(/<button\b[^>]*>Рыба и морепродукты<\/button>/g, '')
     .replace(/\b(src|poster)="([^"]+)"/g, (match, attr, raw) => {
       let value = decodeEntities(raw);
       if (value.startsWith('/_next/image?')) value = new URL(value, 'https://local.invalid').searchParams.get('url') ?? value;
@@ -196,8 +265,9 @@ for (const page of builtPages) {
 
   html = html.replace(/\bhref="([^"]+)"/g, (_, raw) => `href="${escapeHtml(staticHref(decodeEntities(raw)))}"`);
   const catalog = page.route === '/' || page.route === '/catalog' ? `<template id="static-products">${cards}</template>` : '';
-  html = html.replace('</body>', `${catalog}<script>${runtime}</script></body>`);
+  const fishCatalog = page.route === '/catalog' ? `<template id="static-fish-products">${fishCards}</template>` : '';
+  html = html.replace('</body>', `${catalog}${fishCatalog}<script>${runtime}</script></body>`);
   if (html.includes('/_next/')) throw new Error(`An unresolved Next.js asset remains in ${page.output}.`);
   await writeFile(path.join(outputDirectory, page.output), html);
-  console.log(`Exported ${page.output} with embedded CSS and local fonts${catalog ? `; ${entries.length} catalog products` : ''}.`);
+  console.log(`Exported ${page.output} with embedded CSS and local fonts${catalog ? `; ${entries.length} ice cream products` : ''}${fishCatalog ? `; ${herringProducts.length} fish products` : ''}.`);
 }

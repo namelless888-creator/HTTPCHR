@@ -76,6 +76,12 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
 
   useEffect(() => mountHeroParallax(document.getElementById('hero')), [page]);
   useEffect(() => page === 'contacts' ? mountMapIntro(map.current) : undefined, [page]);
+  useEffect(() => {
+    if (page === 'catalog' && new URLSearchParams(window.location.search).get('department') === 'fish') {
+      const frame = requestAnimationFrame(() => setDepartment(DEPARTMENTS[1]));
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [page]);
 
   useEffect(() => {
     const revealObserver = new IntersectionObserver(entries => {
@@ -160,7 +166,15 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   const activeCount = department === DEPARTMENTS[1] ? HERRING_PRODUCTS.length : products.length;
   const product = productId ? getProduct(productId) : undefined;
   const herringProduct = page === 'herring' && productId ? getHerringProduct(productId) : undefined;
-  const switchDepartment = (label: typeof DEPARTMENTS[number]) => { setDepartment(label); setFilter('Все вкусы'); setExpanded(false); };
+  const switchDepartment = (label: typeof DEPARTMENTS[number]) => {
+    setDepartment(label);
+    setFilter('Все вкусы');
+    setExpanded(false);
+    const url = new URL(window.location.href);
+    if (label === DEPARTMENTS[1]) url.searchParams.set('department', 'fish');
+    else url.searchParams.delete('department');
+    window.history.replaceState(null, '', url);
+  };
 
   const handleGlow = (event: React.MouseEvent<HTMLElement>) => {
     if (reduce) return;
@@ -231,7 +245,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
               </Link>
             </Reveal>
             <Reveal delay={.12}>
-              <Link href='/herring/herring-oil-500' className='direction-card' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
+              <Link href='/catalog?department=fish#catalog-products' className='direction-card' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
                 <div className='direction-photo direction-photo-fish'>
                   <Image src='/images/directions/iceberg-herring-on-ice.png' alt='Сельдь АЙСБЕРГ с филе и красным луком на льду' width={1774} height={887} unoptimized />
                 </div>
