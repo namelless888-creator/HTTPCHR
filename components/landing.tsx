@@ -220,7 +220,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             <Reveal className='direction-card-feature-wrap'>
               <Link href='/catalog' className='direction-card direction-card-feature' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
                 <div className='direction-photo direction-photo-ice'>
-                  <Image src='/images/directions/marzo-ice-collection.webp' alt='Мороженое MARZO и три вида упаковки на льду' width={1672} height={941} unoptimized />
+                  <Image src='/images/catalog-intro-poster.webp' alt='Вафельный рожок и упаковка мороженого MARZO на льду' width={1280} height={736} unoptimized />
                 </div>
                 <div className='direction-card-copy'>
                   <span className='direction-card-index'>01</span>
@@ -233,7 +233,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             <Reveal delay={.12}>
               <Link href='/herring/herring-oil-500' className='direction-card' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
                 <div className='direction-photo direction-photo-fish'>
-                  <Image src='/images/directions/iceberg-herring.webp' alt='Упаковка сельди АЙСБЕРГ и кусочки рыбы на льду' width={1672} height={941} unoptimized />
+                  <Image src='/images/directions/fish-on-ice.webp' alt='Рыба и лососевые стейки на колотом льду' width={734} height={397} unoptimized />
                 </div>
                 <div className='direction-card-copy'>
                   <span className='direction-card-index'>02</span>
