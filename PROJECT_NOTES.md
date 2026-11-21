@@ -18,3 +18,8 @@
 - Git commit dates, rather than checkout file mtimes, are used to identify newer REF files.
 - REF supplies the herring routes, product data, and component styles, but does not contain their referenced product photography.
 - Missing REF media is tracked by path: `public/images/herring/` needs `fish-fillets.webp`, `fish-oil-180.webp`, `fish-oil-500.webp`, `fish-ruby.webp`, `fish-spices.webp`, `fish-steaks.webp`, `hero-scene.webp`, all eight `label-*.webp` files, `packaging-tub.webp`, `studio-ice.webp`, and `waves.svg`; `public/images/` also needs `product-stage-bg.png`, `product-podium-cutout.png`, and `product-reference-cutout.png`.
+
+## Direction card imagery
+
+- On 2026-11-21, the two photos in the “Эксперты в холоде” cards were replaced with images recreated from the user's inline references. The exact original files were not available in the connected repositories or workspace attachments. For pixel-exact replacement, obtain the original files for the MARZO ice composition and АЙСБЕРГ herring composition.
+- Rollback branch for this change: `backup/pre-directions-photo-swap-20261121` (source branch `work`).
