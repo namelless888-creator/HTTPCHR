@@ -10,7 +10,6 @@ import { ProductDetails } from '@/components/product-details';
 import { HerringDetails } from '@/components/herring-details';
 import { SceneBackdrop } from '@/components/scene-backdrop';
 import { CatalogIntro } from '@/components/catalog-intro';
-import { HomeHeroFilm } from '@/components/home-hero-film';
 import { getProduct, PRODUCTS, productCategory as category, productCutout, productHref } from '@/lib/products';
 import { getHerringProduct, HERRING_PRODUCTS, herringProductHref } from '@/lib/herring';
 import { mountMapIntro } from '@/lib/map-intro.mjs';
@@ -196,13 +195,18 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
       <main id='main'>
         {page === 'home' && <>
           <section id='hero' className='reference-hero scene-section'>
-          <HomeHeroFilm />
-          <span className='hero-frost' aria-hidden='true'>{FROST_PARTICLES.map((particle, index) => <span key={index} style={{ left: particle.left, '--size': `${particle.size}px`, '--dur': `${particle.duration}s`, '--delay': `${particle.delay}s` } as React.CSSProperties} />)}</span>
-          <div className='reference-hero-copy'>
-            <span className='hero-index' aria-hidden='true'>01</span>
-            <h1>Создаём вкус.<br />Сохраняем свежесть.</h1>
-            <Link className='pill pill-dark reference-hero-button' href='/catalog'>Смотреть каталог <ArrowRight size={27} /></Link>
+          <div className='reference-hero-photo'>
+            <Image
+              src='/images/home-hero-winter-marzo.webp'
+              alt='Мороженое MARZO в зимней композиции на льду'
+              fill
+              sizes='100vw'
+              priority
+              unoptimized
+            />
           </div>
+          <span className='hero-frost' aria-hidden='true'>{FROST_PARTICLES.map((particle, index) => <span key={index} style={{ left: particle.left, '--size': `${particle.size}px`, '--dur': `${particle.duration}s`, '--delay': `${particle.delay}s` } as React.CSSProperties} />)}</span>
+          <Link className='reference-hero-copy' href='/catalog'>Смотреть каталог</Link>
           <span className='hero-scroll-cue' aria-hidden='true'><ChevronDown size={18} strokeWidth={1.5} /></span>
         </section>
 
