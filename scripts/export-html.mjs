@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { access, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
@@ -38,6 +38,20 @@ const herringProducts = herringModule.exports.HERRING_PRODUCTS;
 if (!Array.isArray(herringProducts) || !herringProducts.length || herringProducts.some(item => !/^[a-z0-9-]+$/.test(item.id))) {
   throw new Error('Expected herring products with safe route IDs in lib/herring.ts.');
 }
+const herringAssets = new Set([
+  '/images/herring/studio-ice.png',
+  '/images/herring/packaging-tub.png',
+  '/images/herring/waves.svg',
+  ...herringProducts.flatMap(item => [item.fishImage, item.labelImage]),
+]);
+await Promise.all([...herringAssets].map(async source => {
+  if (!source.startsWith('/images/herring/')) throw new Error(`Unexpected herring asset path: ${source}`);
+  try {
+    await access(path.join(root, 'public', source.slice(1)));
+  } catch {
+    throw new Error(`Missing herring asset: public${source}`);
+  }
+}));
 
 pages.push(...entries.map(item => {
   const id = String(item.n).padStart(2, '0');
@@ -69,7 +83,7 @@ const cards = entries.map(item => {
 }).join('');
 const fishCards = herringProducts.map(item => {
   const name = `${item.title} ${item.subtitle}`;
-  return `<a href="herring-${escapeHtml(item.id)}.html" class="product-card" aria-label="Подробнее: ${escapeHtml(name)}, ${escapeHtml(item.weight)}"><div class="product-visual"><span class="product-category">${escapeHtml(item.weight)}</span><img src="public${escapeHtml(item.fishImage)}" alt="${escapeHtml(name)}" width="1254" height="1254" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>${escapeHtml(item.brand)} / ${escapeHtml(item.format)}</span><h3>${escapeHtml(name)}</h3></div></a>`;
+  return `<a href="herring-${escapeHtml(item.id)}.html" class="product-card" aria-label="Подробнее: ${escapeHtml(name)}, ${escapeHtml(item.weight)}"><div class="product-visual product-visual-fish"><span class="product-category">${escapeHtml(item.weight)}</span><div class="herring-card-pack" aria-hidden="true"><img class="herring-card-pack-base" src="public/images/herring/packaging-tub.png" alt="" width="1254" height="1254" loading="lazy" decoding="async"><img class="herring-card-pack-label" src="public${escapeHtml(item.labelImage)}" alt="" width="1401" height="1401" loading="lazy" decoding="async"></div><img class="herring-card-fish" src="public${escapeHtml(item.fishImage)}" alt="" width="1254" height="1254" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>${escapeHtml(item.brand)} / ${escapeHtml(item.format)}</span><h3>${escapeHtml(name)}</h3></div></a>`;
 }).join('');
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
