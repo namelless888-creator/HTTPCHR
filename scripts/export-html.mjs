@@ -127,7 +127,7 @@ const runtime = String.raw`
       note.hidden = !isFish || !departmentButtons.length;
       filters.forEach(button => {
         const label = button.textContent.trim();
-        const selected = label === 'Рыба' ? isFish : !isFish && label === filter;
+        const selected = label === 'Рыба' ? isFish : label === 'Мороженое' ? !isFish : !isFish && label === filter;
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', String(selected));
       });
@@ -145,7 +145,7 @@ const runtime = String.raw`
     filters.forEach(button => button.addEventListener('click', () => {
       const label = button.textContent.trim();
       department = label === 'Рыба' ? 'fish' : 'ice';
-      if (label !== 'Рыба') filter = label;
+      if (label !== 'Рыба') filter = label === 'Мороженое' ? 'Все вкусы' : label;
       expanded = false;
       const url = new URL(location.href);
       if (department === 'fish') url.searchParams.set('department', 'fish');
