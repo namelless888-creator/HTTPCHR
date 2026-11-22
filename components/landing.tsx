@@ -199,7 +199,9 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   return <div className={`ramcad site-page-${page}`}>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
     <header className='main-header'>
-      <Link href='/' className={`header-brand${page === 'home' ? ' header-brand-hero' : ''}`} aria-label='RAMCAD — на главную'><span>RAMCAD</span>{page === 'home' && <span className='header-brand-snow' aria-hidden='true'><svg viewBox='0 0 403 86' preserveAspectRatio='none' focusable='false'><g fill='#f9fdff' stroke='#beddea' strokeWidth='1.3' strokeLinejoin='round'><path d='M3 20Q9 15 15 17Q20 12 27 15Q35 12 41 16Q54 13 62 19L60 23Q52 21 45 23Q37 20 31 23L30 29Q28 32 26 28L25 22Q16 25 10 22Z' /><path d='M85 21Q90 17 94 14Q99 12 103 17Q108 17 111 21Q104 23 101 21L100 26Q98 29 96 25L95 21Q90 23 85 21Z' /><path d='M125 20Q130 15 136 17Q141 13 147 16Q152 15 157 20Q150 23 145 21Q140 24 136 22L135 27Q133 30 131 26L130 21Z' /><path d='M176 20Q182 15 188 17Q194 13 200 16Q205 16 209 21Q202 23 196 21Q190 24 184 22L183 28Q181 31 179 27L178 22Z' /><path d='M220 21Q226 16 232 18Q239 13 245 16Q253 14 260 19Q266 19 270 22Q260 24 253 22Q246 25 240 22L239 27Q237 30 235 26L234 22Q227 24 220 21Z' /><path d='M289 21Q294 16 299 15Q305 12 310 17Q315 17 320 21Q313 24 308 21L307 27Q305 30 303 26L302 21Q296 23 289 21Z' /><path d='M334 20Q341 15 348 17Q355 13 362 16Q371 13 379 17Q390 14 400 20L398 23Q390 21 383 23Q375 20 369 23L368 29Q366 32 364 28L363 22Q354 25 347 22Q340 24 334 20Z' /></g></svg></span>}</Link>
+      <Link href='/' className={`header-brand${page === 'home' ? ' header-brand-hero' : ''}`} aria-label='RAMCAD — на главную'>
+        <span className='header-brand-word'>RAMCAD</span>
+      </Link>
       <nav id='main-navigation' className='header-links' aria-label='Основная навигация'>
         {NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}
       </nav>
