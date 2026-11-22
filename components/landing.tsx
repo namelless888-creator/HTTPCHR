@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, PackageCheck, Snowflake, UtensilsCrossed } from 'lucide-react';
+import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
 import { HerringDetails } from '@/components/herring-details';
 import { SceneBackdrop } from '@/components/scene-backdrop';
@@ -19,6 +20,7 @@ const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Ката�
 export type SitePage = typeof NAV[number][0] | 'product' | 'herring';
 const MotionLink = motion.create(Link);
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
+const HOME_FILTERS = [...FILTERS, 'Рыба'];
 const DEPARTMENTS = ['Мороженое', 'Рыба и морепродукты'] as const;
 const flavorCount = (n: number) => `${n} ${n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов'}`;
 const itemCount = (n: number) => `${n} ${n > 10 && n < 15 ? 'позиций' : n % 10 === 1 ? 'позиция' : n % 10 >= 2 && n % 10 <= 4 ? 'позиции' : 'позиций'}`;
@@ -76,7 +78,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   useEffect(() => mountHeroParallax(document.getElementById('hero')), [page]);
   useEffect(() => page === 'contacts' ? mountMapIntro(map.current) : undefined, [page]);
   useEffect(() => {
-    if (page === 'catalog' && new URLSearchParams(window.location.search).get('department') === 'fish') {
+    if ((page === 'home' || page === 'catalog') && new URLSearchParams(window.location.search).get('department') === 'fish') {
       const frame = requestAnimationFrame(() => setDepartment(DEPARTMENTS[1]));
       return () => cancelAnimationFrame(frame);
     }
@@ -272,20 +274,10 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           <SceneBackdrop />
           {page === 'home' ? <>
           <Reveal><SectionMark number='02'>Каталог RAMCAD</SectionMark></Reveal>
-          <div className='section-heading'><Reveal><ContentHeading className='page-title'>Каталог<br /><em>продукции.</em></ContentHeading></Reveal></div>
-          <div className='home-catalog-grid'>
-            <Reveal><Link href='/catalog#catalog-products' className='home-catalog-card'>
-              <Image src='/images/directions/marzo-products-on-ice.png' alt='Мороженое MARZO на льду' width={1672} height={941} unoptimized loading='lazy' />
-              <span className='home-catalog-card-copy'><span>01 / MARZO</span><strong>Мороженое</strong><ArrowUpRight size={24} aria-hidden='true' /></span>
-            </Link></Reveal>
-            <Reveal delay={.12}><Link href='/catalog?department=fish#catalog-products' className='home-catalog-card home-catalog-card-fish'>
-              <Image src='/images/directions/iceberg-herring-on-ice.png' alt='Рыбные пресервы Айсберг на льду' width={1774} height={887} unoptimized loading='lazy' />
-              <span className='home-catalog-card-copy'><span>02 / АЙСБЕРГ</span><strong>Рыба</strong><ArrowUpRight size={24} aria-hidden='true' /></span>
-            </Link></Reveal>
-          </div>
+          <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} unoptimized loading='lazy' /></div>)}</div></Reveal></div>
           </> : <h2 className='sr-only'>Каталог мороженого MARZO</h2>}
-          {page === 'catalog' && <><div className='department-tabs' role='group' aria-label='Разделы каталога'>{DEPARTMENTS.map(label => <button key={label} aria-pressed={department === label} className={department === label ? 'selected' : ''} onClick={() => switchDepartment(label)}>{label}</button>)}</div>
-          <div id='catalog-products' className='catalog-toolbar'>{department === DEPARTMENTS[0] ? <div className='filter-tabs' ref={filterTabsRef} role='group' aria-label='Категории мороженого'>{filterIndicator && <motion.span className='filter-tab-indicator' initial={false} animate={{ x: filterIndicator.x, width: filterIndicator.width }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }} />}{FILTERS.map(label => <button key={label} aria-pressed={filter === label} className={filter === label ? 'selected' : ''} onClick={() => { setFilter(label); setExpanded(false); }}>{label}</button>)}</div> : <p className='catalog-toolbar-note'>Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.</p>}<span className='catalog-count' aria-live='polite'><AnimatePresence mode='popLayout' initial={false}><motion.span key={activeCount} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -8 }} transition={{ duration: .3, ease: [.22, .61, .36, 1] }}>{department === DEPARTMENTS[0] ? flavorCount(activeCount) : itemCount(activeCount)}</motion.span></AnimatePresence></span></div>
+          {page === 'catalog' && <div className='department-tabs' role='group' aria-label='Разделы каталога'>{DEPARTMENTS.map(label => <button key={label} aria-pressed={department === label} className={department === label ? 'selected' : ''} onClick={() => switchDepartment(label)}>{label}</button>)}</div>}
+          <div id='catalog-products' className='catalog-toolbar'>{(page === 'home' || department === DEPARTMENTS[0]) ? <div className='filter-tabs' ref={filterTabsRef} role='group' aria-label={page === 'home' ? 'Разделы каталога' : 'Категории мороженого'}>{filterIndicator && <motion.span className='filter-tab-indicator' initial={false} animate={{ x: filterIndicator.x, width: filterIndicator.width }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }} />}{(page === 'home' ? HOME_FILTERS : FILTERS).map(label => { const selected = label === 'Рыба' ? department === DEPARTMENTS[1] : department === DEPARTMENTS[0] && filter === label; return <button key={label} aria-pressed={selected} className={selected ? 'selected' : ''} onClick={() => { if (page === 'home') { switchDepartment(label === 'Рыба' ? DEPARTMENTS[1] : DEPARTMENTS[0]); if (label !== 'Рыба') setFilter(label); } else { setFilter(label); setExpanded(false); } }}>{label}</button>; })}</div> : <p className='catalog-toolbar-note'>Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.</p>}<span className='catalog-count' aria-live='polite'><AnimatePresence mode='popLayout' initial={false}><motion.span key={activeCount} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -8 }} transition={{ duration: .3, ease: [.22, .61, .36, 1] }}>{department === DEPARTMENTS[0] ? flavorCount(activeCount) : itemCount(activeCount)}</motion.span></AnimatePresence></span></div>
           <div className='product-grid' ref={productGridRef}>
             {department === DEPARTMENTS[0]
               ? visible.map(item => <MotionLink data-card-n={item.n} key={item.n} className='product-card' href={productHref(item)} initial={false} aria-label={`Подробнее: ${item.name}`}>
@@ -311,7 +303,6 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           </div>
           {department === DEPARTMENTS[0] && products.length > 8 && <button className='pill pill-outline show-more' onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть коллекцию' : `Все ${products.length} вкусов`}<ChevronDown size={18} style={{ transform: expanded ? 'rotate(180deg)' : undefined }} /></button>}
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>
-          </>}
         </section>}
 
         {(page === 'home' || page === 'about') && <section id='about' className='about-section section-pad scene-section'>
