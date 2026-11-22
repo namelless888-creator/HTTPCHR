@@ -113,7 +113,7 @@ const runtime = String.raw`
     note.textContent = 'Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.';
     note.hidden = true;
     count?.before(note);
-    let department = departmentButtons.length && new URL(location.href).searchParams.get('department') === 'fish' ? 'fish' : 'ice';
+    let department = new URL(location.href).searchParams.get('department') === 'fish' ? 'fish' : 'ice';
     let filter = 'Все вкусы';
     let expanded = false;
     const flavorCount = n => n + ' ' + (n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов');
@@ -123,10 +123,11 @@ const runtime = String.raw`
       const matching = isFish ? fishProducts : products.filter(card => filter === 'Все вкусы' || card.dataset.category === filter);
       grid.replaceChildren(...(isFish || expanded ? matching : matching.slice(0, 8)).map(card => card.cloneNode(true)));
       if (count) count.textContent = isFish ? itemCount(matching.length) : flavorCount(matching.length);
-      if (filterBar) filterBar.style.display = isFish ? 'none' : '';
-      note.hidden = !isFish;
+      if (filterBar) filterBar.style.display = isFish && departmentButtons.length ? 'none' : '';
+      note.hidden = !isFish || !departmentButtons.length;
       filters.forEach(button => {
-        const selected = button.textContent.trim() === filter;
+        const label = button.textContent.trim();
+        const selected = label === 'Рыба' ? isFish : !isFish && label === filter;
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', String(selected));
       });
@@ -142,7 +143,15 @@ const runtime = String.raw`
       }
     };
     filters.forEach(button => button.addEventListener('click', () => {
-      filter = button.textContent.trim(); expanded = false; render();
+      const label = button.textContent.trim();
+      department = label === 'Рыба' ? 'fish' : 'ice';
+      if (label !== 'Рыба') filter = label;
+      expanded = false;
+      const url = new URL(location.href);
+      if (department === 'fish') url.searchParams.set('department', 'fish');
+      else url.searchParams.delete('department');
+      history.replaceState(null, '', url);
+      render();
     }));
     departmentButtons.forEach((button, index) => button.addEventListener('click', () => {
       department = index === 1 ? 'fish' : 'ice';
@@ -279,7 +288,7 @@ for (const page of builtPages) {
 
   html = html.replace(/\bhref="([^"]+)"/g, (_, raw) => `href="${escapeHtml(staticHref(decodeEntities(raw)))}"`);
   const catalog = page.route === '/' || page.route === '/catalog' ? `<template id="static-products">${cards}</template>` : '';
-  const fishCatalog = page.route === '/catalog' ? `<template id="static-fish-products">${fishCards}</template>` : '';
+  const fishCatalog = page.route === '/' || page.route === '/catalog' ? `<template id="static-fish-products">${fishCards}</template>` : '';
   html = html.replace('</body>', `${catalog}${fishCatalog}<script>${runtime}</script></body>`);
   if (html.includes('/_next/')) throw new Error(`An unresolved Next.js asset remains in ${page.output}.`);
   await writeFile(path.join(outputDirectory, page.output), html);
