@@ -10,8 +10,8 @@ export function HomeHeroFilm() {
   useEffect(() => mountHomeHero(video.current), []);
 
   return <div className='reference-hero-photo hero-film'>
-    <Image className='hero-film-poster' src='/images/home-hero-poster.webp' alt='' width={1280} height={736} unoptimized priority />
-    <video ref={video} className='hero-film-video' src='/videos/home-hero.mp4' poster='/images/home-hero-poster.webp' width={1280} height={736} muted playsInline preload='auto' aria-label='Мороженое MARZO в движении: солёная карамель, эскимо и шоколадный пломбир' />
+    <Image className='hero-film-poster' src='/images/home-hero-poster.webp' alt='' width={1672} height={940} unoptimized priority />
+    <video ref={video} className='hero-film-video' src='/videos/home-hero.mp4' poster='/images/home-hero-poster.webp' width={1672} height={940} muted playsInline preload='auto' aria-label='Классическое эскимо MARZO в зимнем горном пейзаже' />
     <button className='hero-film-control' type='button' data-film-toggle data-state='paused' aria-label='Продолжить анимацию' hidden>
       <Pause className='film-icon-pause' size={15} aria-hidden='true' />
       <Play className='film-icon-play' size={15} aria-hidden='true' />
