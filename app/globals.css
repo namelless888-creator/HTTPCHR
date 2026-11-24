@@ -167,16 +167,17 @@ button { cursor: pointer; }
 .header-brand { font-family: var(--font-playfair), serif; font-size: 26px; font-weight: 700; letter-spacing: .01em; line-height: 1; padding: 13px 20px; border: 1px solid rgb(255 255 255 / 0.65); border-radius: 18px; background: rgb(241 246 248 / 0.58); backdrop-filter: blur(18px); box-shadow: 0 8px 26px rgb(9 46 59 / 0.12); transition: background-color .38s ease, box-shadow .4s ease, transform .35s cubic-bezier(.25,.46,.45,.94); }
 .header-brand:is(:hover,:focus-visible) { background: rgb(241 246 248 / 0.92); box-shadow: 0 12px 32px rgb(9 46 59 / 0.18); transform: translateY(-2px); }
 .header-brand-hero, .header-brand-hero:is(:hover,:focus-visible) { position: absolute; left: 5.25%; top: 10px; display: grid; isolation: isolate; border-color: transparent; background: transparent; backdrop-filter: none; box-shadow: none; color: rgb(var(--brand-text-rgb, 241 246 248)) !important; font-size: var(--brand-font-size, clamp(68px, 6vw, 114px)); -webkit-text-stroke: 0; text-shadow: 0 2px 5px rgb(5 31 39 / .28); letter-spacing: calc(.01em + .04em * var(--brand-hero-emphasis, 1)); transform: translate3d(var(--brand-shift-x, calc(12.75vw - 250px)), var(--brand-shift-y, calc(37vh - 70px)), 0) scale(var(--brand-scale, 1)); transform-origin: center; transition: none; will-change: transform; }
-.header-brand-hero .header-brand-word { position: relative; white-space: nowrap; }
+.header-brand-hero .header-brand-word {
+  position: relative;
+  color: rgb(var(--brand-text-rgb, 241 246 248) / var(--brand-text-opacity, 0));
+  white-space: nowrap;
+}
 .header-brand-hero .header-brand-word::before {
   content: '';
   position: absolute;
-  inset-inline: -.045em 0;
-  top: .21em;
-  aspect-ratio: 2064 / 152;
-  transform: translateY(-70%);
-  background: url('/images/ramcad-snow-cap.webp') center / contain no-repeat;
-  filter: drop-shadow(0 .012em .015em rgb(35 70 87 / .30));
+  inset: -.08em -.045em -.06em;
+  background: url('/images/ramcad-snow-logo.png') center / 100% 100% no-repeat;
+  filter: drop-shadow(0 .018em .024em rgb(27 62 80 / .32));
   opacity: var(--brand-snow-opacity, 1);
   pointer-events: none;
 }
