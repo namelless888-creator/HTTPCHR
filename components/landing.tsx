@@ -8,7 +8,6 @@ import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, P
 import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
 import { HerringDetails } from '@/components/herring-details';
-import { HomeHeroFilm } from '@/components/home-hero-film';
 import { SceneBackdrop } from '@/components/scene-backdrop';
 import { CatalogIntro } from '@/components/catalog-intro';
 import { getProduct, PRODUCTS, productCategory as category, productCutout, productHref } from '@/lib/products';
@@ -213,7 +212,16 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
       <main id='main'>
         {page === 'home' && <>
           <section id='hero' className='reference-hero scene-section'>
-          <HomeHeroFilm />
+          <div className='reference-hero-photo'>
+            <Image
+              src='/images/home-hero-winter-marzo.webp'
+              alt='Мороженое MARZO в зимней композиции на льду'
+              fill
+              sizes='100vw'
+              priority
+              unoptimized
+            />
+          </div>
           <span className='hero-frost' aria-hidden='true'>{FROST_PARTICLES.map((particle, index) => <span key={index} style={{ left: particle.left, '--size': `${particle.size}px`, '--dur': `${particle.duration}s`, '--delay': `${particle.delay}s` } as React.CSSProperties} />)}</span>
           <Link className='reference-hero-copy' href='/catalog'>Смотреть каталог</Link>
           <span className='hero-scroll-cue' aria-hidden='true'><ChevronDown size={18} strokeWidth={1.5} /></span>

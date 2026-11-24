@@ -6,9 +6,9 @@ import { ArrowDown } from 'lucide-react';
 import { mountCatalogIntro } from '@/lib/catalog-intro.mjs';
 
 const PARTS = [
-  { id: 'cream', title: 'Мороженое', text: 'Нежная текстура', x: .3671875, y: .32608696, start: .58, end: .68 },
-  { id: 'caramel', title: 'Солёная карамель', text: 'Карамельная лента', x: .4609375, y: .36684783, start: .70, end: .80 },
-  { id: 'waffle', title: 'Вафельный рожок', text: 'Хрустящая вафля', x: .40625, y: .61141304, start: .82, end: .92 },
+  { id: 'cream', title: 'Классический пломбир', text: 'Нежная сливочная текстура', x: .476, y: .405, start: .58, end: .68 },
+  { id: 'caramel', title: 'Белая глазурь', text: 'Тонкое хрустящее покрытие', x: .488, y: .49, start: .70, end: .80 },
+  { id: 'waffle', title: 'Эскимо MARZO', text: 'Знакомый вкус в зимней коллекции', x: .475, y: .72, start: .82, end: .92 },
 ];
 
 export function CatalogIntro() {
@@ -16,10 +16,10 @@ export function CatalogIntro() {
   useEffect(() => mountCatalogIntro(video.current), []);
 
   return <section className='catalog-intro' aria-labelledby='catalog-intro-heading'>
-    <h1 id='catalog-intro-heading' className='sr-only'>Каталог мороженого MARZO</h1>
+    <h1 id='catalog-intro-heading' className='sr-only'>Зимняя коллекция мороженого MARZO</h1>
     <div className='catalog-intro-stage'>
-      <video className='catalog-intro-video' ref={video} src='/videos/catalog-intro.mp4' poster='/images/catalog-intro-start.webp' width={1280} height={736} muted playsInline preload='auto' aria-label='Раскрытие рожка MARZO с солёной карамелью при прокрутке' />
-      <Image className='catalog-intro-still' src='/images/catalog-intro-poster.webp' alt='' width={1280} height={736} unoptimized loading='eager' />
+      <video className='catalog-intro-video' ref={video} src='/videos/home-hero.mp4' poster='/images/home-hero-poster.webp' width={1672} height={940} muted playsInline preload='auto' aria-label='Классическое эскимо MARZO в зимнем горном пейзаже' />
+      <Image className='catalog-intro-still' src='/images/home-hero-poster.webp' alt='' width={1672} height={940} unoptimized loading='eager' />
       {PARTS.map((part, index) => <div key={part.id} className={`catalog-callout catalog-callout-${part.id}`} data-target-x={part.x} data-target-y={part.y} data-reveal-start={part.start} data-reveal-end={part.end} aria-hidden='true'>
         <svg className='catalog-callout-arrow' aria-hidden='true'>
           <path className='catalog-callout-shadow' pathLength={1} />
