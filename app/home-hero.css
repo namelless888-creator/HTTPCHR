@@ -12,6 +12,23 @@
   transform: none;
   will-change: auto;
 }
+.reference-hero .hero-film .hero-film-poster {
+  transform: scale(1.025);
+  transition: opacity 1.15s ease;
+}
+.reference-hero .hero-film .hero-film-video {
+  opacity: 0;
+  transform: scale(1.025);
+  transition: opacity 1.15s ease;
+  animation: hero-film-drift 14s cubic-bezier(.45,.05,.55,.95) infinite alternate;
+  will-change: transform;
+}
+.reference-hero .hero-film.film-ready .hero-film-poster { opacity: 0; }
+.reference-hero .hero-film.film-ready .hero-film-video { opacity: 1; }
+@keyframes hero-film-drift {
+  0% { transform: scale(1.025) translate3d(-.25%, 0, 0); }
+  100% { transform: scale(1.055) translate3d(.35%, -.25%, 0); }
+}
 .hero-film-control {
   position: absolute;
   z-index: 2;
@@ -43,4 +60,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-film-video,.hero-film-control { display: none!important; }
+  .reference-hero .hero-film .hero-film-poster { transform: none; }
 }
