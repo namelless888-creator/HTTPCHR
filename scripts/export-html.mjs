@@ -25,8 +25,8 @@ const entries = [...catalogSource.matchAll(/\{\s*src:\s*img\((\d+)\),\s*name:\s*
   n: Number(number),
   name: name.replace(/\\(['\\])/g, '$1'),
 }));
-if (entries.length !== 36 || entries.some((entry, index) => entry.n !== index + 1)) {
-  throw new Error('Expected 36 consecutively numbered catalog entries; review the catalog parser.');
+if (!entries.length || entries.some((entry, index) => entry.n !== index + 1)) {
+  throw new Error(`Expected consecutively numbered catalog entries, got ${entries.length}; review the catalog parser.`);
 }
 const herringSource = await readFile(path.join(root, 'lib/herring.ts'), 'utf8');
 const herringModule = { exports: {} };
@@ -70,10 +70,16 @@ const staticHref = value => {
   return file ? file + url.search + url.hash : value;
 };
 
-const category = n => [2, 4, 6, 7, 9, 18, 19, 20].includes(n) ? 'Рожки'
-  : [3, 10, 13, 14, 28, 36].includes(n) ? 'Фруктовый лёд'
-  : [16, 17, 32, 33, 34, 35].includes(n) ? 'Для семьи'
-  : [23, 24, 25].includes(n) ? 'Стаканчики' : 'Эскимо';
+const categorySource = await readFile(path.join(root, 'lib/product-category.ts'), 'utf8');
+const categoryModule = { exports: {} };
+const categoryCode = ts.transpileModule(categorySource, {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+}).outputText;
+new Function('module', 'exports', categoryCode)(categoryModule, categoryModule.exports);
+const category = categoryModule.exports.productCategory;
+if (typeof category !== 'function') {
+  throw new Error('Expected productCategory in lib/product-category.ts.');
+}
 const arrow = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg>';
 const cards = entries.map(item => {
   const number = String(item.n).padStart(2, '0');

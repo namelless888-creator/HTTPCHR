@@ -6,7 +6,10 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const preview = process.argv.includes('--preview');
 const prefix = preview ? 'preview' : 'ramcad';
-const productPages = Array.from({ length: 36 }, (_, index) => `product-${String(index + 1).padStart(2, '0')}`);
+const catalogSource = await readFile(path.join(root, 'lib/catalog.ts'), 'utf8');
+const productCount = new Set([...catalogSource.matchAll(/\{\s*src:\s*img\((\d+)\)/g)].map(([, number]) => Number(number))).size;
+if (!productCount) throw new Error('Could not read catalog entries from lib/catalog.ts.');
+const productPages = Array.from({ length: productCount }, (_, index) => `product-${String(index + 1).padStart(2, '0')}`);
 const pages = ['index', 'catalog', 'about', 'contacts', ...productPages].map(page => ({
   input: `${page}.html`,
   output: `${prefix}${page === 'index' ? '' : `-${page}`}.html`,
