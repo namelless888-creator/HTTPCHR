@@ -2,22 +2,33 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronDown, ChevronRight, Mail, Snowflake } from 'lucide-react';
 import { PRODUCTS, productCutout, productHref, type Product } from '@/lib/products';
+import { getProductLegal } from '@/lib/product-legal';
 import { SceneBackdrop } from '@/components/scene-backdrop';
 
 const productTitle = (product: Product) => product.name.replace(/^MARZO\s+/i, '');
 
 export function ProductDetails({ product }: { product: Product }) {
+  const legal = getProductLegal(product.id);
   const [title, standard] = productTitle(product).split(/ (?=\(ГОСТ)/);
   const related = [
     ...PRODUCTS.filter(item => item.n !== product.n && item.category === product.category),
     ...PRODUCTS.filter(item => item.n !== product.n && item.category !== product.category),
   ].slice(0, 3);
+  const mass = legal?.mass ?? product.weight;
   const facts = [
     ['Коллекция', product.brand],
     ['Формат', product.category],
     ['Вкус', product.taste],
-    ...(product.weight ? [['Масса нетто', product.weight]] : []),
+    ...(mass ? [['Масса нетто', mass]] : []),
   ];
+  const nutrition = legal
+    ? ([
+        ['Белки', legal.protein],
+        ['Жиры', legal.fat],
+        ['Углеводы', legal.carbs],
+        ['Энергетическая ценность', legal.energy],
+      ] as const).filter(([, value]) => Boolean(value))
+    : [];
 
   return <article className='product-details'>
     <div className='product-detail-stage scene-section'>
@@ -34,7 +45,7 @@ export function ProductDetails({ product }: { product: Product }) {
         <span className='podium-layer' aria-hidden='true' />
         <span className='product-contact-shadow' aria-hidden='true' />
         <div className='product-pack'>
-          <Image className='product-layer' src={productCutout(product)} alt={product.name} fill unoptimized loading='eager' />
+          <Image className='product-layer' src={productCutout(product)} alt={product.name} fill loading='eager' />
         </div>
         <p className='showcase-caption'><Snowflake size={18} strokeWidth={1.5} aria-hidden='true' /><span>Сохраняем любимый вкус</span></p>
       </div>
@@ -59,8 +70,35 @@ export function ProductDetails({ product }: { product: Product }) {
         <div className='product-information'>
           <details className='pd-card' open>
             <summary>О продукте <ChevronDown size={17} strokeWidth={1.5} aria-hidden='true' /></summary>
-            <div><p>{product.description}</p><p>Состав и пищевая ценность — на упаковке. Условия хранения и срок годности указаны производителем.</p></div>
+            <div><p>{product.description}</p>{!legal?.composition && <p>Состав и пищевая ценность — на упаковке. Условия хранения и срок годности указаны производителем.</p>}</div>
           </details>
+          {legal?.composition && <details className='pd-card'>
+            <summary>Состав <ChevronDown size={17} strokeWidth={1.5} aria-hidden='true' /></summary>
+            <div><p>{legal.composition}</p></div>
+          </details>}
+          {nutrition.length > 0 && <details className='pd-card'>
+            <summary>Пищевая ценность <ChevronDown size={17} strokeWidth={1.5} aria-hidden='true' /></summary>
+            <div>
+              <p className='product-nutrition-note'>В 100 г продукта</p>
+              <dl className='product-nutrition'>
+                {nutrition.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+              </dl>
+            </div>
+          </details>}
+          {(legal?.shelfLife || legal?.storage) && <details className='pd-card'>
+            <summary>Хранение и срок годности <ChevronDown size={17} strokeWidth={1.5} aria-hidden='true' /></summary>
+            <div>
+              {legal?.shelfLife && <p>Срок годности — {legal.shelfLife}.</p>}
+              {legal?.storage && <p>Хранить при температуре {legal.storage}</p>}
+            </div>
+          </details>}
+          {(legal?.manufacturer || legal?.standard) && <details className='pd-card'>
+            <summary>Изготовитель <ChevronDown size={17} strokeWidth={1.5} aria-hidden='true' /></summary>
+            <div>
+              {legal?.standard && <p>Изготовлено по {legal.standard}.</p>}
+              {legal?.manufacturer && <p>{legal.manufacturer}</p>}
+            </div>
+          </details>}
           <details className='pd-card'>
             <summary>Заказ и поставка <ChevronDown size={17} strokeWidth={1.5} aria-hidden='true' /></summary>
             <div><p>Свяжитесь с отделом продаж: поможем выбрать ассортимент и обсудим объём заказа, стоимость и условия поставки.</p><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div>
@@ -75,7 +113,7 @@ export function ProductDetails({ product }: { product: Product }) {
       <div className='product-related-heading'><div><p className='product-detail-eyebrow'>Ещё немного хорошего</p><h2 id='product-related-title'>Найдите свой <em>вкус.</em></h2></div><Link href='/catalog'>Весь каталог</Link></div>
       <div className='product-related-grid'>
         {related.map(item => <Link href={productHref(item)} key={item.id} className='product-related-card'>
-          <div className='product-related-visual'><span>{item.category}</span><Image src={productCutout(item)} alt={item.name} width={600} height={800} unoptimized /><span className='product-related-arrow'><ArrowUpRight size={21} strokeWidth={1.5} aria-hidden='true' /></span></div>
+          <div className='product-related-visual'><span>{item.category}</span><Image src={productCutout(item)} alt={item.name} width={600} height={800} /><span className='product-related-arrow'><ArrowUpRight size={21} strokeWidth={1.5} aria-hidden='true' /></span></div>
           <div className='product-related-caption'><h3>{productTitle(item)}</h3><span>{item.brand}</span></div>
         </Link>)}
       </div>

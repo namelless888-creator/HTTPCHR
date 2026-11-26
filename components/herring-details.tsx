@@ -15,13 +15,13 @@ const GALLERY: { id: GalleryView; label: string }[] = [
 
 function PhotoComposition({ product, className, withBackdrop = false }: { product: HerringProduct; className: string; withBackdrop?: boolean }) {
   return <div className={className} aria-hidden='true'>
-    {withBackdrop && <Image className='herring-composition-backdrop' src='/images/herring/studio-ice.png' alt='' width={1773} height={887} unoptimized />}
+    {withBackdrop && <Image className='herring-composition-backdrop' src='/images/herring/studio-ice.png' alt='' width={1773} height={887} />}
     <div className='herring-pack'>
-      <Image className='herring-pack-base' src='/images/herring/packaging-tub.png' alt='' width={1254} height={1254} unoptimized />
-      <Image className='herring-pack-label' src={product.labelImage} alt='' width={1401} height={1401} unoptimized />
+      <Image className='herring-pack-base' src='/images/herring/packaging-tub.png' alt='' width={1254} height={1254} />
+      <Image className='herring-pack-label' src={product.labelImage} alt='' width={1401} height={1401} />
       <span className='herring-pack-sheen' />
     </div>
-    <Image className='herring-photo-fish' src={product.fishImage} alt='' width={2048} height={2048} unoptimized />
+    <Image className='herring-photo-fish' src={product.fishImage} alt='' width={2048} height={2048} />
   </div>;
 }
 
@@ -45,7 +45,7 @@ export function HerringDetails({ product }: { product: HerringProduct }) {
     </nav>
 
     <div className='herring-layout scene-section'>
-      <Image className='herring-ice-backdrop' src='/images/herring/studio-ice.png' alt='' width={1773} height={887} unoptimized priority fetchPriority='high' />
+      <Image className='herring-ice-backdrop' src='/images/herring/studio-ice.png' alt='' width={1773} height={887} priority fetchPriority='high' />
       <PhotoComposition product={product} className='herring-composition herring-composition-desktop' />
       <span className='herring-wave-pattern' aria-hidden='true' />
 

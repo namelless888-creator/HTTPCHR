@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { ArrowDown } from 'lucide-react';
 import { mountCatalogIntro } from '@/lib/catalog-intro.mjs';
+import { asset } from '@/lib/site';
 
 const PARTS = [
   { id: 'cream', title: 'Классический пломбир', text: 'Нежная сливочная текстура', x: .476, y: .405, start: .58, end: .68 },
@@ -18,8 +19,8 @@ export function CatalogIntro() {
   return <section className='catalog-intro' aria-labelledby='catalog-intro-heading'>
     <h1 id='catalog-intro-heading' className='sr-only'>Зимняя коллекция мороженого MARZO</h1>
     <div className='catalog-intro-stage'>
-      <video className='catalog-intro-video' ref={video} src='/videos/home-hero.mp4' poster='/images/home-hero-poster.webp' width={1672} height={940} muted playsInline preload='auto' aria-label='Классическое эскимо MARZO в зимнем горном пейзаже' />
-      <Image className='catalog-intro-still' src='/images/home-hero-poster.webp' alt='' width={1672} height={940} unoptimized loading='eager' />
+      <video className='catalog-intro-video' ref={video} src={asset('/videos/home-hero.mp4')} poster={asset('/images/home-hero-poster.webp')} width={1672} height={940} muted playsInline preload='auto' aria-label='Классическое эскимо MARZO в зимнем горном пейзаже' />
+      <Image className='catalog-intro-still' src='/images/home-hero-poster.webp' alt='' width={1672} height={940} loading='eager' />
       {PARTS.map((part, index) => <div key={part.id} className={`catalog-callout catalog-callout-${part.id}`} data-target-x={part.x} data-target-y={part.y} data-reveal-start={part.start} data-reveal-end={part.end} aria-hidden='true'>
         <svg className='catalog-callout-arrow' aria-hidden='true'>
           <path className='catalog-callout-shadow' pathLength={1} />

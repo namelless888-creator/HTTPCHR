@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import localFont from 'next/font/local';
+import { JsonLd } from '@/components/json-ld';
+import { OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
+import { organizationSchema, websiteSchema } from '@/lib/structured-data';
 import './globals.css';
 
 const display = localFont({
@@ -43,9 +46,28 @@ const sansLatin = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'RAMCAD — хладокомбинат: мороженое, рыба, полуфабрикаты',
-  description:
-    'Ваш надёжный партнёр в холодном производстве. Авторская продукция с историей, натуральные ингредиенты в традиционных рецептах с 2003 года.',
+  metadataBase: new URL(SITE_URL),
+  title: `${SITE_NAME} — хладокомбинат: мороженое, рыба, полуфабрикаты`,
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    locale: 'ru_RU',
+    siteName: SITE_NAME,
+    url: '/',
+    title: `${SITE_NAME} — хладокомбинат: мороженое, рыба, полуфабрикаты`,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE_NAME} — хладокомбинат: мороженое, рыба, полуфабрикаты`,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE.url],
+  },
+  robots: { index: true, follow: true },
+  formatDetection: { telephone: true, address: true, email: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -58,6 +80,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='ru' data-scroll-behavior='smooth' className={`${display.variable} ${sans.variable}`} style={fontVariables}>
       <body className='bg-background font-sans text-foreground antialiased'>
+        <JsonLd data={organizationSchema} />
+        <JsonLd data={websiteSchema} />
         <a
           href='#main'
           className='sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground'

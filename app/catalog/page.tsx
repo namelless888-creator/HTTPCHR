@@ -1,11 +1,22 @@
-import type { Metadata } from 'next';
 import { Landing } from '@/components/landing';
+import { JsonLd } from '@/components/json-ld';
+import { pageMetadata } from '@/lib/seo';
+import { breadcrumbSchema } from '@/lib/structured-data';
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Каталог мороженого MARZO и рыбы Айсберг — RAMCAD',
-  description: 'Мороженое MARZO и рыбные пресервы Айсберг в каталоге RAMCAD.',
-};
+  description: 'Мороженое MARZO и рыбные пресервы Айсберг в каталоге RAMCAD: рожки, эскимо, стаканчики, фруктовый лёд и семейные форматы.',
+  path: '/catalog/',
+});
 
 export default function Page() {
-  return <Landing page='catalog' />;
+  return (
+    <>
+      <JsonLd data={breadcrumbSchema([
+        { name: 'Главная', path: '/' },
+        { name: 'Каталог', path: '/catalog/' },
+      ])} />
+      <Landing page='catalog' />
+    </>
+  );
 }

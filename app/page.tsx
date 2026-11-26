@@ -1,9 +1,12 @@
-import type { Metadata } from 'next';
 import { Landing } from '@/components/landing';
+import { pageMetadata } from '@/lib/seo';
+import { SITE_DESCRIPTION } from '@/lib/site';
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'RAMCAD — создаём вкус, сохраняем свежесть',
-};
+  description: SITE_DESCRIPTION,
+  path: '/',
+});
 
 export default function Page() {
   return <Landing page='home' />;

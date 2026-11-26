@@ -1,11 +1,22 @@
-import type { Metadata } from 'next';
 import { Landing } from '@/components/landing';
+import { JsonLd } from '@/components/json-ld';
+import { pageMetadata } from '@/lib/seo';
+import { breadcrumbSchema } from '@/lib/structured-data';
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'О компании — RAMCAD',
   description: 'Хладокомбинат RAMCAD в Гудермесе: история с 2003 года, производство и стандарты качества.',
-};
+  path: '/about/',
+});
 
 export default function Page() {
-  return <Landing page='about' />;
+  return (
+    <>
+      <JsonLd data={breadcrumbSchema([
+        { name: 'Главная', path: '/' },
+        { name: 'О компании', path: '/about/' },
+      ])} />
+      <Landing page='about' />
+    </>
+  );
 }

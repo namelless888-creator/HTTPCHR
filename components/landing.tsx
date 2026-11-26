@@ -4,9 +4,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, ChevronDown, Factory, Handshake, Lightbulb, PackageCheck, Snowflake, UtensilsCrossed } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, ChevronRight, Factory, Handshake, Lightbulb, PackageCheck, Search, Snowflake, UtensilsCrossed, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
+import { ContactRequest } from '@/components/contact-request';
 import { HerringDetails } from '@/components/herring-details';
 import { SceneBackdrop } from '@/components/scene-backdrop';
 import { CatalogIntro } from '@/components/catalog-intro';
@@ -15,6 +16,7 @@ import { getHerringProduct, HERRING_PRODUCTS, herringProductHref } from '@/lib/h
 import { mountMapIntro } from '@/lib/map-intro.mjs';
 import { mountMapScroll } from '@/lib/map-scroll.mjs';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
+import { asset } from '@/lib/site';
 
 const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Каталог'], ['about', '/about', 'О компании'], ['contacts', '/contacts', 'Контакты']] as const;
 export type SitePage = typeof NAV[number][0] | 'product' | 'herring';
@@ -68,6 +70,8 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   const [expanded, setExpanded] = useState(false);
   const [mapDrawn, setMapDrawn] = useState(false);
   const [filterIndicator, setFilterIndicator] = useState<{ x: number; width: number } | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const map = useRef<HTMLVideoElement>(null);
   const filterTabsRef = useRef<HTMLDivElement>(null);
   const productGridRef = useRef<HTMLDivElement>(null);
@@ -77,6 +81,12 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
 
   useEffect(() => mountHeroParallax(document.getElementById('hero')), [page]);
   useEffect(() => page === 'contacts' ? mountMapIntro(map.current) : undefined, [page]);
+  useEffect(() => {
+    if (!searchOpen) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setSearchOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [searchOpen]);
   useEffect(() => {
     if ((page === 'home' || page === 'catalog') && new URLSearchParams(window.location.search).get('department') === 'fish') {
       const frame = requestAnimationFrame(() => setDepartment(DEPARTMENTS[1]));
@@ -153,10 +163,13 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
       setMapDrawn(false);
       checkProgress();
     });
+    // Contacts must never stay blank while a browser delays video playback.
+    const fallback = page === 'contacts' ? window.setTimeout(() => setMapDrawn(true), 1800) : 0;
     video.addEventListener('timeupdate', checkProgress);
     video.addEventListener('ended', checkProgress);
     return () => {
       cancelAnimationFrame(initialFrame);
+      window.clearTimeout(fallback);
       video.removeEventListener('timeupdate', checkProgress);
       video.removeEventListener('ended', checkProgress);
     };
@@ -165,6 +178,13 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   const products = PRODUCTS.filter(item => filter === 'Все вкусы' || category(item.n) === filter);
   const visible = expanded ? products : products.slice(0, 8);
   const activeCount = department === DEPARTMENTS[1] ? HERRING_PRODUCTS.length : products.length;
+  const searchTerm = query.trim().toLowerCase();
+  const searchResults = searchTerm
+    ? [
+        ...PRODUCTS.filter(item => `${item.name} ${item.taste} ${item.category} ${item.brand}`.toLowerCase().includes(searchTerm)).slice(0, 6).map(item => ({ key: `p${item.n}`, href: productHref(item), title: item.name.replace(/^MARZO\s*/, ''), meta: `${item.brand} · ${item.category}` })),
+        ...HERRING_PRODUCTS.filter(item => `${item.title} ${item.subtitle} ${item.format}`.toLowerCase().includes(searchTerm)).slice(0, 3).map(item => ({ key: `h${item.id}`, href: herringProductHref(item), title: `${item.title} ${item.subtitle}`, meta: `${item.brand} · ${item.weight}` })),
+      ]
+    : [];
   const product = productId ? getProduct(productId) : undefined;
   const herringProduct = page === 'herring' && productId ? getHerringProduct(productId) : undefined;
   const switchDepartment = (label: typeof DEPARTMENTS[number]) => {
@@ -196,6 +216,8 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
     event.currentTarget.style.setProperty('--tilt-y', '0deg');
   };
 
+  const breadcrumbLabel = page === 'about' ? 'О компании' : page === 'catalog' ? 'Каталог' : page === 'contacts' ? 'Контакты' : null;
+
   return <div className={`ramcad site-page-${page}`}>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
     <header className='main-header'>
@@ -204,9 +226,38 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
       </Link>
       <nav id='main-navigation' className='header-links' aria-label='Основная навигация'>
         {NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}
+        <button className='header-search' type='button' aria-label='Поиск по каталогу' aria-expanded={searchOpen} onClick={() => { setSearchOpen(true); setQuery(''); }}>
+          <Search size={17} strokeWidth={1.6} aria-hidden='true' />
+        </button>
       </nav>
       <a className='header-phone' href='tel:+79389042323'>8 (938) 904-23-23</a>
     </header>
+
+    <AnimatePresence>
+      {searchOpen && <motion.div className='site-search' role='dialog' aria-modal='true' aria-label='Поиск по каталогу' initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .22 }}>
+        <div className='site-search-inner'>
+          <div className='site-search-bar'>
+            <Search size={22} strokeWidth={1.5} aria-hidden='true' />
+            <input autoFocus value={query} onChange={event => setQuery(event.target.value)} type='search' placeholder='Вкус, продукт или категория' aria-label='Поисковый запрос' />
+            <button type='button' onClick={() => setSearchOpen(false)} aria-label='Закрыть поиск'><X size={22} strokeWidth={1.5} aria-hidden='true' /></button>
+          </div>
+          {searchTerm && <div className='site-search-results'>
+            {searchResults.length > 0
+              ? searchResults.map(result => <Link key={result.key} href={result.href} onClick={() => setSearchOpen(false)}>
+                  <span><strong>{result.title}</strong><small>{result.meta}</small></span>
+                  <ArrowUpRight size={17} strokeWidth={1.5} aria-hidden='true' />
+                </Link>)
+              : <p className='site-search-empty'>Ничего не нашли. Попробуйте другой вкус или категорию.</p>}
+          </div>}
+          {!searchTerm && <p className='site-search-hint'>Например: фисташка, пломбир, рожок или сельдь.</p>}
+        </div>
+      </motion.div>}
+    </AnimatePresence>
+
+    {breadcrumbLabel && <nav className='page-breadcrumbs' aria-label='Хлебные крошки'>
+      <Link href='/'>Главная</Link><ChevronRight size={12} strokeWidth={1.5} aria-hidden='true' />
+      <span aria-current='page'>{breadcrumbLabel}</span>
+    </nav>}
 
     <div className='page-content'>
       <main id='main'>
@@ -219,7 +270,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
               fill
               sizes='100vw'
               priority
-              unoptimized
+             
             />
           </div>
           <span className='hero-frost' aria-hidden='true'>{FROST_PARTICLES.map((particle, index) => <span key={index} style={{ left: particle.left, '--size': `${particle.size}px`, '--dur': `${particle.duration}s`, '--delay': `${particle.delay}s` } as React.CSSProperties} />)}</span>
@@ -237,7 +288,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             <Reveal className='direction-card-feature-wrap'>
               <Link href='/catalog' className='direction-card direction-card-feature' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
                 <div className='direction-photo direction-photo-ice'>
-                  <Image src='/images/directions/marzo-products-on-ice.png' alt='Мороженое MARZO в упаковках и рожках на льду' width={1672} height={941} unoptimized />
+                  <Image src='/images/directions/marzo-products-on-ice.png' alt='Мороженое MARZO в упаковках и рожках на льду' width={1672} height={941} />
                 </div>
                 <div className='direction-card-copy'>
                   <span className='direction-card-index'>01</span>
@@ -250,7 +301,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             <Reveal delay={.12}>
               <Link href='/catalog?department=fish#catalog-products' className='direction-card' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
                 <div className='direction-photo direction-photo-fish'>
-                  <Image src='/images/directions/iceberg-herring-on-ice.png' alt='Сельдь АЙСБЕРГ с филе и красным луком на льду' width={1774} height={887} unoptimized />
+                  <Image src='/images/directions/iceberg-herring-on-ice.png' alt='Сельдь АЙСБЕРГ с филе и красным луком на льду' width={1774} height={887} />
                 </div>
                 <div className='direction-card-copy'>
                   <span className='direction-card-index'>02</span>
@@ -276,7 +327,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           <SceneBackdrop />
           {page === 'home' ? <>
           <Reveal><SectionMark number='02'>Каталог RAMCAD</SectionMark></Reveal>
-          <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} unoptimized loading='lazy' /></div>)}</div></Reveal></div>
+          <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} loading='lazy' /></div>)}</div></Reveal></div>
           </> : <h2 className='sr-only'>Каталог мороженого MARZO</h2>}
           {page === 'catalog' && <div className='department-tabs' role='group' aria-label='Разделы каталога'>{DEPARTMENTS.map(label => <button key={label} aria-pressed={department === label} className={department === label ? 'selected' : ''} onClick={() => switchDepartment(label)}>{label}</button>)}</div>}
           <div id='catalog-products' className='catalog-toolbar'>{(page === 'home' || department === DEPARTMENTS[0]) ? <div className='filter-tabs' ref={filterTabsRef} role='group' aria-label={page === 'home' ? 'Разделы каталога' : 'Категории мороженого'}>{filterIndicator && <motion.span className='filter-tab-indicator' initial={false} animate={{ x: filterIndicator.x, width: filterIndicator.width }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }} />}{(page === 'home' ? HOME_FILTERS : FILTERS).map(label => { const selected = label === 'Рыба' ? department === DEPARTMENTS[1] : page === 'home' ? department === DEPARTMENTS[0] : department === DEPARTMENTS[0] && filter === label; return <button key={label} aria-pressed={selected} className={selected ? 'selected' : ''} onClick={() => { if (page === 'home') switchDepartment(label === 'Рыба' ? DEPARTMENTS[1] : DEPARTMENTS[0]); else { setFilter(label); setExpanded(false); } }}>{label}</button>; })}</div> : <p className='catalog-toolbar-note'>Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.</p>}<span className='catalog-count' aria-live='polite'><AnimatePresence mode='popLayout' initial={false}><motion.span key={activeCount} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -8 }} transition={{ duration: .3, ease: [.22, .61, .36, 1] }}>{department === DEPARTMENTS[0] ? flavorCount(activeCount) : itemCount(activeCount)}</motion.span></AnimatePresence></span></div>
@@ -285,7 +336,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
               ? visible.map(item => <MotionLink data-card-n={item.n} key={item.n} className='product-card' href={productHref(item)} initial={false} aria-label={`Подробнее: ${item.name}`}>
                 <div className='product-visual'>
                   <span className='product-category'>{item.category}</span>
-                  <Image src={productCutout(item)} alt='' width={600} height={800} unoptimized loading='lazy' />
+                  <Image src={productCutout(item)} alt='' width={600} height={800} loading='lazy' />
                   <span className='product-open'><ArrowUpRight size={18} aria-hidden='true' /></span>
                 </div>
                 <div className='product-info'><span>{item.brand}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div>
@@ -294,10 +345,10 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
                   <div className='product-visual product-visual-fish'>
                     <span className='product-category'>{item.weight}</span>
                     <div className='herring-card-pack' aria-hidden='true'>
-                      <Image className='herring-card-pack-base' src='/images/herring/packaging-tub.png' alt='' width={1254} height={1254} unoptimized loading='lazy' />
-                      <Image className='herring-card-pack-label' src={item.labelImage} alt='' width={1401} height={1401} unoptimized loading='lazy' />
+                      <Image className='herring-card-pack-base' src='/images/herring/packaging-tub.png' alt='' width={1254} height={1254} loading='lazy' />
+                      <Image className='herring-card-pack-label' src={item.labelImage} alt='' width={1401} height={1401} loading='lazy' />
                     </div>
-                    <Image className='herring-card-fish' src={item.fishImage} alt='' width={1254} height={1254} unoptimized loading='lazy' />
+                    <Image className='herring-card-fish' src={item.fishImage} alt='' width={1254} height={1254} loading='lazy' />
                     <span className='product-open'><ArrowUpRight size={18} /></span>
                   </div>
                   <div className='product-info'><span>{item.brand} / {item.format}</span><h3>{item.title} {item.subtitle}</h3></div>
@@ -328,7 +379,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             {NEWS.map((item, index) => <Reveal key={item.slug} className='news-row'>
               <a className='news-row-link' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'>
                 <span className='news-row-index'>{String(index + 1).padStart(2, '0')}</span>
-                <div className='news-row-media'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} unoptimized alt='' loading='lazy' /></div>
+                <div className='news-row-media'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} alt='' loading='lazy' /></div>
                 <div className='news-row-body'>
                   <div className='news-row-meta'><time dateTime={item.iso}>{item.date}</time><span>{item.type}</span></div>
                   <h3>{item.title}</h3>
@@ -341,7 +392,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         </section>}
 
         {(page === 'home' || page === 'contacts') && <section id='contacts' className='contacts-section' aria-labelledby='contacts-heading'><div className='map-section'>
-            <video className='map-route' ref={map} data-map-mode={page === 'contacts' ? 'intro' : 'scroll'} src={page === 'contacts' ? '/videos/karta-intro.mp4' : '/videos/karta-scroll.mp4'} poster={page === 'contacts' ? '/images/map-start.webp' : undefined} muted playsInline preload='auto' aria-label='Анимация маршрута к хладокомбинату в Гудермесе' />
+            <video className='map-route' ref={map} data-map-mode={page === 'contacts' ? 'intro' : 'scroll'} src={page === 'contacts' ? asset('/videos/karta-intro.mp4') : asset('/videos/karta-scroll.mp4')} poster={page === 'contacts' ? asset('/images/map-start.webp') : undefined} muted playsInline preload='auto' aria-label='Анимация маршрута к хладокомбинату в Гудермесе' />
             <div className='map-shade' />
             <div className='contact-panel-anchor'>
               <motion.div className='contact-panel' initial={false} animate={mapDrawn ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 46, scale: .97 }} transition={{ duration: .75, ease: [.22, .61, .36, 1] }}>
@@ -353,6 +404,21 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
               </motion.div>
             </div>
             <span className='map-caption'>Гудермес, Чеченская Республика</span>
+          </div>
+        </section>}
+        {page === 'contacts' && <section id='request' className='request-section section-pad'>
+          <div className='request-layout'>
+            <div className='request-copy'>
+              <p className='request-eyebrow'>Заявка</p>
+              <h2>Расскажите,<br /><em>что нужно.</em></h2>
+              <p className='request-text'>Оставьте контакты — вернёмся с ассортиментом и условиями поставки. Работаем с магазинами, кафе и дистрибьюторами.</p>
+              <div className='request-details'>
+                <a href='tel:+79389042323'>+7 (938) 904-23-23</a>
+                <a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a>
+                <span>Пн–Сб, 08:00–18:00</span>
+              </div>
+            </div>
+            <ContactRequest />
           </div>
         </section>}
         {page === 'product' && product && <ProductDetails product={product} />}
