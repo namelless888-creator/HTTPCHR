@@ -4,13 +4,12 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, ChevronDown, ChevronRight, Factory, Handshake, Lightbulb, PackageCheck, Search, Snowflake, UtensilsCrossed, X } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, ChevronDown, ChevronRight, Factory, Handshake, Lightbulb, PackageCheck, Search, Snowflake, UtensilsCrossed, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
 import { ContactRequest } from '@/components/contact-request';
 import { HerringDetails } from '@/components/herring-details';
 import { SceneBackdrop } from '@/components/scene-backdrop';
-import { CatalogIntro } from '@/components/catalog-intro';
 import { getProduct, PRODUCTS, productCategory as category, productCutout, productHref } from '@/lib/products';
 import { getHerringProduct, HERRING_PRODUCTS, herringProductHref } from '@/lib/herring';
 import { mountMapIntro } from '@/lib/map-intro.mjs';
@@ -20,10 +19,17 @@ import { asset } from '@/lib/site';
 import { LEGAL } from '@/lib/site';
 
 const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Каталог'], ['about', '/about', 'О компании'], ['contacts', '/contacts', 'Контакты']] as const;
-export type SitePage = typeof NAV[number][0] | 'product' | 'herring';
+export type SitePage = typeof NAV[number][0] | 'product' | 'herring' | 'privacy';
 const MotionLink = motion.create(Link);
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
 const HOME_FILTERS = ['Мороженое', 'Рыба'];
+const CARD_PREVIEW = 12;
+const TRUST = [
+  { value: '2003', label: 'год основания' },
+  { value: '3', label: 'производственных цеха' },
+  { value: String(PRODUCTS.length), label: 'позиций мороженого' },
+  { value: String(HERRING_PRODUCTS.length), label: 'рыбных пресервов' },
+];
 const DEPARTMENTS = ['Мороженое', 'Рыба и морепродукты'] as const;
 const flavorCount = (n: number) => `${n} ${n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов'}`;
 const itemCount = (n: number) => `${n} ${n > 10 && n < 15 ? 'позиций' : n % 10 === 1 ? 'позиция' : n % 10 >= 2 && n % 10 <= 4 ? 'позиции' : 'позиций'}`;
@@ -73,6 +79,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   const [filterIndicator, setFilterIndicator] = useState<{ x: number; width: number } | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [catalogQuery, setCatalogQuery] = useState('');
   const map = useRef<HTMLVideoElement>(null);
   const filterTabsRef = useRef<HTMLDivElement>(null);
   const productGridRef = useRef<HTMLDivElement>(null);
@@ -176,9 +183,12 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
     };
   }, [page]);
 
-  const products = PRODUCTS.filter(item => filter === 'Все вкусы' || category(item.n) === filter);
-  const visible = expanded ? products : products.slice(0, 8);
+  const catalogTerm = catalogQuery.trim().toLowerCase();
+  const products = PRODUCTS.filter(item => (filter === 'Все вкусы' || category(item.n) === filter)
+    && (!catalogTerm || `${item.name} ${item.taste} ${item.category} ${item.brand}`.toLowerCase().includes(catalogTerm)));
+  const visible = expanded ? products : products.slice(0, CARD_PREVIEW);
   const activeCount = department === DEPARTMENTS[1] ? HERRING_PRODUCTS.length : products.length;
+  const filterCount = (label: string) => label === 'Все вкусы' ? PRODUCTS.length : PRODUCTS.filter(item => category(item.n) === label).length;
   const searchTerm = query.trim().toLowerCase();
   const searchResults = searchTerm
     ? [
@@ -192,6 +202,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
     setDepartment(label);
     setFilter('Все вкусы');
     setExpanded(false);
+    setCatalogQuery('');
     const url = new URL(window.location.href);
     if (label === DEPARTMENTS[1]) url.searchParams.set('department', 'fish');
     else url.searchParams.delete('department');
@@ -217,7 +228,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
     event.currentTarget.style.setProperty('--tilt-y', '0deg');
   };
 
-  const breadcrumbLabel = page === 'about' ? 'О компании' : page === 'catalog' ? 'Каталог' : page === 'contacts' ? 'Контакты' : null;
+  const breadcrumbLabel = page === 'about' ? 'О компании' : page === 'catalog' ? 'Каталог' : page === 'contacts' ? 'Контакты' : page === 'privacy' ? 'Политика конфиденциальности' : null;
 
   return <div className={`ramcad site-page-${page}`}>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
@@ -229,6 +240,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         {NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}
         <button className='header-search' type='button' aria-label='Поиск по каталогу' aria-expanded={searchOpen} onClick={() => { setSearchOpen(true); setQuery(''); }}>
           <Search size={17} strokeWidth={1.6} aria-hidden='true' />
+          <span className='header-search-label' aria-hidden='true'>Поиск</span>
         </button>
       </nav>
       <a className='header-phone' href='tel:+79389042323'>8 (938) 904-23-23</a>
@@ -263,6 +275,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
     <div className='page-content'>
       <main id='main'>
         {page === 'home' && <>
+          <h1 className='sr-only'>RAMCAD — хладокомбинат: мороженое MARZO и рыбные пресервы «Айсберг»</h1>
           <section id='hero' className='reference-hero scene-section'>
           <div className='reference-hero-photo'>
             <Image
@@ -275,7 +288,10 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             />
           </div>
           <span className='hero-frost' aria-hidden='true'>{FROST_PARTICLES.map((particle, index) => <span key={index} style={{ left: particle.left, '--size': `${particle.size}px`, '--dur': `${particle.duration}s`, '--delay': `${particle.delay}s` } as React.CSSProperties} />)}</span>
-          <Link className='reference-hero-copy' href='/catalog'>Смотреть каталог</Link>
+          <div className='reference-hero-copy reference-hero-actions'>
+            <Link className='hero-action hero-action-primary' href='/catalog'>Смотреть каталог <ArrowRight size={18} strokeWidth={1.6} aria-hidden='true' /></Link>
+            <Link className='hero-action hero-action-secondary' href='/contacts#request'>Оставить заявку</Link>
+          </div>
           <span className='hero-scroll-cue' aria-hidden='true'><ChevronDown size={18} strokeWidth={1.5} /></span>
         </section>
 
@@ -321,17 +337,70 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             </div>
           </Reveal>
         </section>
+
+        <section className='trust-strip' aria-label='Хладокомбинат в цифрах'>
+          <Reveal className='trust-strip-inner'>
+            <div className='trust-strip-intro'>
+              <span className='trust-eyebrow'>Хладокомбинат полного цикла</span>
+              <p>Мороженое и рыба из Гудермеса — собственное производство с 2003 года.</p>
+            </div>
+            <dl className='trust-stats'>
+              {TRUST.map(stat => <div key={stat.label}><dt>{stat.value}</dt><dd>{stat.label}</dd></div>)}
+            </dl>
+            <Link className='trust-link' href='/about'>О производстве <ArrowUpRight size={17} strokeWidth={1.5} aria-hidden='true' /></Link>
+          </Reveal>
+        </section>
         </>}
 
-        {page === 'catalog' && <CatalogIntro />}
+        {page === 'catalog' && <section className='catalog-hero'>
+          <div className='catalog-hero-copy'>
+            <p className='catalog-hero-eyebrow'>Каталог · оптовые поставки</p>
+            <h1>Мороженое и рыба.<br /><em>Без лишнего.</em></h1>
+            <p className='catalog-hero-lead'>MARZO и «Айсберг»: {PRODUCTS.length} позиций мороженого и {HERRING_PRODUCTS.length} рыбных пресервов. Работаем с магазинами, кафе и сетями.</p>
+            <div className='catalog-hero-actions'>
+              <a className='pill pill-dark' href='#catalog-products'>К ассортименту <ArrowDown size={18} strokeWidth={1.6} aria-hidden='true' /></a>
+              <Link className='pill pill-outline' href='/contacts#request'>Оставить заявку <ArrowUpRight size={18} strokeWidth={1.6} aria-hidden='true' /></Link>
+            </div>
+          </div>
+          <div className='catalog-hero-media' aria-hidden='true'>
+            {[PRODUCTS[1], PRODUCTS[11], PRODUCTS[26]].map((item, index) => <span key={item.id} className={`catalog-hero-pack catalog-hero-pack-${index}`}>
+              <Image src={productCutout(item)} alt='' width={600} height={800} priority={index === 1} />
+            </span>)}
+            <span className='catalog-hero-media-note'>{PRODUCTS.length} позиций мороженого · {HERRING_PRODUCTS.length} рыбных пресервов</span>
+          </div>
+        </section>}
         {(page === 'home' || page === 'catalog') && <section id='catalog' className='catalog-section section-pad scene-section'>
           <SceneBackdrop />
           {page === 'home' ? <>
           <Reveal><SectionMark number='02'>Каталог RAMCAD</SectionMark></Reveal>
           <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} loading='lazy' /></div>)}</div></Reveal></div>
-          </> : <h2 className='sr-only'>Каталог мороженого MARZO</h2>}
+          </> : null}
           {page === 'catalog' && <div className='department-tabs' role='group' aria-label='Разделы каталога'>{DEPARTMENTS.map(label => <button key={label} aria-pressed={department === label} className={department === label ? 'selected' : ''} onClick={() => switchDepartment(label)}>{label}</button>)}</div>}
-          <div id='catalog-products' className='catalog-toolbar'>{(page === 'home' || department === DEPARTMENTS[0]) ? <div className='filter-tabs' ref={filterTabsRef} role='group' aria-label={page === 'home' ? 'Разделы каталога' : 'Категории мороженого'}>{filterIndicator && <motion.span className='filter-tab-indicator' initial={false} animate={{ x: filterIndicator.x, width: filterIndicator.width }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }} />}{(page === 'home' ? HOME_FILTERS : FILTERS).map(label => { const selected = label === 'Рыба' ? department === DEPARTMENTS[1] : page === 'home' ? department === DEPARTMENTS[0] : department === DEPARTMENTS[0] && filter === label; return <button key={label} aria-pressed={selected} className={selected ? 'selected' : ''} onClick={() => { if (page === 'home') switchDepartment(label === 'Рыба' ? DEPARTMENTS[1] : DEPARTMENTS[0]); else { setFilter(label); setExpanded(false); } }}>{label}</button>; })}</div> : <p className='catalog-toolbar-note'>Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.</p>}<span className='catalog-count' aria-live='polite'><AnimatePresence mode='popLayout' initial={false}><motion.span key={activeCount} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -8 }} transition={{ duration: .3, ease: [.22, .61, .36, 1] }}>{department === DEPARTMENTS[0] ? flavorCount(activeCount) : itemCount(activeCount)}</motion.span></AnimatePresence></span></div>
+          <div id='catalog-products' className='catalog-toolbar'>
+            {(page === 'home' || department === DEPARTMENTS[0])
+              ? <div className='filter-tabs' ref={filterTabsRef} role='group' aria-label={page === 'home' ? 'Разделы каталога' : 'Категории мороженого'}>
+                  {filterIndicator && <motion.span className='filter-tab-indicator' initial={false} animate={{ x: filterIndicator.x, width: filterIndicator.width }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {(page === 'home' ? HOME_FILTERS : FILTERS).map(label => {
+                    const selected = label === 'Рыба' ? department === DEPARTMENTS[1] : page === 'home' ? department === DEPARTMENTS[0] : department === DEPARTMENTS[0] && filter === label;
+                    return <button key={label} data-filter={label} aria-pressed={selected} className={selected ? 'selected' : ''} onClick={() => { if (page === 'home') switchDepartment(label === 'Рыба' ? DEPARTMENTS[1] : DEPARTMENTS[0]); else { setFilter(label); setExpanded(false); } }}>
+                      {label}{page === 'catalog' && <span className='filter-count' aria-hidden='true'>{filterCount(label)}</span>}
+                    </button>;
+                  })}
+                </div>
+              : <p className='catalog-toolbar-note'>Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.</p>}
+            <div className='catalog-tools'>
+              {page === 'catalog' && department === DEPARTMENTS[0] && <div className='catalog-search' role='search'>
+                <Search size={16} strokeWidth={1.6} aria-hidden='true' />
+                <input type='search' value={catalogQuery} onChange={event => { setCatalogQuery(event.target.value); setExpanded(false); }} placeholder='Найти вкус или продукт' aria-label='Поиск по каталогу' />
+                <button type='button' hidden={!catalogQuery} onClick={() => setCatalogQuery('')} aria-label='Очистить поиск'><X size={14} aria-hidden='true' /></button>
+              </div>}
+              <span className='catalog-count' aria-live='polite'><AnimatePresence mode='popLayout' initial={false}><motion.span key={activeCount} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -8 }} transition={{ duration: .3, ease: [.22, .61, .36, 1] }}>{department === DEPARTMENTS[0] ? flavorCount(activeCount) : itemCount(activeCount)}</motion.span></AnimatePresence></span>
+            </div>
+          </div>
+          {department === DEPARTMENTS[0] && products.length === 0 && <div className='catalog-empty'>
+            <p>По запросу «{catalogQuery.trim()}» ничего не нашлось.</p>
+            <button type='button' className='text-link' onClick={() => { setCatalogQuery(''); setFilter('Все вкусы'); }}>Сбросить фильтры</button>
+          </div>}
           <div className='product-grid' ref={productGridRef}>
             {department === DEPARTMENTS[0]
               ? visible.map(item => <MotionLink data-card-n={item.n} key={item.n} className='product-card' href={productHref(item)} initial={false} aria-label={`Подробнее: ${item.name}`}>
@@ -340,7 +409,11 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
                   <Image src={productCutout(item)} alt='' width={600} height={800} loading='lazy' />
                   <span className='product-open'><ArrowUpRight size={18} aria-hidden='true' /></span>
                 </div>
-                <div className='product-info'><span>{item.brand}</span><h3>{item.name.replace(/^MARZO\s*/, '')}</h3></div>
+                <div className='product-info'>
+                  <span className='product-brand'>{item.brand}</span>
+                  <h3>{item.name.replace(/^MARZO\s*/, '')}</h3>
+                  <p className='product-taste'>{item.description}</p>
+                </div>
               </MotionLink>)
               : HERRING_PRODUCTS.map((item, index) => <MotionLink data-card-n={1000 + index} key={item.id} className='product-card' href={herringProductHref(item)} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} aria-label={`Подробнее: ${item.title} ${item.subtitle}, ${item.weight}`}>
                   <div className='product-visual product-visual-fish'>
@@ -352,10 +425,14 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
                     <Image className='herring-card-fish' src={item.fishImage} alt='' width={1254} height={1254} loading='lazy' />
                     <span className='product-open'><ArrowUpRight size={18} /></span>
                   </div>
-                  <div className='product-info'><span>{item.brand} / {item.format}</span><h3>{item.title} {item.subtitle}</h3></div>
+                  <div className='product-info'>
+                    <span className='product-brand'>{item.brand} / {item.format}</span>
+                    <h3>{item.title} {item.subtitle}</h3>
+                    <p className='product-taste'>{item.description}</p>
+                  </div>
                 </MotionLink>)}
           </div>
-          {department === DEPARTMENTS[0] && products.length > 8 && <button className='pill pill-outline show-more' onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть коллекцию' : `Все ${products.length} вкусов`}<ChevronDown size={18} style={{ transform: expanded ? 'rotate(180deg)' : undefined }} /></button>}
+          {department === DEPARTMENTS[0] && products.length > CARD_PREVIEW && <button className='pill pill-outline show-more' onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть коллекцию' : `Все ${products.length} вкусов`}<ChevronDown size={18} style={{ transform: expanded ? 'rotate(180deg)' : undefined }} /></button>}
           <div className='catalog-note'><Snowflake size={17} />От производства до вашего стола — под контролем холода.</div>
         </section>}
 
@@ -425,6 +502,46 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         </section>}
         {page === 'product' && product && <ProductDetails product={product} />}
         {page === 'herring' && herringProduct && <HerringDetails product={herringProduct} />}
+        {page === 'privacy' && <section className='legal-section section-pad'>
+          <div className='legal-draft'>Черновик. Перед публикацией проверьте текст у юриста.</div>
+          <p className='legal-eyebrow'>Правовая информация</p>
+          <h1>Политика обработки<br /><em>персональных данных.</em></h1>
+          <p className='legal-updated'>Редакция от 26 ноября 2026 года</p>
+          <div className='legal-body'>
+            <section>
+              <h2>1. Оператор</h2>
+              <p>{LEGAL.legalName}, ИНН {LEGAL.inn}, ОГРН {LEGAL.ogrn}, КПП {LEGAL.kpp}. Адрес: Чеченская Республика, г. Гудермес, 5-й км трассы Ростов–Баку. Электронная почта: <a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a>.</p>
+            </section>
+            <section>
+              <h2>2. Какие данные мы получаем</h2>
+              <p>Только те данные, которые вы оставляете сами: имя, телефон или адрес электронной почты и текст сообщения в форме заявки. Дополнительно сервер может обрабатывать обезличенные технические данные, необходимые для работы сайта.</p>
+            </section>
+            <section>
+              <h2>3. Зачем мы их обрабатываем</h2>
+              <p>Чтобы ответить на обращение, подобрать ассортимент и согласовать условия поставки. Мы не используем эти данные для рекламных рассылок без отдельного согласия.</p>
+            </section>
+            <section>
+              <h2>4. Правовое основание</h2>
+              <p>Обработка выполняется на основании вашего согласия, которое вы даёте, отмечая соответствующий пункт в форме заявки, в соответствии с Федеральным законом № 152-ФЗ «О персональных данных».</p>
+            </section>
+            <section>
+              <h2>5. Срок хранения и передача</h2>
+              <p>Данные хранятся до достижения цели обращения или до отзыва согласия. Мы не передаём их третьим лицам, кроме случаев, прямо предусмотренных законом.</p>
+            </section>
+            <section>
+              <h2>6. Ваши права</h2>
+              <p>Вы можете запросить доступ к своим данным, уточнить или удалить их, а также отозвать согласие — напишите на <a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a>. Мы ответим в срок, установленный законом.</p>
+            </section>
+            <section>
+              <h2>7. Файлы cookie</h2>
+              <p>Сайт использует только технические механизмы, необходимые для его работы. Рекламные и аналитические cookie без вашего согласия не устанавливаются.</p>
+            </section>
+            <section>
+              <h2>8. Изменения политики</h2>
+              <p>Актуальная редакция всегда опубликована на этой странице. При изменении существенных условий мы обновим дату редакции.</p>
+            </section>
+          </div>
+        </section>}
       </main>
       <footer className='landing-footer scene-section' onMouseMove={handleGlow}>
         <SceneBackdrop />
@@ -435,10 +552,14 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
         </div>
         <div className='footer-bottom'>
           <span>© {new Date().getFullYear()} RAMCAD · {LEGAL.legalName}</span>
-          <nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}</nav>
+          <nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}<Link href='/privacy'>Политика данных</Link></nav>
           <a href='#main'>В начало</a>
         </div>
       </footer>
     </div>
+    {page !== 'contacts' && page !== 'privacy' && <div className='mobile-request-bar'>
+      <a className='mobile-request-call' href='tel:+79389042323'>Позвонить</a>
+      <Link className='mobile-request-submit' href='/contacts#request'>Оставить заявку <ArrowUpRight size={17} strokeWidth={1.6} aria-hidden='true' /></Link>
+    </div>}
   </div>;
 }

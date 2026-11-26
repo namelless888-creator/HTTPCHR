@@ -17,6 +17,7 @@ const pages = [
   { route: '/catalog', build: 'catalog.html', output: 'catalog.html' },
   { route: '/about', build: 'about.html', output: 'about.html' },
   { route: '/contacts', build: 'contacts.html', output: 'contacts.html' },
+  { route: '/privacy', build: 'privacy.html', output: 'privacy.html' },
 ];
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const decodeEntities = value => value.replaceAll('&amp;', '&').replaceAll('&#x27;', "'").replaceAll('&quot;', '"');
@@ -27,6 +28,13 @@ const entries = [...catalogSource.matchAll(/\{\s*src:\s*img\((\d+)\),\s*name:\s*
 }));
 if (!entries.length || entries.some((entry, index) => entry.n !== index + 1)) {
   throw new Error(`Expected consecutively numbered catalog entries, got ${entries.length}; review the catalog parser.`);
+}
+// The card shows the short product line from the same `details` table the React app uses.
+const productsSource = await readFile(path.join(root, 'lib/products.ts'), 'utf8');
+const cardLines = [...productsSource.matchAll(/^\s*\['((?:\\.|[^'\\])*)',\s*'((?:\\.|[^'\\])*)'\],?$/gm)]
+  .map(([, , description]) => description.replace(/\\(['\\])/g, '$1'));
+if (cardLines.length !== entries.length) {
+  throw new Error(`Expected ${entries.length} product lines in lib/products.ts, got ${cardLines.length}.`);
 }
 const herringSource = await readFile(path.join(root, 'lib/herring.ts'), 'utf8');
 const herringModule = { exports: {} };
@@ -86,15 +94,15 @@ if (typeof category !== 'function') {
   throw new Error('Expected productCategory in lib/product-category.ts.');
 }
 const arrow = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg>';
-const cards = entries.map(item => {
+const cards = entries.map((item, index) => {
   const number = String(item.n).padStart(2, '0');
   const name = escapeHtml(item.name);
   const brand = item.name.startsWith('MARZO') ? 'MARZO' : item.name.includes('Бурёнка') ? 'Бурёнка' : item.name.includes('My Love') ? 'My Love' : 'RAMCAD';
-  return `<a href="product-${number}.html" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span><img src="public/images/product-cutouts/${number}.webp" alt="" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>${brand}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3></div></a>`;
+  return `<a href="product-${number}.html" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span><img src="public/images/product-cutouts/${number}.webp" alt="" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span class="product-brand">${brand}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3><p class="product-taste">${escapeHtml(cardLines[index])}</p></div></a>`;
 }).join('');
 const fishCards = herringProducts.map(item => {
   const name = `${item.title} ${item.subtitle}`;
-  return `<a href="herring-${escapeHtml(item.id)}.html" class="product-card" aria-label="Подробнее: ${escapeHtml(name)}, ${escapeHtml(item.weight)}"><div class="product-visual product-visual-fish"><span class="product-category">${escapeHtml(item.weight)}</span><div class="herring-card-pack" aria-hidden="true"><img class="herring-card-pack-base" src="public/images/herring/packaging-tub.png" alt="" width="1254" height="1254" loading="lazy" decoding="async"><img class="herring-card-pack-label" src="public${escapeHtml(item.labelImage)}" alt="" width="1401" height="1401" loading="lazy" decoding="async"></div><img class="herring-card-fish" src="public${escapeHtml(item.fishImage)}" alt="" width="1254" height="1254" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span>${escapeHtml(item.brand)} / ${escapeHtml(item.format)}</span><h3>${escapeHtml(name)}</h3></div></a>`;
+  return `<a href="herring-${escapeHtml(item.id)}.html" class="product-card" aria-label="Подробнее: ${escapeHtml(name)}, ${escapeHtml(item.weight)}"><div class="product-visual product-visual-fish"><span class="product-category">${escapeHtml(item.weight)}</span><div class="herring-card-pack" aria-hidden="true"><img class="herring-card-pack-base" src="public/images/herring/packaging-tub.png" alt="" width="1254" height="1254" loading="lazy" decoding="async"><img class="herring-card-pack-label" src="public${escapeHtml(item.labelImage)}" alt="" width="1401" height="1401" loading="lazy" decoding="async"></div><img class="herring-card-fish" src="public${escapeHtml(item.fishImage)}" alt="" width="1254" height="1254" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span class="product-brand">${escapeHtml(item.brand)} / ${escapeHtml(item.format)}</span><h3>${escapeHtml(name)}</h3><p class="product-taste">${escapeHtml(item.description)}</p></div></a>`;
 }).join('');
 
 const heroRuntime = `(${mountHeroParallax.toString()})(document.getElementById('hero'));`;
@@ -117,8 +125,10 @@ const runtime = String.raw`
     const filters = [...document.querySelectorAll('.filter-tabs button')];
     const filterBar = document.querySelector('.filter-tabs');
     const departmentButtons = [...document.querySelectorAll('.department-tabs button')];
-    const count = document.querySelector('.catalog-toolbar > span');
+    const count = document.querySelector('.catalog-count');
     const more = document.querySelector('.show-more');
+    const search = document.querySelector('.catalog-search input');
+    const searchClear = document.querySelector('.catalog-search button');
     const note = document.createElement('p');
     note.className = 'catalog-toolbar-note';
     note.textContent = 'Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.';
@@ -127,17 +137,22 @@ const runtime = String.raw`
     let department = new URL(location.href).searchParams.get('department') === 'fish' ? 'fish' : 'ice';
     let filter = 'Все вкусы';
     let expanded = false;
+    let term = '';
     const flavorCount = n => n + ' ' + (n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов');
     const itemCount = n => n + ' ' + (n > 10 && n < 15 ? 'товаров' : n % 10 === 1 ? 'товар' : n % 10 >= 2 && n % 10 <= 4 ? 'товара' : 'товаров');
+    const matchesTerm = card => !term || card.textContent.toLowerCase().includes(term);
     const render = () => {
       const isFish = department === 'fish';
-      const matching = isFish ? fishProducts : products.filter(card => filter === 'Все вкусы' || card.dataset.category === filter);
-      grid.replaceChildren(...(isFish || expanded ? matching : matching.slice(0, 8)).map(card => card.cloneNode(true)));
+      const matching = isFish
+        ? fishProducts.filter(matchesTerm)
+        : products.filter(card => (filter === 'Все вкусы' || card.dataset.category === filter) && matchesTerm(card));
+      grid.replaceChildren(...(isFish || expanded ? matching : matching.slice(0, 12)).map(card => card.cloneNode(true)));
       if (count) count.textContent = isFish ? itemCount(matching.length) : flavorCount(matching.length);
       if (filterBar) filterBar.style.display = isFish && departmentButtons.length ? 'none' : '';
       note.hidden = !isFish || !departmentButtons.length;
+      if (searchClear) searchClear.hidden = !term;
       filters.forEach(button => {
-        const label = button.textContent.trim();
+        const label = button.dataset.filter || button.textContent.trim();
         const selected = label === 'Рыба' ? isFish : label === 'Мороженое' ? !isFish : !isFish && label === filter;
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', String(selected));
@@ -148,13 +163,24 @@ const runtime = String.raw`
         button.setAttribute('aria-pressed', String(selected));
       });
       if (more) {
-        more.hidden = isFish || matching.length <= 8;
+        more.hidden = isFish || matching.length <= 12;
         more.firstChild.textContent = expanded ? 'Свернуть коллекцию' : 'Все ' + matching.length + ' вкусов';
         more.querySelector('svg').style.transform = expanded ? 'rotate(180deg)' : '';
       }
     };
+    search?.addEventListener('input', () => {
+      term = search.value.trim().toLowerCase();
+      expanded = false;
+      render();
+    });
+    searchClear?.addEventListener('click', () => {
+      if (search) search.value = '';
+      term = '';
+      expanded = false;
+      render();
+    });
     filters.forEach(button => button.addEventListener('click', () => {
-      const label = button.textContent.trim();
+      const label = button.dataset.filter || button.textContent.trim();
       department = label === 'Рыба' ? 'fish' : 'ice';
       if (label !== 'Рыба') filter = label === 'Мороженое' ? 'Все вкусы' : label;
       expanded = false;

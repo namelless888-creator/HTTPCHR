@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { ArrowUpRight, Mail } from 'lucide-react';
 
 const EMAIL = 'oooiceberg95@mail.ru';
@@ -79,6 +80,10 @@ export function ContactRequest() {
         <textarea name='message' rows={4} required placeholder='Что интересует: ассортимент, объём, город поставки' />
       </label>
       <input className='request-honeypot' name='_gotcha' type='text' tabIndex={-1} autoComplete='off' aria-hidden='true' />
+      <label className='request-consent request-field-wide'>
+        <input name='consent' type='checkbox' required />
+        <span>Согласен на обработку персональных данных и принимаю <Link href='/privacy' target='_blank' rel='noopener noreferrer'>политику конфиденциальности</Link>.</span>
+      </label>
       <div className='request-form-footer'>
         <button type='submit' className='request-submit' disabled={busy}>{busy ? 'Отправляем…' : 'Отправить заявку'} <ArrowUpRight size={19} strokeWidth={1.6} aria-hidden='true' /></button>
         <p className='request-note'>{ENDPOINT ? 'Заявка уйдёт с сайта. Мы ответим по указанному контакту.' : `Откроется почтовая программа с готовым письмом на ${EMAIL}. Ничего не отправляется без вашего подтверждения.`}</p>

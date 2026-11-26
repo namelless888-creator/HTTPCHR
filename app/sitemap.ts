@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl('/catalog/'), lastModified, changeFrequency: 'weekly', priority: 0.9 },
     { url: absoluteUrl('/about/'), lastModified, changeFrequency: 'yearly', priority: 0.7 },
     { url: absoluteUrl('/contacts/'), lastModified, changeFrequency: 'yearly', priority: 0.8 },
+    { url: absoluteUrl('/privacy/'), lastModified, changeFrequency: 'yearly', priority: 0.3 },
   ];
 
   return [
