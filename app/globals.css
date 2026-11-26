@@ -655,6 +655,9 @@ button { cursor: pointer; }
   background: linear-gradient(112deg, #eef6fa 0%, #f7f3ec 56%, #f0e9e0 100%);
   border-bottom: 1px solid var(--rule);
 }
+/* Breadcrumbs already clear the fixed header, so the compact hero must not repeat it */
+.page-breadcrumbs + .page-content .catalog-hero { padding-top: 24px; }
+.page-breadcrumbs + .page-content .legal-section { padding-top: 24px; }
 .catalog-hero-eyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #2f4d55; }
 .ramcad .catalog-hero h1 { margin-top: 16px; font-size: clamp(44px, 5.2vw, 82px); line-height: 1.02; letter-spacing: -.05em; }
 .catalog-hero-lead { margin-top: 20px; max-width: 520px; font-size: 15.5px; line-height: 1.68; color: #34545d; }
@@ -788,6 +791,7 @@ button { cursor: pointer; }
   .catalog-hero-media { min-height: 220px; border-radius: 18px; }
   .catalog-hero-media-note { left: 12px; right: 12px; bottom: 12px; font-size: 10px; text-align: center; }
   .reference-hero-actions { left: 16px; right: 16px; bottom: 56px; flex-wrap: nowrap; }
+  .hero-scroll-cue { display: none; }
   .hero-action { flex: 1 1 0; min-width: 0; min-height: 48px; padding: 12px 12px; font-size: 12.5px; gap: 7px; }
   .catalog-toolbar { display: block; margin-top: 22px; }
   .filter-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 0 -22px; padding: 0 22px 6px; scrollbar-width: none; }
