@@ -31,6 +31,14 @@ export const CONTACTS = {
   hours: 'Пн–Сб, 08:00–18:00',
 };
 
+// Verified against the ЕГРЮЛ record for the GUDERMES ice-cream plant.
+export const LEGAL = {
+  legalName: 'ООО «Айсберг»',
+  inn: '2005004860',
+  ogrn: '1072032001623',
+  kpp: '200501001',
+};
+
 export const absoluteUrl = (path = '/') => `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 
 /** Prefixes a public-folder path with the deployment base path (videos, CSS). */

@@ -66,8 +66,13 @@ const routeFiles = new Map(pages.map(page => [page.route, page.output]));
 const staticHref = value => {
   if (!value.startsWith('/') || value.startsWith('//')) return value;
   const url = new URL(value, 'https://local.invalid');
-  const file = routeFiles.get(url.pathname.replace(/\/+$/, '') || '/');
-  return file ? file + url.search + url.hash : value;
+  const segments = url.pathname.split('/').filter(Boolean);
+  for (let index = 0; index <= segments.length; index += 1) {
+    const candidate = `/${segments.slice(index).join('/')}`;
+    const file = routeFiles.get(candidate.replace(/\/+$/, '') || '/');
+    if (file) return file + url.search + url.hash;
+  }
+  return value;
 };
 
 const categorySource = await readFile(path.join(root, 'lib/product-category.ts'), 'utf8');
@@ -255,25 +260,31 @@ const builtPages = await Promise.all(pages.map(async page => {
 
 for (const page of builtPages) {
   let html = page.html;
+  // CSS variables such as --img-hero carry the deployment base path; strip it
+  // so the portable build keeps pointing at public/ next to the HTML file.
+  const assetPrefix = html.match(/url\(&quot;([^&"]*?)\/images\//)?.[1] ?? '';
+  if (assetPrefix) html = html.replaceAll(`${assetPrefix}/images/`, 'public/images/').replaceAll(`${assetPrefix}/videos/`, 'public/videos/');
   const stylesheetTags = [...html.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*>/g)];
   if (!stylesheetTags.length) throw new Error('The built page has no linked stylesheet.');
   const styles = [];
   for (const [tag] of stylesheetTags) {
     const href = tag.match(/href="([^"]+)"/)?.[1];
-    if (!href?.startsWith('/_next/static/')) throw new Error(`Unexpected stylesheet: ${href}`);
-    const cssPath = path.join(root, '.next', href.slice('/_next/'.length));
+    const stylesheetPath = href?.includes('/_next/static/') ? href.slice(href.indexOf('/_next/static/')) : href;
+    if (!stylesheetPath?.startsWith('/_next/static/')) throw new Error(`Unexpected stylesheet: ${href}`);
+    const cssPath = path.join(root, '.next', stylesheetPath.slice('/_next/'.length));
     let css = await readFile(cssPath, 'utf8');
     const resources = [...new Set([...css.matchAll(/url\(([^)]+)\)/g)].map(match => match[1].replace(/^['"]|['"]$/g, '')))];
     for (const resource of resources) {
       if (!/\.woff2(?:\?.*)?$/.test(resource)) continue;
-      const fontPath = resource.startsWith('/_next/')
-        ? path.join(root, '.next', resource.slice('/_next/'.length))
-        : path.resolve(path.dirname(cssPath), resource);
+      const staticResource = resource.includes('/_next/static/') ? resource.slice(resource.indexOf('/_next/static/')) : resource;
+      const fontPath = staticResource.startsWith('/_next/')
+        ? path.join(root, '.next', staticResource.slice('/_next/'.length))
+        : path.resolve(path.dirname(cssPath), staticResource);
       if (!fontPath.startsWith(path.join(root, '.next/static/'))) throw new Error('Font path escapes the static build directory.');
       const font = await readFile(fontPath);
       css = css.replaceAll(resource, `data:font/woff2;base64,${font.toString('base64')}`);
     }
-    styles.push(css.replace(/url\((['"]?)(\/(?:images|videos)\/[^)'"]+)\1\)/g, 'url($1public$2$1)'));
+    styles.push(css.replace(/url\((['"]?)([^)'"]*?\/(?:images|videos)\/[^)'"]+)\1\)/g, (_, quote, path) => `url(${quote}public${path.slice(path.search(/\/(?:images|videos)\//))}${quote})`));
     html = html.replace(tag, '');
   }
 
@@ -285,8 +296,10 @@ for (const page of builtPages) {
     .replace(/\s+data-nimg="[^"]*"/gi, '')
     .replace(/\b(src|poster)="([^"]+)"/g, (match, attr, raw) => {
       let value = decodeEntities(raw);
-      if (value.startsWith('/_next/image?')) value = new URL(value, 'https://local.invalid').searchParams.get('url') ?? value;
-      if (value.startsWith('/images/') || value.startsWith('/videos/')) value = `public${value}`;
+      const query = value.indexOf('/_next/image?');
+      if (query >= 0) value = new URL(value.slice(query), 'https://local.invalid').searchParams.get('url') ?? value;
+      const asset = value.search(/\/(?:images|videos)\//);
+      if (asset >= 0) value = `public${value.slice(asset)}`;
       return `${attr}="${escapeHtml(value)}"`;
     });
 

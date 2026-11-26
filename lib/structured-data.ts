@@ -1,4 +1,4 @@
-import { CONTACTS, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from './site';
+import { CONTACTS, LEGAL, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from './site';
 import { PRODUCT_LEGAL } from './product-legal';
 import type { Product } from './products';
 import type { HerringProduct } from './herring';
@@ -10,7 +10,12 @@ export const organizationSchema = {
   '@type': 'Organization',
   '@id': ORGANIZATION_ID,
   name: SITE_NAME,
-  legalName: 'ООО «Айсберг»',
+  legalName: LEGAL.legalName,
+  taxID: LEGAL.inn,
+  identifier: [
+    { '@type': 'PropertyValue', name: 'ИНН', value: LEGAL.inn },
+    { '@type': 'PropertyValue', name: 'ОГРН', value: LEGAL.ogrn },
+  ],
   url: `${SITE_URL}/`,
   logo: absoluteUrl('/favicon.ico'),
   image: absoluteUrl('/og-ramcad.png'),

@@ -355,6 +355,11 @@ button { cursor: pointer; }
 .contact-card-links { display: flex; flex-direction: column; gap: 10px; align-items: start; }
 .contact-phone { font-size: 20px; font-weight: 600; }
 .opening-hours { font-size: 13px; line-height: 1.9; color: var(--muted-ink); padding-top: 18px; border-top: 1px solid var(--rule); width: 100%; margin: 0; }
+.contact-legal { font-size: 11px; line-height: 1.6; color: var(--muted-ink); opacity: .8; margin: -6px 0 0; }
+.request-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.request-submit:disabled { opacity: .65; cursor: progress; }
+.legacy-redirect { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; background: var(--paper, #f7f4ee); color: var(--ink, #171717); }
+.legacy-redirect a { color: inherit; text-decoration: underline; text-underline-offset: .25em; }
 .map-caption { position: absolute; bottom: 28px; right: 28px; color: var(--ink); background: rgb(241 246 248 / 0.78); font-size: 12px; padding: 8px 12px; pointer-events: none; z-index: 3; }
 
 /* ---- footer: a masthead colophon ---- */

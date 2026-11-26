@@ -1,0 +1,21 @@
+# 301 rules for hosts that understand the Netlify/Cloudflare Pages format.
+# GitHub Pages ignores this file; the matching pages in app/ handle it there.
+/shop/ /catalog/ 301
+/shop/* /catalog/ 301
+/about-us/ /about/ 301
+/contact-us/ /contacts/ 301
+/blog/ /#news 301
+/blog/* /#news 301
+/news/ /#news 301
+/request-a-quote/ /contacts/ 301
+/request-quote/ /contacts/ 301
+/request-quotes/ /contacts/ 301
+/%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81%D0%B8%D1%82%D1%8C-%D1%86%D0%B5%D0%BD%D1%83/ /contacts/ 301
+/cart/ /catalog/ 301
+/checkout/ /catalog/ 301
+/my-account/ /catalog/ 301
+/compare/ /catalog/ 301
+/wishlist/ /catalog/ 301
+/quote-history/ /contacts/ 301
+/quoted-products/ /catalog/ 301
+/sample-page/ / 301

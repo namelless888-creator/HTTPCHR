@@ -17,6 +17,7 @@ import { mountMapIntro } from '@/lib/map-intro.mjs';
 import { mountMapScroll } from '@/lib/map-scroll.mjs';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
 import { asset } from '@/lib/site';
+import { LEGAL } from '@/lib/site';
 
 const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Каталог'], ['about', '/about', 'О компании'], ['contacts', '/contacts', 'Контакты']] as const;
 export type SitePage = typeof NAV[number][0] | 'product' | 'herring';
@@ -401,6 +402,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
                 <address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address>
                 <div className='contact-card-links'><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23</a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div>
                 <p className='opening-hours'>Пн–Сб, 08:00–18:00<br />Воскресенье — выходной</p>
+                <p className='contact-legal'>{LEGAL.legalName} · ИНН {LEGAL.inn} · ОГРН {LEGAL.ogrn}</p>
               </motion.div>
             </div>
             <span className='map-caption'>Гудермес, Чеченская Республика</span>
@@ -432,7 +434,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           <div className='footer-contact'><a href='tel:+79389042323'>+7 (938) 904-23-23</a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div>
         </div>
         <div className='footer-bottom'>
-          <span>© {new Date().getFullYear()} RAMCAD</span>
+          <span>© {new Date().getFullYear()} RAMCAD · {LEGAL.legalName}</span>
           <nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}</nav>
           <a href='#main'>В начало</a>
         </div>
