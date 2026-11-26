@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
@@ -287,7 +288,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
              
             />
           </div>
-          <span className='hero-frost' aria-hidden='true'>{FROST_PARTICLES.map((particle, index) => <span key={index} style={{ left: particle.left, '--size': `${particle.size}px`, '--dur': `${particle.duration}s`, '--delay': `${particle.delay}s` } as React.CSSProperties} />)}</span>
+          <span className='hero-frost' aria-hidden='true'>{FROST_PARTICLES.map((particle, index) => <span key={index} style={{ left: particle.left, '--size': `${particle.size}px`, '--dur': `${particle.duration}s`, '--delay': `${particle.delay}s` } as CSSProperties} />)}</span>
           <div className='reference-hero-copy reference-hero-actions'>
             <Link className='hero-action hero-action-primary' href='/catalog'>Смотреть каталог <ArrowRight size={18} strokeWidth={1.6} aria-hidden='true' /></Link>
             <Link className='hero-action hero-action-secondary' href='/contacts#request'>Оставить заявку</Link>
@@ -403,7 +404,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
           </div>}
           <div className='product-grid' ref={productGridRef}>
             {department === DEPARTMENTS[0]
-              ? visible.map(item => <MotionLink data-card-n={item.n} key={item.n} className='product-card' href={productHref(item)} initial={false} aria-label={`Подробнее: ${item.name}`}>
+              ? visible.map((item, index) => <MotionLink data-card-n={item.n} key={item.n} className='product-card' href={productHref(item)} initial={false} style={{ '--card-i': index } as CSSProperties} aria-label={`Подробнее: ${item.name}`}>
                 <div className='product-visual'>
                   <span className='product-category'>{item.category}</span>
                   <Image src={productCutout(item)} alt='' width={600} height={800} loading='lazy' />
@@ -415,7 +416,7 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
                   <p className='product-taste'>{item.description}</p>
                 </div>
               </MotionLink>)
-              : HERRING_PRODUCTS.map((item, index) => <MotionLink data-card-n={1000 + index} key={item.id} className='product-card' href={herringProductHref(item)} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} aria-label={`Подробнее: ${item.title} ${item.subtitle}, ${item.weight}`}>
+              : HERRING_PRODUCTS.map((item, index) => <MotionLink data-card-n={1000 + index} key={item.id} className='product-card' href={herringProductHref(item)} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} style={{ '--card-i': index } as CSSProperties} aria-label={`Подробнее: ${item.title} ${item.subtitle}, ${item.weight}`}>
                   <div className='product-visual product-visual-fish'>
                     <span className='product-category'>{item.weight}</span>
                     <div className='herring-card-pack' aria-hidden='true'>
