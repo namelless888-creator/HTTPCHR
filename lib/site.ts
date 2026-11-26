@@ -1,6 +1,8 @@
 // Build-time base path. Preview builds live under this sub-path, so every
-// generated asset and route is prefixed with it.
-export const BASE_PATH = '/namelless888-creator/HTTPCHR/component-swap-preview';
+// generated asset and route is prefixed with it. On a dedicated domain build
+// with an empty value: NEXT_PUBLIC_BASE_PATH= npm run build
+const previewBasePath = '/namelless888-creator/HTTPCHR/component-swap-preview';
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? previewBasePath;
 
 // Canonical, Open Graph and sitemap URLs need an absolute public address.
 // Override it for the production domain, for example:

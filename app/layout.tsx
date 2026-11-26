@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import localFont from 'next/font/local';
 import { JsonLd } from '@/components/json-ld';
-import { OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
+import { OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL, asset } from '@/lib/site';
 import { organizationSchema, websiteSchema } from '@/lib/structured-data';
 import './globals.css';
 
@@ -75,6 +75,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const fontVariables = {
     '--font-playfair': `${display.style.fontFamily}, ${displayLatin.style.fontFamily}, Georgia, serif`,
     '--font-manrope': `${sans.style.fontFamily}, ${sansLatin.style.fontFamily}, Arial, sans-serif`,
+    // CSS url() cannot read the build-time base path, so pass them as variables.
+    '--img-snow-logo': `url("${asset('/images/ramcad-snow-logo.png')}")`,
+    '--img-studio-background': `url("${asset('/images/studio-background.webp')}")`,
+    '--img-herring-studio': `url("${asset('/images/herring/studio-ice.png')}")`,
+    '--img-herring-waves': `url("${asset('/images/herring/waves.svg')}")`,
   } as CSSProperties;
 
   return (
