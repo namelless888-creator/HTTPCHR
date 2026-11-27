@@ -12,8 +12,8 @@ const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible
 export const SiteHeader: React.FC = () => (
   <header className='fixed inset-x-0 top-0 z-50 h-16 border-b border-border bg-background/80 text-foreground backdrop-blur'>
     <div className='mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 md:px-8'>
-      <Link href='/' className={cn('rounded-sm text-lg font-extrabold tracking-[0.08em]', focusRing)}>
-        Айсберг
+      <Link href='/' className={cn('rounded-sm text-lg font-extrabold uppercase tracking-[0.18em]', focusRing)}>
+        RAMKAD
       </Link>
 
       <div className='flex items-center gap-3'>
@@ -33,7 +33,7 @@ export const SiteHeader: React.FC = () => (
           </SheetTrigger>
           <SheetContent side='right' className='bg-background text-foreground'>
             <SheetHeader>
-              <SheetTitle className='font-extrabold tracking-[0.08em]'>Айсберг</SheetTitle>
+              <SheetTitle className='font-extrabold uppercase tracking-[0.18em]'>RAMKAD</SheetTitle>
             </SheetHeader>
             <nav aria-label='Мобильное меню' className='mt-8 flex flex-col gap-5 px-4'>
               {NAV_LINKS.map((l) => (

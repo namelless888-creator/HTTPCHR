@@ -171,7 +171,6 @@ button { cursor: pointer; }
   position: relative;
   color: rgb(var(--brand-text-rgb, 241 246 248) / var(--brand-text-opacity, 0));
   white-space: nowrap;
-  text-transform: uppercase;
 }
 .header-brand-hero .header-brand-word::before {
   content: '';
@@ -441,7 +440,7 @@ button { cursor: pointer; }
   /* Keep the mobile wordmark in the header, clear of the product photograph. */
   .header-brand-hero, .header-brand-hero:is(:hover,:focus-visible) { left: 16px; top: 7px; font-size: 18px; letter-spacing: .01em; text-shadow: none; transform: none; opacity: 1 !important; will-change: auto; }
   .header-brand-hero::before { opacity: 1; }
-  .header-brand-hero .header-brand-word { color: var(--ink); text-transform: none; }
+  .header-brand-hero .header-brand-word { color: var(--ink); }
   .header-brand-hero .header-brand-word::before { content: none; }
   .header-phone { grid-column: 2; grid-row: 1; padding: 10px 14px; }
   .header-links { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); }
