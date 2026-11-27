@@ -181,6 +181,35 @@ try {
     heroTransform: document.querySelector('.brand-hero-ice').style.transform,
   })`) });
 
+  // Search dialog: scroll lock, keyboard trap, Escape restores focus.
+  await send('Emulation.setEmulatedMedia', { features: [] });
+  await send('Page.navigate', { url: `${base}/catalog/` });
+  await wait(900);
+  await evaluate(`document.querySelector('.header-search').click()`);
+  await wait(350);
+  results.push({ searchDialog: await evaluate(`(() => {
+    const panel = document.querySelector('.site-search-inner');
+    const items = [...panel.querySelectorAll('a[href], button, input')];
+    items[items.length - 1].focus();
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    const trapped = document.activeElement === items[0];
+    return {
+      open: !!panel,
+      bodyOverflow: getComputedStyle(document.body).overflow,
+      themeColor: document.querySelector('meta[name="theme-color"]')?.content,
+      cardDuration: getComputedStyle(document.querySelector('.product-grid > *')).animationDuration,
+      tabTrapped: trapped,
+    };
+  })()`) });
+  await evaluate(`window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`);
+  await wait(800);
+  results.push({ searchClosed: await evaluate(`({
+    open: !!document.querySelector('.site-search'),
+    bodyOverflow: getComputedStyle(document.body).overflow,
+    focusReturned: document.activeElement?.classList.contains('header-search'),
+    scrollMargin: getComputedStyle(document.querySelector('#catalog-products')).scrollMarginTop,
+  })`) });
+
   const report = { base, widths, shots, results, errors };
   await fs.writeFile(path.join(dir, 'ramcad-audit.json'), JSON.stringify(report, null, 2));
   console.log(JSON.stringify({ base, widths, shots, errors, results }, null, 2));

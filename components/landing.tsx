@@ -144,6 +144,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
   const [catalogQuery, setCatalogQuery] = useState('');
   const map = useRef<HTMLVideoElement>(null);
   const searchTriggerRef = useRef<HTMLButtonElement>(null);
+  const searchPanelRef = useRef<HTMLDivElement>(null);
   const filterTabsRef = useRef<HTMLDivElement>(null);
   const productGridRef = useRef<HTMLDivElement>(null);
   const cardRectsRef = useRef<Map<number, DOMRect>>(new Map());
@@ -154,9 +155,26 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
   useEffect(() => page === 'contacts' ? mountMapIntro(map.current) : undefined, [page]);
   useEffect(() => {
     if (!searchOpen) return;
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setSearchOpen(false); searchTriggerRef.current?.focus(); } };
+    const panel = searchPanelRef.current;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setSearchOpen(false); searchTriggerRef.current?.focus(); return; }
+      if (event.key !== 'Tab' || !panel) return;
+      // Keep keyboard focus inside the modal while it is open.
+      const items = [...panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled])')]
+        .filter(item => item.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [searchOpen]);
   useEffect(() => {
     if ((page === 'home' || page === 'catalog') && new URLSearchParams(window.location.search).get('department') === 'fish') {
@@ -331,7 +349,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
 
     <AnimatePresence>
       {searchOpen && <motion.div className='site-search' role='dialog' aria-modal='true' aria-label='Поиск по каталогу' initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .22 }}>
-        <div className='site-search-inner'>
+        <div className='site-search-inner' ref={searchPanelRef}>
           <div className='site-search-bar'>
             <Search size={22} strokeWidth={1.5} aria-hidden='true' />
             <input autoFocus value={query} onChange={event => setQuery(event.target.value)} type='search' placeholder='Вкус, продукт или категория' aria-label='Поисковый запрос' />

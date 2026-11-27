@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { CSSProperties } from 'react';
 import localFont from 'next/font/local';
 import { JsonLd } from '@/components/json-ld';
@@ -70,6 +70,11 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   formatDetection: { telephone: true, address: true, email: true },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#f4f9fb',
+  colorScheme: 'light',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
