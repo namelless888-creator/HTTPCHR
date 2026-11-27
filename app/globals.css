@@ -509,9 +509,10 @@ button { cursor: pointer; }
 /* Поиск по сайту */
 .header-search { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 999px; color: var(--ink); transition: background-color .3s ease; }
 .header-search:is(:hover,:focus-visible) { background: rgb(16 52 60 / 0.08); }
-.site-search { position: fixed; inset: 0; z-index: 80; padding: calc(var(--header-height) + 22px) 4.8% 40px; overflow-y: auto; background: rgb(7 31 42 / 0.62); backdrop-filter: blur(12px); }
+.site-search { position: fixed; inset: 0; z-index: 80; padding: calc(var(--header-height) + 22px) 4.8% 40px; overflow-y: auto; overscroll-behavior: contain; background: rgb(7 31 42 / 0.62); backdrop-filter: blur(12px); }
 .site-search-inner { max-width: 760px; margin: 0 auto; }
-.site-search-bar { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 18px; background: #f7fafb; box-shadow: 0 22px 64px rgb(4 24 32 / 0.38); color: #41637d; }
+.site-search-bar { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 18px; background: #f7fafb; box-shadow: 0 22px 64px rgb(4 24 32 / 0.38); color: #41637d; transition: box-shadow .2s ease; }
+.site-search-bar:focus-within { box-shadow: 0 0 0 3px rgb(125 106 168 / .45), 0 22px 64px rgb(4 24 32 / 0.38); }
 .site-search-bar input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: clamp(17px, 2vw, 23px); color: var(--ink); outline: none; }
 .site-search-bar input::-webkit-search-cancel-button { display: none; }
 .site-search-bar button { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; color: #41637d; transition: background-color .2s ease; }
@@ -872,6 +873,9 @@ button { cursor: pointer; }
 /* Buttons and links share one press response */
 .pill, .hero-action, .request-submit, .header-phone, .mobile-request-call, .mobile-request-submit { user-select: none; }
 .pill:active, .hero-action:active, .request-submit:active, .header-phone:active { transform: translateY(0) scale(.985); transition-duration: var(--dur-fast); }
+.header-search, .site-search-bar button, .catalog-search button, .filter-tabs button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.header-search, .site-search-bar button, .catalog-search button { transition: background-color .2s ease, transform .16s var(--ease-out); }
+.header-search:active, .site-search-bar button:active, .catalog-search button:active, .filter-tabs button:active { transform: scale(.96); }
 .pill-outline:hover { box-shadow: 0 10px 24px rgb(16 52 60 / .12); }
 .text-link, .trust-link, .request-mail-link { transition: color var(--dur-base) ease, border-color var(--dur-base) ease; }
 

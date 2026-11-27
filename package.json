@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "postbuild": "node scripts/prepare-static.mjs",
+    "audit:design": "node scripts/design-audit.mjs",
     "start": "next start",
     "lint": "eslint"
   },

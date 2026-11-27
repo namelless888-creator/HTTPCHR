@@ -143,6 +143,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
   const [query, setQuery] = useState('');
   const [catalogQuery, setCatalogQuery] = useState('');
   const map = useRef<HTMLVideoElement>(null);
+  const searchTriggerRef = useRef<HTMLButtonElement>(null);
   const filterTabsRef = useRef<HTMLDivElement>(null);
   const productGridRef = useRef<HTMLDivElement>(null);
   const cardRectsRef = useRef<Map<number, DOMRect>>(new Map());
@@ -153,7 +154,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
   useEffect(() => page === 'contacts' ? mountMapIntro(map.current) : undefined, [page]);
   useEffect(() => {
     if (!searchOpen) return;
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setSearchOpen(false); };
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setSearchOpen(false); searchTriggerRef.current?.focus(); } };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [searchOpen]);
@@ -320,7 +321,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
       </Link>
       <nav id='main-navigation' className='header-links' aria-label='Основная навигация'>
         {NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}
-        <button className='header-search' type='button' aria-label='Поиск по каталогу' aria-expanded={searchOpen} onClick={() => { setSearchOpen(true); setQuery(''); }}>
+        <button ref={searchTriggerRef} className='header-search' type='button' aria-label='Поиск по каталогу' aria-expanded={searchOpen} onClick={() => { setSearchOpen(true); setQuery(''); }}>
           <Search size={17} strokeWidth={1.6} aria-hidden='true' />
           <span className='header-search-label' aria-hidden='true'>Поиск</span>
         </button>
@@ -334,9 +335,9 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
           <div className='site-search-bar'>
             <Search size={22} strokeWidth={1.5} aria-hidden='true' />
             <input autoFocus value={query} onChange={event => setQuery(event.target.value)} type='search' placeholder='Вкус, продукт или категория' aria-label='Поисковый запрос' />
-            <button type='button' onClick={() => setSearchOpen(false)} aria-label='Закрыть поиск'><X size={22} strokeWidth={1.5} aria-hidden='true' /></button>
+            <button type='button' onClick={() => { setSearchOpen(false); searchTriggerRef.current?.focus(); }} aria-label='Закрыть поиск'><X size={22} strokeWidth={1.5} aria-hidden='true' /></button>
           </div>
-          {searchTerm && <div className='site-search-results'>
+          {searchTerm && <div className='site-search-results' aria-live='polite'>
             {searchResults.length > 0
               ? searchResults.map(result => <Link key={result.key} href={result.href} onClick={() => setSearchOpen(false)}>
                   <span><strong>{result.title}</strong><small>{result.meta}</small></span>
@@ -472,10 +473,11 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
               </div>
               <div className='catalog-chapter-side'>
                 <span className='catalog-chapter-count'>{department === DEPARTMENTS[0] ? flavorCount(PRODUCTS.length) : itemCount(HERRING_PRODUCTS.length)}</span>
-                <div className='department-tabs' role='group' aria-label='Разделы каталога'>{DEPARTMENTS.map((label, index) => <button key={label} aria-pressed={department === label} className={department === label ? 'selected' : ''} onClick={() => switchDepartment(label)}>
+                <div className='department-tabs' role='group' aria-label='Разделы каталога'>{DEPARTMENTS.map((label, index) => <button key={label} type='button' aria-controls='catalog-products' aria-pressed={department === label} className={department === label ? 'selected' : ''} onClick={() => switchDepartment(label)}>
                   {index === 0 ? <IceCreamBowl aria-hidden='true' /> : <Fish aria-hidden='true' />}
                   <span className='department-label'>{label}</span>
                   <span className='department-total' aria-hidden='true'>{index === 0 ? PRODUCTS.length : HERRING_PRODUCTS.length}</span>
+                  <span className='sr-only'>{index === 0 ? flavorCount(PRODUCTS.length) : itemCount(HERRING_PRODUCTS.length)}</span>
                 </button>)}</div>
               </div>
             </div>
@@ -745,7 +747,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
         <SceneBackdrop />
         <span className='ambient-glow' aria-hidden='true' />
         <div className='footer-top'>
-          <Link href='/' className='footer-brand' aria-label='RAMCAD — на главную'><svg viewBox='0 0 1000 180' role='img' aria-label='RAMCAD'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg></Link>
+          <Link href='/' className='footer-brand' aria-label='RAMCAD — на главную'><svg viewBox='0 0 1000 180' aria-hidden='true' focusable='false'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg><span className='footer-brand-rule' aria-hidden='true' /></Link>
           <div className='footer-contact'><a href='tel:+79389042323'>+7 (938) 904-23-23</a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div>
         </div>
         <div className='footer-bottom'>

@@ -73,7 +73,7 @@ export function ContactRequest() {
       </label>
       <label className='request-field'>
         <span>Телефон или e-mail</span>
-        <input name='contact' type='text' autoComplete='email' required placeholder='Чтобы мы могли ответить' />
+        <input name='contact' type='text' autoComplete='tel' required placeholder='Чтобы мы могли ответить' />
       </label>
       <label className='request-field request-field-wide'>
         <span>Сообщение</span>
