@@ -306,7 +306,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
   return <div className={`ramcad site-page-${page}`}>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
     <header className='main-header'>
-      <Link href='/' className={`header-brand${page === 'home' ? ' header-brand-hero header-brand-plain' : ''}`} aria-label='Айсберг — на главную'>
+      <Link href='/' className={`header-brand${page === 'home' ? ' header-brand-hero' : ''}`} aria-label='Айсберг — на главную'>
         <span className='header-brand-word'>Айсберг</span>
       </Link>
       <nav id='main-navigation' className='header-links' aria-label='Основная навигация'>

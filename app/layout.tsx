@@ -83,7 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     '--font-playfair': `${display.style.fontFamily}, ${displayLatin.style.fontFamily}, Georgia, serif`,
     '--font-manrope': `${sans.style.fontFamily}, ${sansLatin.style.fontFamily}, Arial, sans-serif`,
     // CSS url() cannot read the build-time base path, so pass them as variables.
-    '--img-snow-logo': `url("${asset('/images/ramkad-snow-logo.png')}")`,
+    '--img-snow-logo': `url("${asset('/images/aisberg-snow-logo.png')}")`,
     '--img-studio-background': `url("${asset('/images/studio-background.webp')}")`,
     '--img-herring-studio': `url("${asset('/images/herring/studio-ice.png')}")`,
     '--img-herring-waves': `url("${asset('/images/herring/waves.svg')}")`,
