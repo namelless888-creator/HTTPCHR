@@ -5,7 +5,7 @@ import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import { ArrowDown, ArrowRight, ArrowUpRight, ChevronDown, ChevronRight, Factory, Handshake, Lightbulb, PackageCheck, Search, Snowflake, UtensilsCrossed, X } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, ChevronDown, ChevronRight, Factory, Fish, IceCreamBowl, Handshake, Lightbulb, PackageCheck, Search, Snowflake, Truck, UtensilsCrossed, X } from 'lucide-react';
 import { CATALOG } from '@/lib/catalog';
 import { ProductDetails } from '@/components/product-details';
 import { ContactRequest } from '@/components/contact-request';
@@ -18,8 +18,11 @@ import { mountMapScroll } from '@/lib/map-scroll.mjs';
 import { mountHeroParallax } from '@/lib/hero-parallax.mjs';
 import { asset } from '@/lib/site';
 import { LEGAL } from '@/lib/site';
+import { latestNews, getNewsBySlug } from '@/lib/news';
+import { NewsIndex, NewsArticle } from '@/components/news-content';
+import { AboutHero, AboutClosing, FlavorRibbon, ManifestoWords, PartnershipFinal } from '@/components/brand-scenes';
 
-const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Каталог'], ['about', '/about', 'О компании'], ['contacts', '/contacts', 'Контакты']] as const;
+const NAV = [['home', '/', 'Главная'], ['catalog', '/catalog', 'Каталог'], ['about', '/about', 'О компании'], ['news', '/news', 'Новости'], ['contacts', '/contacts', 'Контакты']] as const;
 export type SitePage = typeof NAV[number][0] | 'product' | 'herring' | 'privacy';
 const MotionLink = motion.create(Link);
 const FILTERS = ['Все вкусы', 'Рожки', 'Эскимо', 'Стаканчики', 'Фруктовый лёд', 'Для семьи'];
@@ -34,11 +37,7 @@ const TRUST = [
 const DEPARTMENTS = ['Мороженое', 'Рыба и морепродукты'] as const;
 const flavorCount = (n: number) => `${n} ${n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов'}`;
 const itemCount = (n: number) => `${n} ${n > 10 && n < 15 ? 'позиций' : n % 10 === 1 ? 'позиция' : n % 10 >= 2 && n % 10 <= 4 ? 'позиции' : 'позиций'}`;
-const NEWS = [
-  { date: '06.03.2024', iso: '2024-03-06', type: 'События', title: 'Когда хороший вкус объединяет', text: 'MARZO — партнёр интеллектуального вечера «Недвижимый квиз».', slug: '2024/03/06/estate-quiz/', image: 4 },
-  { date: '29.02.2024', iso: '2024-02-29', type: 'Партнёрство', title: 'Кино, друзья и любимое мороженое', text: 'Уютный кинопросмотр вместе с MARZO и Lancman School.', slug: '2024/02/29/marzo-and-lancman/', image: 11 },
-  { date: '18.02.2024', iso: '2024-02-18', type: 'Новый вкус', title: 'Маленький кусочек большого лета', text: 'Фруктовый лёд со вкусом дыни в коллекции MARZO.', slug: '2024/02/18/new-icecream/', image: 3 },
-];
+const NEWS = latestNews();
 
 const FROST_PARTICLES = [
   { left: '6%', size: 5, duration: 13, delay: -2 },
@@ -58,6 +57,38 @@ const ADVANTAGES = [
   { icon: UtensilsCrossed, title: 'Всегда на столе', text: 'Продукты, которые покупают снова и снова. Ежедневно. Для всей семьи. Во всех городах.' },
 ];
 
+const COLLECTION_TINTS: Record<string, [string, string]> = {
+  'Рожки': ['#f0dfc8', '#fbf7f1'],
+  'Эскимо': ['#e2d4ea', '#faf6fb'],
+  'Стаканчики': ['#d6e6f2', '#fbfdfe'],
+  'Фруктовый лёд': ['#d6ecdd', '#f8fcf9'],
+  'Для семьи': ['#eeddc6', '#fcf9f4'],
+};
+
+const COLLECTIONS = FILTERS.filter(label => label !== 'Все вкусы').map(label => ({
+  label,
+  count: PRODUCTS.filter(item => category(item.n) === label).length,
+  sample: PRODUCTS.find(item => category(item.n) === label),
+}));
+
+const collectionStyle = (label: string): CSSProperties => {
+  const [a, b] = COLLECTION_TINTS[label] ?? ['#dbe7ee', '#fbfdfe'];
+  return { '--tint-a': a, '--tint-b': b } as CSSProperties;
+};
+
+const PROCESS = [
+  { icon: PackageCheck, title: 'Сырьё', text: 'Натуральные ингредиенты, с которых начинается вкус.' },
+  { icon: Factory, title: 'Производство', text: 'Три отдельных цеха и высокоточное оборудование.' },
+  { icon: Snowflake, title: 'Холод', text: 'Свой температурный режим для каждого продукта.' },
+  { icon: Truck, title: 'Доставка', text: 'От производства до вашего стола — под контролем холода.' },
+];
+
+const STORY = [
+  { mark: '2003', title: 'Начало', text: 'Хладокомбинат в Гудермесе начинает работу с мороженым.' },
+  { mark: 'Цеха', title: 'Производство', text: 'Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта.' },
+  { mark: 'Сегодня', title: 'Ассортимент', text: `${PRODUCTS.length} вкусов мороженого MARZO и ${HERRING_PRODUCTS.length} рыбных пресервов «Айсберг». Поставки для магазинов, кафе и сетей.` },
+];
+
 function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   return <div className={`reveal ${className}`} style={{ transitionDelay: `${delay}s` }}>{children}</div>;
 }
@@ -69,10 +100,40 @@ function SectionMark({ number, children, note }: { number: string; children: Rea
   </div>;
 }
 
-export function Landing({ page = 'home', productId }: { page?: SitePage; productId?: string }) {
+function CountUp({ value }: { value: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [display, setDisplay] = useState(value);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let frame = 0;
+    // Only rewind off-screen numbers, so a number already on screen never
+    // flashes from its value down to zero on load.
+    if (el.getBoundingClientRect().top > window.innerHeight * 0.92) setDisplay(0);
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      observer.disconnect();
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / 900);
+        setDisplay(Math.round(value * (1 - Math.pow(1 - t, 3))));
+        if (t < 1) frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+    }, { threshold: .35 });
+    observer.observe(el);
+    return () => { observer.disconnect(); cancelAnimationFrame(frame); };
+  }, [value]);
+
+  return <span ref={ref}>{display}</span>;
+}
+
+export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePage; productId?: string; newsSlug?: string }) {
   const activePage = page === 'product' || page === 'herring' ? 'catalog' : page;
   const reduce = useReducedMotion();
-  const ContentHeading = page === 'home' ? 'h2' : 'h1';
+  const ContentHeading = page === 'home' || page === 'about' ? 'h2' : 'h1';
+  const newsItem = newsSlug ? getNewsBySlug(newsSlug) : undefined;
   const [department, setDepartment] = useState<typeof DEPARTMENTS[number]>(DEPARTMENTS[0]);
   const [filter, setFilter] = useState('Все вкусы');
   const [expanded, setExpanded] = useState(false);
@@ -211,25 +272,45 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
   };
 
   const handleGlow = (event: React.MouseEvent<HTMLElement>) => {
-    if (reduce) return;
+    if (reduce || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     const rect = event.currentTarget.getBoundingClientRect();
     event.currentTarget.style.setProperty('--glow-x', `${((event.clientX - rect.left) / rect.width) * 100}%`);
     event.currentTarget.style.setProperty('--glow-y', `${((event.clientY - rect.top) / rect.height) * 100}%`);
   };
   const handleTilt = (event: React.MouseEvent<HTMLElement>) => {
-    if (reduce) return;
+    if (reduce || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const px = (event.clientX - rect.left) / rect.width - .5;
     const py = (event.clientY - rect.top) / rect.height - .5;
-    event.currentTarget.style.setProperty('--tilt-x', `${(py * -6).toFixed(2)}deg`);
-    event.currentTarget.style.setProperty('--tilt-y', `${(px * 6).toFixed(2)}deg`);
+    event.currentTarget.style.setProperty('--tilt-x', `${(py * -12).toFixed(2)}deg`);
+    event.currentTarget.style.setProperty('--tilt-y', `${(px * 12).toFixed(2)}deg`);
   };
   const resetTilt = (event: React.MouseEvent<HTMLElement>) => {
     event.currentTarget.style.setProperty('--tilt-x', '0deg');
     event.currentTarget.style.setProperty('--tilt-y', '0deg');
   };
 
-  const breadcrumbLabel = page === 'about' ? 'О компании' : page === 'catalog' ? 'Каталог' : page === 'contacts' ? 'Контакты' : page === 'privacy' ? 'Политика конфиденциальности' : null;
+  const featureShown = page === 'catalog' && filter === 'Все вкусы' && !catalogTerm;
+  // The insert must land on a full row edge: the featured plate eats two cells.
+  const insertAt = featureShown ? 7 : 8;
+
+  const renderIceCard = (item: (typeof PRODUCTS)[number], index: number) => {
+    const isFeature = featureShown && index === 0;    return <MotionLink data-card-n={item.n} key={item.n} className={`product-card${isFeature ? ' product-card-featured' : ''}`} href={productHref(item)} initial={false} onMouseMove={handleTilt} onMouseLeave={resetTilt} style={{ '--card-i': index } as CSSProperties} aria-label={`Подробнее: ${item.name}`}>
+      <div className='product-visual'>
+        <span className='product-category'>{item.category}</span>
+        <Image src={productCutout(item)} alt='' width={600} height={800} loading='lazy' />
+        <span className='product-open'><ArrowUpRight size={18} aria-hidden='true' /></span>
+        {isFeature && <span className='product-feature-flag'>Крупным планом</span>}
+      </div>
+      <div className='product-info'>
+        <span className='product-brand'>{item.brand}</span>
+        <h3>{item.name.replace(/^MARZO\s*/, '')}</h3>
+        <p className='product-taste'>{item.description}</p>
+      </div>
+    </MotionLink>;
+  };
+
+  const breadcrumbLabel = page === 'about' ? 'О компании' : page === 'catalog' ? 'Каталог' : page === 'news' ? 'Новости' : page === 'contacts' ? 'Контакты' : page === 'privacy' ? 'Политика конфиденциальности' : null;
 
   return <div className={`ramcad site-page-${page}`}>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
@@ -275,6 +356,8 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
 
     <div className='page-content'>
       <main id='main'>
+        {page === 'news' && (newsItem ? <NewsArticle item={newsItem} /> : <NewsIndex />)}
+        {page === 'about' && <AboutHero />}
         {page === 'home' && <>
           <h1 className='sr-only'>RAMCAD — хладокомбинат: мороженое MARZO и рыбные пресервы «Айсберг»</h1>
           <section id='hero' className='reference-hero scene-section'>
@@ -363,20 +446,51 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
               <Link className='pill pill-outline' href='/contacts#request'>Оставить заявку <ArrowUpRight size={18} strokeWidth={1.6} aria-hidden='true' /></Link>
             </div>
           </div>
-          <div className='catalog-hero-media' aria-hidden='true'>
+          <div className='catalog-hero-media' aria-hidden='true' onMouseMove={handleTilt} onMouseLeave={resetTilt}>
             {[PRODUCTS[1], PRODUCTS[11], PRODUCTS[26]].map((item, index) => <span key={item.id} className={`catalog-hero-pack catalog-hero-pack-${index}`}>
               <Image src={productCutout(item)} alt='' width={600} height={800} priority={index === 1} />
             </span>)}
             <span className='catalog-hero-media-note'>{PRODUCTS.length} позиций мороженого · {HERRING_PRODUCTS.length} рыбных пресервов</span>
           </div>
         </section>}
-        {(page === 'home' || page === 'catalog') && <section id='catalog' className='catalog-section section-pad scene-section'>
+        {page === 'catalog' && <FlavorRibbon />}
+        {(page === 'home' || page === 'catalog') && <section id='catalog' data-department={department === DEPARTMENTS[0] ? 'ice' : 'fish'} className='catalog-section section-pad scene-section' onMouseMove={handleGlow}>
           <SceneBackdrop />
+          <div className='catalog-atmosphere' aria-hidden='true'><span className='catalog-orbit' /><span className='catalog-wordmark'>{department === DEPARTMENTS[0] ? 'MARZO' : 'АЙСБЕРГ'}</span><span className='ambient-glow' /></div>
           {page === 'home' ? <>
           <Reveal><SectionMark number='02'>Каталог RAMCAD</SectionMark></Reveal>
           <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} loading='lazy' /></div>)}</div></Reveal></div>
           </> : null}
-          {page === 'catalog' && <div className='department-tabs' role='group' aria-label='Разделы каталога'>{DEPARTMENTS.map(label => <button key={label} aria-pressed={department === label} className={department === label ? 'selected' : ''} onClick={() => switchDepartment(label)}>{label}</button>)}</div>}
+          {page === 'catalog' && <>
+            <div className='catalog-chapter'>
+              <span className='catalog-chapter-index' aria-hidden='true'>{department === DEPARTMENTS[0] ? '01' : '02'}</span>
+              <div className='catalog-chapter-copy'>
+                <h2>{department === DEPARTMENTS[0] ? 'Мороженое' : 'Рыба и морепродукты'}</h2>
+                <p>{department === DEPARTMENTS[0]
+                  ? 'Рожки, эскимо, стаканчики, фруктовый лёд и семейные форматы MARZO.'
+                  : 'Пресервы «Айсберг»: сельдь кусочками, филе и в масле.'}</p>
+              </div>
+              <div className='catalog-chapter-side'>
+                <span className='catalog-chapter-count'>{department === DEPARTMENTS[0] ? flavorCount(PRODUCTS.length) : itemCount(HERRING_PRODUCTS.length)}</span>
+                <div className='department-tabs' role='group' aria-label='Разделы каталога'>{DEPARTMENTS.map((label, index) => <button key={label} aria-pressed={department === label} className={department === label ? 'selected' : ''} onClick={() => switchDepartment(label)}>
+                  {index === 0 ? <IceCreamBowl aria-hidden='true' /> : <Fish aria-hidden='true' />}
+                  <span className='department-label'>{label}</span>
+                  <span className='department-total' aria-hidden='true'>{index === 0 ? PRODUCTS.length : HERRING_PRODUCTS.length}</span>
+                </button>)}</div>
+              </div>
+            </div>
+            {department === DEPARTMENTS[0] && <div className='collection-row' aria-label='Подборки вкусов'>
+              {COLLECTIONS.map(collection => collection.sample && <button key={collection.label} type='button' className='collection-card' style={collectionStyle(collection.label)} onClick={() => {
+                setFilter(collection.label);
+                setExpanded(false);
+                setCatalogQuery('');
+                document.getElementById('catalog-products')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+              }}>
+                <span className='collection-stage'><Image src={productCutout(collection.sample)} alt='' width={600} height={800} loading='lazy' /></span>
+                <span className='collection-meta'><span className='collection-name'>{collection.label}</span><span className='collection-count'>{collection.count}</span></span>
+              </button>)}
+            </div>}
+          </>}
           <div id='catalog-products' className='catalog-toolbar'>
             {(page === 'home' || department === DEPARTMENTS[0])
               ? <div className='filter-tabs' ref={filterTabsRef} role='group' aria-label={page === 'home' ? 'Разделы каталога' : 'Категории мороженого'}>
@@ -402,21 +516,24 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
             <p>По запросу «{catalogQuery.trim()}» ничего не нашлось.</p>
             <button type='button' className='text-link' onClick={() => { setCatalogQuery(''); setFilter('Все вкусы'); }}>Сбросить фильтры</button>
           </div>}
-          <div className='product-grid' ref={productGridRef}>
+          <div className={`product-grid${page === 'catalog' && department === DEPARTMENTS[1] ? ' product-grid-duo' : ''}`} ref={productGridRef}>
             {department === DEPARTMENTS[0]
-              ? visible.map((item, index) => <MotionLink data-card-n={item.n} key={item.n} className='product-card' href={productHref(item)} initial={false} style={{ '--card-i': index } as CSSProperties} aria-label={`Подробнее: ${item.name}`}>
-                <div className='product-visual'>
-                  <span className='product-category'>{item.category}</span>
-                  <Image src={productCutout(item)} alt='' width={600} height={800} loading='lazy' />
-                  <span className='product-open'><ArrowUpRight size={18} aria-hidden='true' /></span>
-                </div>
-                <div className='product-info'>
-                  <span className='product-brand'>{item.brand}</span>
-                  <h3>{item.name.replace(/^MARZO\s*/, '')}</h3>
-                  <p className='product-taste'>{item.description}</p>
-                </div>
-              </MotionLink>)
-              : HERRING_PRODUCTS.map((item, index) => <MotionLink data-card-n={1000 + index} key={item.id} className='product-card' href={herringProductHref(item)} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} style={{ '--card-i': index } as CSSProperties} aria-label={`Подробнее: ${item.title} ${item.subtitle}, ${item.weight}`}>
+              ? <>
+                  {visible.slice(0, insertAt).map((item, index) => renderIceCard(item, index))}
+                  {page === 'catalog' && visible.length > insertAt && <div className='grid-insert'>
+                    <div className='grid-insert-copy'>
+                      <span className='grid-insert-eyebrow'>Между рядами</span>
+                      <p>От цеха до полки — <em>одна холодовая цепь.</em></p>
+                    </div>
+                    <ul className='grid-insert-list'>
+                      <li><Snowflake size={19} strokeWidth={1.4} aria-hidden='true' /><span><strong>Свой режим</strong>температура под каждый продукт</span></li>
+                      <li><Factory size={19} strokeWidth={1.4} aria-hidden='true' /><span><strong>Три цеха</strong>мороженое и пресервы</span></li>
+                      <li><PackageCheck size={19} strokeWidth={1.4} aria-hidden='true' /><span><strong>Свои камеры</strong>хранение на месте</span></li>
+                    </ul>
+                  </div>}
+                  {visible.slice(insertAt).map((item, index) => renderIceCard(item, index + insertAt))}
+                </>
+              : HERRING_PRODUCTS.map((item, index) => <MotionLink data-card-n={1000 + index} key={item.id} className='product-card' href={herringProductHref(item)} onMouseMove={handleTilt} onMouseLeave={resetTilt} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={reduce ? { duration: 0 } : { duration: .35 }} style={{ '--card-i': index } as CSSProperties} aria-label={`Подробнее: ${item.title} ${item.subtitle}, ${item.weight}`}>
                   <div className='product-visual product-visual-fish'>
                     <span className='product-category'>{item.weight}</span>
                     <div className='herring-card-pack' aria-hidden='true'>
@@ -449,26 +566,106 @@ export function Landing({ page = 'home', productId }: { page?: SitePage; product
               <p>{text}</p>
             </Reveal>)}
           </div>
+          {page === 'about' && <Reveal className='about-stats'>
+            {TRUST.map(stat => <div key={stat.label} className='about-stat'>
+              <span className='about-stat-value'>{stat.value === '2003' ? stat.value : <CountUp value={Number(stat.value)} />}</span>
+              <span className='about-stat-label'>{stat.label}</span>
+            </div>)}
+          </Reveal>}
         </section>}
 
-        {page === 'home' && <section id='news' className='news-section section-pad'>
-          <Reveal><SectionMark number='04' note='Архив новостей 2024 года'>Наши истории</SectionMark></Reveal>
+        {page === 'about' && <>
+          <section className='about-gallery' aria-label='RAMCAD: производство и продукция'>
+            <figure className='about-gallery-item'>
+              <Image src='/images/directions/marzo-products-on-ice.png' alt='Мороженое MARZO на льду' fill sizes='(max-width: 600px) 100vw, 40vw' />
+              <figcaption>Мороженое MARZO</figcaption>
+            </figure>
+            <figure className='about-gallery-item'>
+              <Image src='/images/herring/studio-ice.png' alt='Колотый лёд крупным планом' fill sizes='(max-width: 600px) 100vw, 25vw' />
+              <figcaption>Холодовая цепь</figcaption>
+            </figure>
+            <figure className='about-gallery-item'>
+              <Image src='/images/directions/iceberg-herring-on-ice.png' alt='Сельдь «Айсберг» на льду' fill sizes='(max-width: 600px) 100vw, 33vw' />
+              <figcaption>Пресервы «Айсберг»</figcaption>
+            </figure>
+          </section>
+
+          <section className='about-manifesto'>
+            <Reveal><blockquote>
+              <ManifestoWords />
+              <cite>Принцип RAMCAD</cite>
+            </blockquote></Reveal>
+          </section>
+
+          <section className='about-story section-pad'>
+            <Reveal><SectionMark number='04' note='С 2003 года'>История</SectionMark></Reveal>
+            <div className='about-story-grid'>
+              <Reveal className='about-story-head'>
+                <h2>Один завод.<br /><em>Две категории.</em></h2>
+                <p>Мороженое и рыбные пресервы выходят из одного производства в Гудермесе — с общим стандартом холода.</p>
+              </Reveal>
+              <Reveal delay={.1}><ol className='about-timeline'>
+                {STORY.map(item => <li key={item.mark}>
+                  <span className='about-timeline-mark'>{item.mark}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </li>)}
+              </ol></Reveal>
+            </div>
+          </section>
+
+          <section className='about-process section-pad'>
+            <Reveal><SectionMark number='05' note='От сырья до полки'>Процесс</SectionMark></Reveal>
+            <div className='about-process-grid'>
+              {PROCESS.map(({ icon: Icon, title, text }, index) => <Reveal key={title} delay={index * .07} className='about-process-step'>
+                <span className='about-process-index'>{String(index + 1).padStart(2, '0')}</span>
+                <Icon size={28} strokeWidth={1.2} aria-hidden='true' />
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </Reveal>)}
+            </div>
+          </section>
+
+          <section className='about-directions section-pad'>
+            <Reveal><SectionMark number='06' note='Ассортимент'>Направления</SectionMark></Reveal>
+            <div className='about-direction-list'>
+              <Link className='about-direction-row' href='/catalog'>
+                <span className='about-direction-index'>01</span>
+                <div><h3>Мороженое</h3><p>MARZO и «Бурёнка»: рожки, эскимо, стаканчики и семейные форматы.</p></div>
+                <span className='about-direction-meta'>{itemCount(PRODUCTS.length)}</span>
+                <span className='about-direction-arrow'><ArrowUpRight size={18} aria-hidden='true' /></span>
+              </Link>
+              <Link className='about-direction-row' href='/catalog?department=fish#catalog-products'>
+                <span className='about-direction-index'>02</span>
+                <div><h3>Рыба и морепродукты</h3><p>Пресервы «Айсберг»: сельдь кусочками, филе и в масле.</p></div>
+                <span className='about-direction-meta'>{itemCount(HERRING_PRODUCTS.length)}</span>
+                <span className='about-direction-arrow'><ArrowUpRight size={18} aria-hidden='true' /></span>
+              </Link>
+            </div>
+          </section>
+          <AboutClosing />
+        </>}
+
+        {(page === 'home' || page === 'about') && <section id='news' className='news-section section-pad'>
+          <Reveal><SectionMark number='04' note='События и производство'>Наши истории</SectionMark></Reveal>
           <Reveal><h2>Есть чем <em>поделиться.</em></h2></Reveal>
           <div className='news-list'>
             {NEWS.map((item, index) => <Reveal key={item.slug} className='news-row'>
-              <a className='news-row-link' href={`https://icechr.ru/${item.slug}`} target='_blank' rel='noopener noreferrer'>
+              <Link className='news-row-link' href={`/news/${item.slug}/`}>
                 <span className='news-row-index'>{String(index + 1).padStart(2, '0')}</span>
-                <div className='news-row-media'><Image src={`/images/products/${String(item.image).padStart(2, '0')}.png`} width={600} height={800} alt='' loading='lazy' /></div>
+                <div className='news-row-media'><Image src={item.image} width={1038} height={678} alt='' loading='lazy' /></div>
                 <div className='news-row-body'>
                   <div className='news-row-meta'><time dateTime={item.iso}>{item.date}</time><span>{item.type}</span></div>
                   <h3>{item.title}</h3>
-                  <p>{item.text}</p>
+                  <p>{item.excerpt}</p>
                 </div>
-                <span className='news-row-cta'>Читать на icechr.ru</span>
-              </a>
+                <span className='news-row-cta'>Читать историю <ArrowUpRight size={16} aria-hidden /></span>
+              </Link>
             </Reveal>)}
           </div>
+          <Link className='text-link all-news-link' href='/news/'>Все новости <ArrowUpRight size={18} aria-hidden /></Link>
         </section>}
+        {page === 'about' && <PartnershipFinal />}
 
         {(page === 'home' || page === 'contacts') && <section id='contacts' className='contacts-section' aria-labelledby='contacts-heading'><div className='map-section'>
             <video className='map-route' ref={map} data-map-mode={page === 'contacts' ? 'intro' : 'scroll'} src={page === 'contacts' ? asset('/videos/karta-intro.mp4') : asset('/videos/karta-scroll.mp4')} poster={page === 'contacts' ? asset('/images/map-start.webp') : undefined} muted playsInline preload='auto' aria-label='Анимация маршрута к хладокомбинату в Гудермесе' />

@@ -18,7 +18,11 @@ const pages = [
   { route: '/about', build: 'about.html', output: 'about.html' },
   { route: '/contacts', build: 'contacts.html', output: 'contacts.html' },
   { route: '/privacy', build: 'privacy.html', output: 'privacy.html' },
+  { route: '/news', build: 'news.html', output: 'news.html' },
 ];
+const newsSource = await readFile(path.join(root, 'lib/news.ts'), 'utf8');
+const newsSlugs = [...newsSource.matchAll(/slug:\s*'([^']+)'/g)].map(match => match[1]);
+pages.push(...newsSlugs.map(slug => ({ route: `/news/${slug}`, build: `news/${slug}.html`, output: `news-${slug}.html` })));
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const decodeEntities = value => value.replaceAll('&amp;', '&').replaceAll('&#x27;', "'").replaceAll('&quot;', '"');
 const catalogSource = await readFile(path.join(root, 'lib/catalog.ts'), 'utf8');
@@ -141,12 +145,37 @@ const runtime = String.raw`
     const flavorCount = n => n + ' ' + (n > 10 && n < 15 ? 'вкусов' : n % 10 === 1 ? 'вкус' : n % 10 >= 2 && n % 10 <= 4 ? 'вкуса' : 'вкусов');
     const itemCount = n => n + ' ' + (n > 10 && n < 15 ? 'товаров' : n % 10 === 1 ? 'товар' : n % 10 >= 2 && n % 10 <= 4 ? 'товара' : 'товаров');
     const matchesTerm = card => !term || card.textContent.toLowerCase().includes(term);
+    const insert = grid.querySelector('.grid-insert')?.cloneNode(true);
+    const isCatalog = document.querySelector('.site-page-catalog');
     const render = () => {
       const isFish = department === 'fish';
       const matching = isFish
         ? fishProducts.filter(matchesTerm)
         : products.filter(card => (filter === 'Все вкусы' || card.dataset.category === filter) && matchesTerm(card));
-      grid.replaceChildren(...(isFish || expanded ? matching : matching.slice(0, 12)).map(card => card.cloneNode(true)));
+      const shown = (isFish || expanded ? matching : matching.slice(0, 12)).map((card, index) => {
+        const clone = card.cloneNode(true);
+        clone.style.setProperty('--card-i', index);
+        if (isCatalog && !isFish && filter === 'Все вкусы' && !term && index === 0) clone.classList.add('product-card-featured');
+        return clone;
+      });
+      if (insert && !isFish && shown.length > 8) shown.splice(filter === 'Все вкусы' && !term ? 7 : 8, 0, insert.cloneNode(true));
+      grid.replaceChildren(...shown);
+      grid.classList.toggle('product-grid-duo', !!isCatalog && isFish);
+      const section = document.querySelector('#catalog');
+      if (section) section.dataset.department = department;
+      const watermark = document.querySelector('.catalog-wordmark');
+      if (watermark) watermark.textContent = isFish ? 'АЙСБЕРГ' : 'MARZO';
+      const chapter = document.querySelector('.catalog-chapter');
+      if (chapter) {
+        chapter.querySelector('.catalog-chapter-index').textContent = isFish ? '02' : '01';
+        chapter.querySelector('h2').textContent = isFish ? 'Рыба и морепродукты' : 'Мороженое';
+        chapter.querySelector('.catalog-chapter-copy p').textContent = isFish ? 'Пресервы «Айсберг»: сельдь кусочками, филе и в масле.' : 'Рожки, эскимо, стаканчики, фруктовый лёд и семейные форматы MARZO.';
+        chapter.querySelector('.catalog-chapter-count').textContent = isFish ? itemCount(fishProducts.length) : flavorCount(products.length);
+      }
+      const collections = document.querySelector('.collection-row');
+      if (collections) collections.hidden = isFish;
+      const searchRow = document.querySelector('.catalog-search');
+      if (searchRow) searchRow.hidden = isFish;
       if (count) count.textContent = isFish ? itemCount(matching.length) : flavorCount(matching.length);
       if (filterBar) filterBar.style.display = isFish && departmentButtons.length ? 'none' : '';
       note.hidden = !isFish || !departmentButtons.length;
@@ -162,6 +191,12 @@ const runtime = String.raw`
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', String(selected));
       });
+      const indicator = document.querySelector('.filter-tab-indicator');
+      const selected = filters.find(button => button.classList.contains('selected'));
+      if (indicator && selected) {
+        indicator.style.transform = 'translateX(' + selected.offsetLeft + 'px)';
+        indicator.style.width = selected.offsetWidth + 'px';
+      }
       if (more) {
         more.hidden = isFish || matching.length <= 12;
         more.firstChild.textContent = expanded ? 'Свернуть коллекцию' : 'Все ' + matching.length + ' вкусов';
@@ -192,6 +227,8 @@ const runtime = String.raw`
     }));
     departmentButtons.forEach((button, index) => button.addEventListener('click', () => {
       department = index === 1 ? 'fish' : 'ice';
+      filter = 'Все вкусы'; term = '';
+      if (search) search.value = '';
       expanded = false;
       const url = new URL(location.href);
       if (department === 'fish') url.searchParams.set('department', 'fish');
@@ -200,8 +237,36 @@ const runtime = String.raw`
       render();
     }));
     more?.addEventListener('click', () => { expanded = !expanded; render(); });
+    document.querySelectorAll('.collection-card').forEach(button => button.addEventListener('click', () => {
+      filter = button.querySelector('.collection-name').textContent;
+      expanded = false; term = '';
+      if (search) search.value = '';
+      render();
+      document.querySelector('#catalog-products')?.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth' });
+    }));
     render();
   }
+
+  const newsFilters = [...document.querySelectorAll('.journal-filters button')];
+  newsFilters.forEach(button => button.addEventListener('click', () => {
+    newsFilters.forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+    let count = 0;
+    document.querySelectorAll('.journal > .journal-grid .journal-card').forEach(card => {
+      card.hidden = button.textContent !== 'Все' && card.dataset.newsType !== button.textContent;
+      if (!card.hidden) count++;
+    });
+    const live = document.querySelector('.journal [aria-live]');
+    if (live) live.textContent = 'Материалов: ' + count;
+  }));
+  document.addEventListener('pointermove', event => {
+    if (reduce.matches || event.pointerType !== 'mouse') return;
+    const card = event.target.closest('.product-card, .catalog-hero-media, .direction-card');
+    if (card) {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--tilt-x', ((event.clientY - rect.top) / rect.height - .5) * -12 + 'deg');
+      card.style.setProperty('--tilt-y', ((event.clientX - rect.left) / rect.width - .5) * 12 + 'deg');
+    }
+  });
 
   const herring = document.querySelector('.herring-details');
   if (herring) {
@@ -274,6 +339,8 @@ const runtime = String.raw`
 const staticStyles = `
 .show-more[hidden]{display:none!important}
 .reading-progress{transition:transform .25s ease-out}
+.journal-card[hidden],.collection-row[hidden],.catalog-search[hidden]{display:none!important}
+.about-manifesto p span{opacity:1!important}
 `;
 
 const builtPages = await Promise.all(pages.map(async page => {
@@ -315,7 +382,7 @@ for (const page of builtPages) {
   }
 
   html = html
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, tag => /type="application\/ld\+json"/.test(tag) ? tag : '')
     .replace(/<link\b[^>]*rel="(?:preload|modulepreload|prefetch|icon)"[^>]*>/gi, '')
     .replace(/<meta\b[^>]*name="next-size-adjust"[^>]*>/gi, '')
     .replace(/\s+srcSet="[^"]*"/gi, '')

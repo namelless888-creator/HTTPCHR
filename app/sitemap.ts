@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { HERRING_PRODUCTS } from '@/lib/herring';
 import { PRODUCTS } from '@/lib/products';
 import { absoluteUrl } from '@/lib/site';
+import { NEWS } from '@/lib/news';
 
 // Build-time timestamp keeps the sitemap identical between repeated exports
 // until the catalog itself changes.
@@ -18,6 +19,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...pages,
+    { url: absoluteUrl('/news/'), changeFrequency: 'monthly', priority: 0.7 },
+    ...NEWS.map(item => ({
+      url: absoluteUrl(`/news/${item.slug}/`),
+      lastModified: new Date(item.iso),
+      changeFrequency: 'yearly' as const,
+      priority: 0.5,
+    })),
     ...PRODUCTS.map(product => ({
       url: absoluteUrl(`/product/${product.id}/`),
       lastModified,

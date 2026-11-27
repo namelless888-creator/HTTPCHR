@@ -1,13 +1,12 @@
-import type { Metadata } from 'next';
-import { LegacyRedirect } from '@/components/legacy-redirect';
-import { absoluteUrl, asset } from '@/lib/site';
+import { Landing } from '@/components/landing';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Новости — RAMCAD',
-  alternates: { canonical: absoluteUrl('/#news') },
-  robots: { index: false, follow: true },
-};
+  description: 'Новости производства, партнёрства и истории MARZO. Архив хладокомбината RAMCAD.',
+  path: '/news/',
+});
 
 export default function Page() {
-  return <LegacyRedirect to={asset('/#news')} label='Новости RAMCAD' />;
+  return <Landing page='news' />;
 }

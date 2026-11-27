@@ -10,7 +10,9 @@ const catalogSource = await readFile(path.join(root, 'lib/catalog.ts'), 'utf8');
 const productCount = new Set([...catalogSource.matchAll(/\{\s*src:\s*img\((\d+)\)/g)].map(([, number]) => Number(number))).size;
 if (!productCount) throw new Error('Could not read catalog entries from lib/catalog.ts.');
 const productPages = Array.from({ length: productCount }, (_, index) => `product-${String(index + 1).padStart(2, '0')}`);
-const pages = ['index', 'catalog', 'about', 'contacts', 'privacy', ...productPages].map(page => ({
+const newsSource = await readFile(path.join(root, 'lib/news.ts'), 'utf8');
+const newsPages = [...newsSource.matchAll(/slug:\s*'([^']+)'/g)].map(match => `news-${match[1]}`);
+const pages = ['index', 'catalog', 'about', 'contacts', 'privacy', 'news', ...newsPages, ...productPages].map(page => ({
   input: `${page}.html`,
   output: `${prefix}${page === 'index' ? '' : `-${page}`}.html`,
 }));

@@ -5,6 +5,8 @@ import { JsonLd } from '@/components/json-ld';
 import { OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL, asset } from '@/lib/site';
 import { organizationSchema, websiteSchema } from '@/lib/structured-data';
 import './globals.css';
+import './brand-scenes.css';
+import './typography.css';
 
 const display = localFont({
   src: [
