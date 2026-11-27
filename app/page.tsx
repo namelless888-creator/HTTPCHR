@@ -3,7 +3,7 @@ import { pageMetadata } from '@/lib/seo';
 import { SITE_DESCRIPTION } from '@/lib/site';
 
 export const metadata = pageMetadata({
-  title: 'RAMCAD — создаём вкус, сохраняем свежесть',
+  title: 'RAMKAD — создаём вкус, сохраняем свежесть',
   description: SITE_DESCRIPTION,
   path: '/',
 });

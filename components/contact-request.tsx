@@ -21,7 +21,7 @@ export function ContactRequest() {
       '',
       message,
     ].join('\n');
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('Заявка с сайта RAMCAD')}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('Заявка с сайта RAMKAD')}&body=${encodeURIComponent(body)}`;
     setStatus('mailto');
   };
 

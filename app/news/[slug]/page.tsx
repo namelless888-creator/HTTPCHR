@@ -11,7 +11,7 @@ export const generateStaticParams = () => NEWS.map(({ slug }) => ({ slug }));
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const item = getNewsBySlug((await params).slug);
   if (!item) notFound();
-  return pageMetadata({ title: `${item.title} — RAMCAD`, description: item.excerpt, path: `/news/${item.slug}/`, type: 'article', image: { url: absoluteUrl(item.image), alt: item.imageAlt } });
+  return pageMetadata({ title: `${item.title} — RAMKAD`, description: item.excerpt, path: `/news/${item.slug}/`, type: 'article', image: { url: absoluteUrl(item.image), alt: item.imageAlt } });
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {

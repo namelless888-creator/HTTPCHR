@@ -70,7 +70,7 @@ export const ContactsBlock = forwardRef<HTMLDivElement>((_props, ref) => {
         >
           <MapAnimation
             src='/videos/karta_animation.mp4'
-            label='Карта: маршрут к RAMCAD по трассе Ростов–Баку в Гудермесе'
+            label='Карта: маршрут к RAMKAD по трассе Ростов–Баку в Гудермесе'
             sectionRef={mapSectionRef}
             className='absolute inset-0 -z-20'
           />

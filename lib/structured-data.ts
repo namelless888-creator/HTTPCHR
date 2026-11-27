@@ -18,7 +18,7 @@ export const organizationSchema = {
   ],
   url: `${SITE_URL}/`,
   logo: absoluteUrl('/favicon.ico'),
-  image: absoluteUrl('/og-ramcad.png'),
+  image: absoluteUrl('/og-ramkad.png'),
   description: SITE_DESCRIPTION,
   email: CONTACTS.email,
   telephone: CONTACTS.phoneSchema,

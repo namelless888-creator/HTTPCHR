@@ -121,7 +121,7 @@ export function ProductDetails({ product }: { product: Product }) {
 
     <section className='product-sales-note scene-section' aria-labelledby='product-sales-title'>
       <SceneBackdrop />
-      <div><p className='product-detail-eyebrow'>Для партнёров RAMCAD</p><h2 id='product-sales-title'>Хороший вкус —<br /><em>хорошее начало.</em></h2><p>Соберём ассортимент для вашего бизнеса. Обсудим сотрудничество?</p></div>
+      <div><p className='product-detail-eyebrow'>Для партнёров RAMKAD</p><h2 id='product-sales-title'>Хороший вкус —<br /><em>хорошее начало.</em></h2><p>Соберём ассортимент для вашего бизнеса. Обсудим сотрудничество?</p></div>
       <div className='product-sales-actions'><Link href='/contacts'>Связаться с нами <ArrowRight size={21} strokeWidth={1.5} aria-hidden='true' /></Link><a href='mailto:oooiceberg95@mail.ru'><Mail size={15} strokeWidth={1.5} aria-hidden='true' />oooiceberg95@mail.ru</a></div>
     </section>
   </article>;

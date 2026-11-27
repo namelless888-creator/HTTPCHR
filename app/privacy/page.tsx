@@ -4,8 +4,8 @@ import { pageMetadata } from '@/lib/seo';
 import { breadcrumbSchema } from '@/lib/structured-data';
 
 export const metadata = pageMetadata({
-  title: 'Политика обработки персональных данных — RAMCAD',
-  description: 'Как RAMCAD обрабатывает данные из формы заявки: состав данных, цели, срок хранения, права посетителя и контакты оператора.',
+  title: 'Политика обработки персональных данных — RAMKAD',
+  description: 'Как RAMKAD обрабатывает данные из формы заявки: состав данных, цели, срок хранения, права посетителя и контакты оператора.',
   path: '/privacy/',
 });
 

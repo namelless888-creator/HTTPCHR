@@ -4,8 +4,8 @@ import { pageMetadata } from '@/lib/seo';
 import { breadcrumbSchema } from '@/lib/structured-data';
 
 export const metadata = pageMetadata({
-  title: 'О компании — RAMCAD',
-  description: 'Хладокомбинат RAMCAD в Гудермесе: история с 2003 года, производство и стандарты качества.',
+  title: 'О компании — RAMKAD',
+  description: 'Хладокомбинат RAMKAD в Гудермесе: история с 2003 года, производство и стандарты качества.',
   path: '/about/',
 });
 

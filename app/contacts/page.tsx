@@ -4,8 +4,8 @@ import { pageMetadata } from '@/lib/seo';
 import { breadcrumbSchema } from '@/lib/structured-data';
 
 export const metadata = pageMetadata({
-  title: 'Контакты — RAMCAD',
-  description: 'Адрес хладокомбината RAMCAD в Гудермесе, телефон, электронная почта, часы работы и анимированный маршрут.',
+  title: 'Контакты — RAMKAD',
+  description: 'Адрес хладокомбината RAMKAD в Гудермесе, телефон, электронная почта, часы работы и анимированный маршрут.',
   path: '/contacts/',
 });
 

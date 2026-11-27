@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated single-file previews
+/preview.html
+/preview-*.html
+/ramcad.html
+/ramcad-*.html

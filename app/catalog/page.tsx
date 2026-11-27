@@ -4,8 +4,8 @@ import { pageMetadata } from '@/lib/seo';
 import { breadcrumbSchema } from '@/lib/structured-data';
 
 export const metadata = pageMetadata({
-  title: 'Каталог мороженого MARZO и рыбы Айсберг — RAMCAD',
-  description: 'Мороженое MARZO и рыбные пресервы Айсберг в каталоге RAMCAD: рожки, эскимо, стаканчики, фруктовый лёд и семейные форматы.',
+  title: 'Каталог мороженого MARZO и рыбы Айсберг — RAMKAD',
+  description: 'Мороженое MARZO и рыбные пресервы Айсберг в каталоге RAMKAD: рожки, эскимо, стаканчики, фруктовый лёд и семейные форматы.',
   path: '/catalog/',
 });
 

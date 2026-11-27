@@ -100,7 +100,7 @@ body {
 }
 
 /* ==========================================================================
-   RAMCAD — editorial direction, full redesign (second pass)
+   RAMKAD — editorial direction, full redesign (second pass)
    Hallmark · v2.0.0
    First pass only de-generated the previous system in place (chrome, labels,
    glued arrows). This pass rebuilds the shape of the page: a full-bleed
@@ -233,6 +233,7 @@ button { cursor: pointer; }
 .direction-photo { position: relative; aspect-ratio: 738/402; overflow: hidden; background: #0a2029; }
 .direction-card-feature .direction-photo { aspect-ratio: 16/9; }
 .direction-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.25,.46,.45,.94); }
+.direction-photo-fish img { object-position: left center; transform-origin: left center; }
 .direction-card:hover .direction-photo img { transform: scale(1.02); }
 .direction-card-copy { padding: 30px 32px 32px; flex: 1; display: flex; flex-direction: column; }
 .direction-card-index { font-family: var(--font-playfair), serif; font-size: 15px; color: #85d3ec; opacity: .85; margin-bottom: 14px; }
@@ -436,14 +437,20 @@ button { cursor: pointer; }
   html { --header-height: 112px; }
   .main-header { grid-template-columns: 1fr 1fr; grid-template-rows: 42px 48px; gap: 5px; padding: 7px 16px 10px; }
   .header-brand { font-size: 18px; padding: 10px 14px; border-radius: 14px; }
-  .header-brand-hero, .header-brand-hero:is(:hover,:focus-visible) { left: 16px; top: 7px; font-size: 18px; text-shadow: 0 2px 5px rgb(5 31 39 / .45); transform: translate3d(var(--brand-shift-x, calc(34vw - 80px)), var(--brand-shift-y, calc(33vh - 28px)), 0) scale(var(--brand-scale, 2.3)); }
+  /* Keep the mobile wordmark in the header, clear of the product photograph. */
+  .header-brand-hero, .header-brand-hero:is(:hover,:focus-visible) { left: 16px; top: 7px; font-size: 18px; letter-spacing: .01em; text-shadow: none; transform: none; opacity: 1 !important; will-change: auto; }
+  .header-brand-hero::before { opacity: 1; }
+  .header-brand-hero .header-brand-word { color: var(--ink); }
+  .header-brand-hero .header-brand-word::before { content: none; }
   .header-phone { grid-column: 2; grid-row: 1; padding: 10px 14px; }
   .header-links { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); }
   .site-page-home .header-links { grid-column: 1 / -1; grid-row: 2; background: rgb(241 246 248 / 0.97); }
   .site-page-home .header-phone { grid-column: 2; grid-row: 1; }
   .header-links a { min-height: 40px; padding-inline: 2px; font-size: clamp(11px,3.3vw,13px); }
-  .reference-hero { height: auto; min-height: 560px; }
-  .reference-hero-photo img { object-position: 25% center; }
+  /* A 6:5 photo window includes all four packs in the right-hand composition. */
+  .reference-hero { height: calc(var(--header-height) + 83.333vw + 88px); min-height: 0; }
+  .reference-hero-photo { top: var(--header-height); bottom: 88px; }
+  .reference-hero-photo img { object-position: right center; }
   .reference-hero-copy { left: calc(34% - 82px); bottom: 60px; width: 164px; min-height: 48px; padding: 11px 16px; }
 }
 @media (max-width: 600px) {
@@ -467,9 +474,7 @@ button { cursor: pointer; }
   .about-row-icon { order: 1; }
   .about-row h3 { order: 2; }
   .about-row p { grid-column: auto; order: 3; }
-  .contact-panel-anchor { left: 50%; top: auto; bottom: 20px; transform: translateX(-50%); width: calc(100% - 32px); max-width: 360px; }
   .contact-panel { padding: 26px; gap: 14px; }
-  .map-section { height: 580px; }
   .map-caption { display: none; }
   .landing-footer { padding: 52px 22px 24px; }
   .footer-brand { font-size: 54px; }
@@ -504,7 +509,14 @@ button { cursor: pointer; }
 .ramcad .page-content { padding-top: 0; }
 .site-page-about .about-section { padding-top: calc(var(--header-height) + 32px); }
 .site-page-herring .herring-details { padding-top: var(--header-height); }
-.site-page-contacts .map-section { min-height: 100svh; }
+@media (max-width: 768px) {
+  /* The card determines the section height, even without video or JavaScript. */
+  .map-section { height: auto; min-height: 0; padding: 24px 16px; background: #dce7e8; }
+  .map-section :is(video,.map-still) { top: 0; }
+  .contact-panel-anchor { position: relative; inset: auto; transform: none; width: 100%; max-width: 420px; margin-inline: auto; }
+  .contact-panel { overflow-wrap: anywhere; }
+  .map-caption { display: none; }
+}
 
 /* Поиск по сайту */
 .header-search { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 999px; color: var(--ink); transition: background-color .3s ease; }
@@ -796,7 +808,7 @@ button { cursor: pointer; }
   .catalog-hero-actions .pill { flex: 1 1 0; justify-content: center; gap: 12px; font-size: 12px; padding-inline: 12px; }
   .catalog-hero-media { min-height: 220px; border-radius: 18px; }
   .catalog-hero-media-note { left: 12px; right: 12px; bottom: 12px; font-size: 10px; text-align: center; }
-  .reference-hero-actions { left: 16px; right: 16px; bottom: 56px; flex-wrap: nowrap; }
+  .reference-hero-actions { left: 16px; right: 16px; bottom: 20px; flex-wrap: nowrap; }
   .hero-scroll-cue { display: none; }
   .hero-action { flex: 1 1 0; min-width: 0; min-height: 48px; padding: 12px 12px; font-size: 12.5px; gap: 7px; }
   .catalog-toolbar { display: block; margin-top: 22px; }

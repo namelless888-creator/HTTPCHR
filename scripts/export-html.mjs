@@ -75,6 +75,8 @@ pages.push(...herringProducts.map(item => ({
   output: `herring-${item.id}.html`,
 })));
 const routeFiles = new Map(pages.map(page => [page.route, page.output]));
+// GitHub Pages serves this file for unknown paths.
+pages.push({ route: '/404', build: '_not-found.html', output: '404.html' });
 const staticHref = value => {
   if (!value.startsWith('/') || value.startsWith('//')) return value;
   const url = new URL(value, 'https://local.invalid');
@@ -101,7 +103,7 @@ const arrow = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" vi
 const cards = entries.map((item, index) => {
   const number = String(item.n).padStart(2, '0');
   const name = escapeHtml(item.name);
-  const brand = item.name.startsWith('MARZO') ? 'MARZO' : item.name.includes('Бурёнка') ? 'Бурёнка' : item.name.includes('My Love') ? 'My Love' : 'RAMCAD';
+  const brand = item.name.startsWith('MARZO') ? 'MARZO' : item.name.includes('Бурёнка') ? 'Бурёнка' : item.name.includes('My Love') ? 'My Love' : 'RAMKAD';
   return `<a href="product-${number}.html" class="product-card" data-product="${item.n}" data-category="${category(item.n)}" aria-label="Подробнее: ${name}"><div class="product-visual"><span class="product-category">${category(item.n)}</span><img src="public/images/product-cutouts/${number}.webp" alt="" width="600" height="800" loading="lazy" decoding="async"><span class="product-open">${arrow}</span></div><div class="product-info"><span class="product-brand">${brand}</span><h3>${escapeHtml(item.name.replace(/^MARZO\s*/, ''))}</h3><p class="product-taste">${escapeHtml(cardLines[index])}</p></div></a>`;
 }).join('');
 const fishCards = herringProducts.map(item => {
@@ -135,7 +137,7 @@ const runtime = String.raw`
     const searchClear = document.querySelector('.catalog-search button');
     const note = document.createElement('p');
     note.className = 'catalog-toolbar-note';
-    note.textContent = 'Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.';
+    note.textContent = 'Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMKAD.';
     note.hidden = true;
     count?.before(note);
     let department = new URL(location.href).searchParams.get('department') === 'fish' ? 'fish' : 'ice';
@@ -309,21 +311,7 @@ const runtime = String.raw`
   addEventListener('resize', updateProgress); updateProgress();
 
   const video = document.querySelector('.map-section video');
-  const panel = document.querySelector('.map-section .contact-panel');
-  if (panel && video) {
-    const showPanel = () => {
-      panel.style.opacity = '1';
-      panel.style.transform = 'none';
-    };
-    const showAtEnd = () => {
-      if (video.duration > 0 && video.currentTime >= video.duration - .08) showPanel();
-    };
-    panel.style.transition = 'opacity .75s ease, transform .75s ease';
-    video.addEventListener('timeupdate', showAtEnd);
-    video.addEventListener('ended', showPanel);
-    video.addEventListener('error', showPanel);
-    if (reduce.matches || video.error) showPanel();
-  }
+  // Contact details are visible in the HTML; the map is only decoration.
   if (video?.dataset.mapMode === 'intro') {
     ${introRuntime}
   } else if (video) {
@@ -382,6 +370,7 @@ for (const page of builtPages) {
   }
 
   html = html
+    .replace(/<meta\b[^>]*name="robots"[^>]*>/gi, '<meta name="robots" content="noindex, nofollow"/>')
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, tag => /type="application\/ld\+json"/.test(tag) ? tag : '')
     .replace(/<link\b[^>]*rel="(?:preload|modulepreload|prefetch|icon)"[^>]*>/gi, '')
     .replace(/<meta\b[^>]*name="next-size-adjust"[^>]*>/gi, '')

@@ -137,7 +137,6 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
   const [department, setDepartment] = useState<typeof DEPARTMENTS[number]>(DEPARTMENTS[0]);
   const [filter, setFilter] = useState('Все вкусы');
   const [expanded, setExpanded] = useState(false);
-  const [mapDrawn, setMapDrawn] = useState(false);
   const [filterIndicator, setFilterIndicator] = useState<{ x: number; width: number } | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -237,33 +236,6 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
     cardRectsRef.current = next;
   }, [filter, expanded, reduce, department]);
 
-  useEffect(() => {
-    const video = map.current;
-    if (!video || (page !== 'home' && page !== 'contacts')) return;
-    const reduceQuery = matchMedia('(prefers-reduced-motion: reduce)');
-    if (reduceQuery.matches) {
-      const reducedFrame = requestAnimationFrame(() => setMapDrawn(true));
-      return () => cancelAnimationFrame(reducedFrame);
-    }
-    const checkProgress = () => {
-      if (Number.isFinite(video.duration) && video.duration > 0 && (video.ended || video.currentTime >= video.duration - .08)) setMapDrawn(true);
-    };
-    const initialFrame = requestAnimationFrame(() => {
-      setMapDrawn(false);
-      checkProgress();
-    });
-    // Contacts must never stay blank while a browser delays video playback.
-    const fallback = page === 'contacts' ? window.setTimeout(() => setMapDrawn(true), 1800) : 0;
-    video.addEventListener('timeupdate', checkProgress);
-    video.addEventListener('ended', checkProgress);
-    return () => {
-      cancelAnimationFrame(initialFrame);
-      window.clearTimeout(fallback);
-      video.removeEventListener('timeupdate', checkProgress);
-      video.removeEventListener('ended', checkProgress);
-    };
-  }, [page]);
-
   const catalogTerm = catalogQuery.trim().toLowerCase();
   const products = PRODUCTS.filter(item => (filter === 'Все вкусы' || category(item.n) === filter)
     && (!catalogTerm || `${item.name} ${item.taste} ${item.category} ${item.brand}`.toLowerCase().includes(catalogTerm)));
@@ -334,8 +306,8 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
   return <div className={`ramcad site-page-${page}`}>
     <motion.div className='reading-progress' style={{ scaleX: reduce ? scrollYProgress : progress }} />
     <header className='main-header'>
-      <Link href='/' className={`header-brand${page === 'home' ? ' header-brand-hero' : ''}`} aria-label='RAMCAD — на главную'>
-        <span className='header-brand-word'>RAMCAD</span>
+      <Link href='/' className={`header-brand${page === 'home' ? ' header-brand-hero' : ''}`} aria-label='RAMKAD — на главную'>
+        <span className='header-brand-word'>RAMKAD</span>
       </Link>
       <nav id='main-navigation' className='header-links' aria-label='Основная навигация'>
         {NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}
@@ -378,7 +350,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
         {page === 'news' && (newsItem ? <NewsArticle item={newsItem} /> : <NewsIndex />)}
         {page === 'about' && <AboutHero />}
         {page === 'home' && <>
-          <h1 className='sr-only'>RAMCAD — хладокомбинат: мороженое MARZO и рыбные пресервы «Айсберг»</h1>
+          <h1 className='sr-only'>RAMKAD — хладокомбинат: мороженое MARZO и рыбные пресервы «Айсберг»</h1>
           <section id='hero' className='reference-hero scene-section'>
           <div className='reference-hero-photo'>
             <Image
@@ -477,7 +449,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
           <SceneBackdrop />
           <div className='catalog-atmosphere' aria-hidden='true'><span className='catalog-orbit' /><span className='catalog-wordmark'>{department === DEPARTMENTS[0] ? 'MARZO' : 'АЙСБЕРГ'}</span><span className='ambient-glow' /></div>
           {page === 'home' ? <>
-          <Reveal><SectionMark number='02'>Каталог RAMCAD</SectionMark></Reveal>
+          <Reveal><SectionMark number='02'>Каталог RAMKAD</SectionMark></Reveal>
           <div className='section-heading'><Reveal><ContentHeading className='page-title'>Выберите своё<br /><em>маленькое счастье.</em></ContentHeading></Reveal><Reveal className='catalog-scene-wrap' delay={.12}><div className='catalog-scene' aria-hidden='true'>{CATALOG.slice(-3).map((item, index) => <div key={item.src} className={`catalog-scene-card catalog-scene-card-${index}`}><Image src={item.src} alt='' width={600} height={800} loading='lazy' /></div>)}</div></Reveal></div>
           </> : null}
           {page === 'catalog' && <>
@@ -522,7 +494,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
                     </button>;
                   })}
                 </div>
-              : <p className='catalog-toolbar-note'>Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMCAD.</p>}
+              : <p className='catalog-toolbar-note'>Рыбные пресервы «Айсберг». Качество и поставка — под контролем RAMKAD.</p>}
             <div className='catalog-tools'>
               {page === 'catalog' && department === DEPARTMENTS[0] && <div className='catalog-search' role='search'>
                 <Search size={16} strokeWidth={1.6} aria-hidden='true' />
@@ -577,7 +549,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
         {(page === 'home' || page === 'about') && <section id='about' className='about-section section-pad scene-section'>
           <SceneBackdrop />
           <Reveal><SectionMark number='03' note='Гудермес, Чеченская Республика'>О компании</SectionMark></Reveal>
-          <div className='about-layout'><Reveal><ContentHeading className='page-title'>Большое дело.<br /><em>Простые ценности.</em></ContentHeading><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMCAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><Link href='/contacts' className='text-link'>Обсудить сотрудничество</Link></div></Reveal></div>
+          <div className='about-layout'><Reveal><ContentHeading className='page-title'>Большое дело.<br /><em>Простые ценности.</em></ContentHeading><p className='about-intro'>Мы верим: хорошим продуктам<br />не нужны громкие обещания.</p></Reveal><Reveal delay={.15}><div className='about-copy'><p>RAMKAD — хладокомбинат в Чеченской Республике. С 2003 года мы работаем с тем, что требует особого внимания: натуральными ингредиентами, свежестью и вашим доверием.</p><p>Три отдельных цеха, собственные холодильные камеры и свой температурный режим для каждого продукта. Чтобы вкус оставался таким, каким его задумали.</p><Link href='/contacts' className='text-link'>Обсудить сотрудничество</Link></div></Reveal></div>
           <div className='about-list' aria-label='Преимущества хладокомбината'>
             {ADVANTAGES.map(({ icon: Icon, title, text }, index) => <Reveal key={title} delay={index * .07} className='about-row'>
               <span className='about-row-index'>{String(index + 1).padStart(2, '0')}</span>
@@ -595,7 +567,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
         </section>}
 
         {page === 'about' && <>
-          <section className='about-gallery' aria-label='RAMCAD: производство и продукция'>
+          <section className='about-gallery' aria-label='RAMKAD: производство и продукция'>
             <figure className='about-gallery-item'>
               <Image src='/images/directions/marzo-products-on-ice.png' alt='Мороженое MARZO на льду' fill sizes='(max-width: 600px) 100vw, 40vw' />
               <figcaption>Мороженое MARZO</figcaption>
@@ -613,7 +585,7 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
           <section className='about-manifesto'>
             <Reveal><blockquote>
               <ManifestoWords />
-              <cite>Принцип RAMCAD</cite>
+              <cite>Принцип RAMKAD</cite>
             </blockquote></Reveal>
           </section>
 
@@ -688,17 +660,17 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
         {page === 'about' && <PartnershipFinal />}
 
         {(page === 'home' || page === 'contacts') && <section id='contacts' className='contacts-section' aria-labelledby='contacts-heading'><div className='map-section'>
-            <video className='map-route' ref={map} data-map-mode={page === 'contacts' ? 'intro' : 'scroll'} src={page === 'contacts' ? asset('/videos/karta-intro.mp4') : asset('/videos/karta-scroll.mp4')} poster={page === 'contacts' ? asset('/images/map-start.webp') : undefined} muted playsInline preload='auto' aria-label='Анимация маршрута к хладокомбинату в Гудермесе' />
+            <video className='map-route' ref={map} data-map-mode={page === 'contacts' ? 'intro' : 'scroll'} src={page === 'contacts' ? asset('/videos/karta-intro.mp4') : asset('/videos/karta-scroll.mp4')} poster={asset('/images/map-preview.webp')} muted playsInline preload='auto' aria-label='Анимация маршрута к хладокомбинату в Гудермесе' />
             <div className='map-shade' />
             <div className='contact-panel-anchor'>
-              <motion.div className='contact-panel' initial={false} animate={mapDrawn ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 46, scale: .97 }} transition={{ duration: .75, ease: [.22, .61, .36, 1] }}>
+              <div className='contact-panel'>
                 <p className='contact-card-lead'>Приезжайте в гости</p>
                 <ContentHeading id='contacts-heading'>Контакты</ContentHeading>
                 <address>Чеченская Республика, г. Гудермес,<br />5-й км трассы Ростов–Баку</address>
                 <div className='contact-card-links'><a className='contact-phone' href='tel:+79389042323'>+7 (938) 904-23-23</a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div>
                 <p className='opening-hours'>Пн–Сб, 08:00–18:00<br />Воскресенье — выходной</p>
                 <p className='contact-legal'>{LEGAL.legalName} · ИНН {LEGAL.inn} · ОГРН {LEGAL.ogrn}</p>
-              </motion.div>
+              </div>
             </div>
             <span className='map-caption'>Гудермес, Чеченская Республика</span>
           </div>
@@ -765,11 +737,11 @@ export function Landing({ page = 'home', productId, newsSlug }: { page?: SitePag
         <SceneBackdrop />
         <span className='ambient-glow' aria-hidden='true' />
         <div className='footer-top'>
-          <Link href='/' className='footer-brand' aria-label='RAMCAD — на главную'><svg viewBox='0 0 1000 180' aria-hidden='true' focusable='false'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMCAD</text></svg><span className='footer-brand-rule' aria-hidden='true' /></Link>
+          <Link href='/' className='footer-brand' aria-label='RAMKAD — на главную'><svg viewBox='0 0 1000 180' aria-hidden='true' focusable='false'><text x='0' y='165' textLength='1000' lengthAdjust='spacingAndGlyphs'>RAMKAD</text></svg><span className='footer-brand-rule' aria-hidden='true' /></Link>
           <div className='footer-contact'><a href='tel:+79389042323'>+7 (938) 904-23-23</a><a href='mailto:oooiceberg95@mail.ru'>oooiceberg95@mail.ru</a></div>
         </div>
         <div className='footer-bottom'>
-          <span>© {new Date().getFullYear()} RAMCAD · {LEGAL.legalName}</span>
+          <span>© {new Date().getFullYear()} RAMKAD · {LEGAL.legalName}</span>
           <nav className='footer-links' aria-label='Навигация в подвале'>{NAV.map(([id, href, label]) => <Link key={id} href={href} aria-current={activePage === id ? 'page' : undefined}>{label}</Link>)}<Link href='/privacy'>Политика данных</Link></nav>
           <a href='#main'>В начало</a>
         </div>

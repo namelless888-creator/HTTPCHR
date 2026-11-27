@@ -8,7 +8,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# RAMCAD
+# RAMKAD
 
 Сайт хладокомбината: мороженое MARZO и рыбные пресервы «Айсберг». Не выдумывай
 факты, цены, сроки, условия поставки, отзывы и ответы FAQ — бери их из

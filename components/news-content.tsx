@@ -21,7 +21,7 @@ export function NewsIndex() {
   const [type, setType] = useState('Все');
   const items = type === 'Все' ? NEWS_SORTED : NEWS_SORTED.filter(item => item.type === type);
   return <section className='journal section-pad'>
-    <div className='journal-intro'><h1>Жизнь<br />за пределами цеха.</h1><p>Новости RAMCAD: производство, встречи и истории MARZO.</p></div>
+    <div className='journal-intro'><h1>Жизнь<br />за пределами цеха.</h1><p>Новости RAMKAD: производство, встречи и истории MARZO.</p></div>
     <div className='journal-filters' role='group' aria-label='Темы новостей'>{['Все', ...NEWS_TYPES].map(label => <button type='button' key={label} aria-pressed={label === type} onClick={() => setType(label)}>{label}</button>)}</div>
     <p className='sr-only' aria-live='polite'>Материалов: {items.length}</p>
     <NewsCards items={items} />

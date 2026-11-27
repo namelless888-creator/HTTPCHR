@@ -1,5 +1,5 @@
 /**
- * Design audit for RAMCAD.
+ * Design audit for RAMKAD.
  *
  * Runs headless Chrome through CDP and checks the pages that carry the most
  * layout risk: horizontal overflow, heading structure, broken images, console

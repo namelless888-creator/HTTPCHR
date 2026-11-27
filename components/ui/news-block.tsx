@@ -12,11 +12,11 @@ interface NewsItem {
   href: string;
 }
 
-// href points to the original articles; replace with RAMCAD URLs after migration.
+// href points to the original articles; replace with RAMKAD URLs after migration.
 const NEWS: NewsItem[] = [
   {
     date: '2024-03-06',
-    title: 'RAMCAD стал партнёром мероприятия «Недвижимый квиз»',
+    title: 'RAMKAD стал партнёром мероприятия «Недвижимый квиз»',
     excerpt: 'Интеллектуальный вечер, который объединил бизнес, партнёров и активную аудиторию. Бренд MARZO принял участие…',
     href: 'https://icechr.ru/2024/03/06/estate-quiz/',
   },
@@ -28,7 +28,7 @@ const NEWS: NewsItem[] = [
   {
     date: '2024-02-18',
     title: 'Новый вкус под брендом Marzo: фруктовый лёд со вкусом дыни',
-    excerpt: 'Фабрика мороженого RAMCAD выпустила новый летний вкус под брендом Marzo — фруктовый лёд со вкусом дыни…',
+    excerpt: 'Фабрика мороженого RAMKAD выпустила новый летний вкус под брендом Marzo — фруктовый лёд со вкусом дыни…',
     href: 'https://icechr.ru/2024/02/18/new-icecream/',
   },
   {

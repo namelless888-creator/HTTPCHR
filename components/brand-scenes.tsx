@@ -18,11 +18,11 @@ export function AboutHero() {
     </motion.div>
     <div className='brand-hero-shade' />
     <div className='brand-hero-copy'>
-      <p>RAMCAD · Гудермес · с 2003 года</p>
+      <p>RAMKAD · Гудермес · с 2003 года</p>
       <h1><span>О компании.</span><br /><span>Всё начинается</span><br /><span>с холода.</span></h1>
       <div className='brand-hero-bottom'><p>Мороженое MARZO и пресервы «Айсберг».<br />Два направления. Одно внимание к продукту.</p><a href='#about' aria-label='Подробнее о компании'><ArrowDown size={26} aria-hidden /></a></div>
     </div>
-    <span className='brand-hero-word' aria-hidden='true'>RAMCAD</span>
+    <span className='brand-hero-word' aria-hidden='true'>RAMKAD</span>
   </section>;
 }
 

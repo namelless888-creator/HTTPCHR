@@ -3,7 +3,7 @@ import { LegacyRedirect } from '@/components/legacy-redirect';
 import { absoluteUrl, asset } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'О компании — RAMCAD',
+  title: 'О компании — RAMKAD',
   alternates: { canonical: absoluteUrl('/about/') },
   robots: { index: false, follow: true },
 };

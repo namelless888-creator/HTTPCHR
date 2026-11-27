@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = getProduct((await params).id);
   if (!product) notFound();
   return pageMetadata({
-    title: `${product.name} — RAMCAD`,
+    title: `${product.name} — RAMKAD`,
     description: product.description,
     path: `/product/${product.id}/`,
     image: { url: product.src, width: 420, height: 560, alt: product.name },

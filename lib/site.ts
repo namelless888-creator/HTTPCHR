@@ -6,19 +6,19 @@ export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? previewBasePath;
 
 // Canonical, Open Graph and sitemap URLs need an absolute public address.
 // Override it for the production domain, for example:
-//   NEXT_PUBLIC_SITE_URL=https://ramcad.example npm run build
+//   NEXT_PUBLIC_SITE_URL=https://ramkad.example npm run build
 const publicUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://namelless888-creator.github.io/HTTPCHR/component-swap-preview';
 
 export const SITE_URL = publicUrl.replace(/\/+$/, '');
-export const SITE_NAME = 'RAMCAD';
+export const SITE_NAME = 'RAMKAD';
 export const SITE_DESCRIPTION =
-  'RAMCAD — хладокомбинат в Гудермесе: мороженое MARZO, рыбные пресервы «Айсберг» и полуфабрикаты. Собственное производство с 2003 года.';
+  'RAMKAD — хладокомбинат в Гудермесе: мороженое MARZO, рыбные пресервы «Айсберг» и полуфабрикаты. Собственное производство с 2003 года.';
 
 export const OG_IMAGE = {
-  url: '/og-ramcad.png',
+  url: '/og-ramkad.png',
   width: 1200,
   height: 630,
-  alt: 'RAMCAD — мороженое и рыба, хладокомбинат в Гудермесе',
+  alt: 'RAMKAD — мороженое и рыба, хладокомбинат в Гудермесе',
 };
 
 export const CONTACTS = {
